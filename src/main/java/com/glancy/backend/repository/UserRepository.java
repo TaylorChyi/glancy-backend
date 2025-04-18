@@ -1,8 +1,10 @@
-package com.ganlcy.backend.repository;
+package com.glancy.backend.repository;
 
-import com.ganlcy.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.glancy.backend.entity.User;
+
 import java.util.Optional;
 
 @Repository

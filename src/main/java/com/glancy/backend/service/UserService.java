@@ -1,11 +1,13 @@
-package com.ganlcy.backend.service;
+package com.glancy.backend.service;
 
-import com.ganlcy.backend.dto.UserRegistrationRequest;
-import com.ganlcy.backend.dto.UserResponse;
-import com.ganlcy.backend.entity.User;
-import com.ganlcy.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.glancy.backend.dto.UserRegistrationRequest;
+import com.glancy.backend.dto.UserResponse;
+import com.glancy.backend.entity.User;
+import com.glancy.backend.repository.UserRepository;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service

@@ -1,4 +1,4 @@
-package com.ganlcy.backend.dto;
+package com.glancy.backend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

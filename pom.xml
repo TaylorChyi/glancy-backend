@@ -8,7 +8,7 @@
 		<version>3.3.10</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.ganlcy</groupId>
+	<groupId>com.glancy</groupId>
 	<artifactId>glancy-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>glancy-backend</name>

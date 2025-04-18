@@ -1,13 +1,14 @@
-package com.ganlcy.backend.controller;
+package com.glancy.backend.controller;
 
-import com.ganlcy.backend.dto.UserRegistrationRequest;
-import com.ganlcy.backend.dto.UserResponse;
-import com.ganlcy.backend.entity.User;
-import com.ganlcy.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.glancy.backend.dto.UserRegistrationRequest;
+import com.glancy.backend.dto.UserResponse;
+import com.glancy.backend.entity.User;
+import com.glancy.backend.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")

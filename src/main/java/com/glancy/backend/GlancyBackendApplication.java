@@ -1,4 +1,4 @@
-package com.ganlcy.backend;
+package com.glancy.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
