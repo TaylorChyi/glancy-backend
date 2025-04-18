@@ -47,3 +47,6 @@ logs/
 
 ### Spring Boot DevTools ###
 .spring-boot-devtools.properties
+
+### Environment Variables ###
+.env
