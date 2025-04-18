@@ -2,7 +2,7 @@ spring:
   application:
     name: glancy
   datasource:
-    url: jdbc:mysql://localhost:3306/glancy_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=utf8mb4
+    url: jdbc:mysql://localhost:3306/glancy_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8
     username: glancy_user
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
