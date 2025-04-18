@@ -1,4 +1,4 @@
-package com.ganlcy.backend.entity;
+package com.glancy.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
