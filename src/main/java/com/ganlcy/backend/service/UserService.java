@@ -41,4 +41,10 @@ public class UserService {
         user.setDeleted(true);
         userRepository.save(user);
     }
+
+    @Transactional(readOnly = true)
+    public User getUserRaw(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+    }
 }

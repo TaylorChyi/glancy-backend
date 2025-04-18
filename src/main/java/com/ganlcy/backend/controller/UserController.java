@@ -2,6 +2,7 @@ package com.ganlcy.backend.controller;
 
 import com.ganlcy.backend.dto.UserRegistrationRequest;
 import com.ganlcy.backend.dto.UserResponse;
+import com.ganlcy.backend.entity.User;
 import com.ganlcy.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -34,5 +35,14 @@ public class UserController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 获取用户信息（包含逻辑删除状态）
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUser(@PathVariable Long id) {
+        User user = userService.getUserRaw(id);
+        return ResponseEntity.ok(user);
     }
 }
