@@ -1,13 +1,11 @@
-package com.ganlcy.glancy_backend;
+package com.ganlcy.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class GlancyBackendApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(GlancyBackendApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(GlancyBackendApplication.class, args);
+    }
 }
