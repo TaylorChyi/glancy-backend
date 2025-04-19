@@ -50,9 +50,3 @@ jobs:
 
             echo "✅ 部署完成"
           EOF
-
-      - name: Notify Deployment Success
-        run: |
-          curl -X POST -H 'Content-type: application/json' \
-          --data '{"text":"🚀 Deployment to Dev Server was successful!"}' \
-          ${{ secrets.SLACK_WEBHOOK_URL }}
