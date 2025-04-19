@@ -19,12 +19,16 @@ jobs:
           echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
           
       - name: Deploy to Remote Server
         run: |
           ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
             set -e
             cd /home/ecs-user/glancy-backend
+
+            echo "📦 修改远程仓库为 SSH"
+            git remote set-url origin git@github.com:TaylorChyi/glancy-backend.git  # ✅ 确保用 SSH
 
             echo "📦 拉取最新代码"
             git pull origin main
@@ -47,6 +51,8 @@ jobs:
             echo "✅ 部署完成"
           EOF
 
-            - name: Notify Deployment Success
-              run: |
-                curl -X POST -H 'Content-type: application/json' --data '{"text":"Deployment to Dev Server was successful!"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Notify Deployment Success
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"🚀 Deployment to Dev Server was successful!"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
