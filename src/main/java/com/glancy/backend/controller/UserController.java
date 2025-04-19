@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.glancy.backend.dto.LoginRequest;
+import com.glancy.backend.dto.LoginResponse;
 import com.glancy.backend.dto.UserRegistrationRequest;
 import com.glancy.backend.dto.UserResponse;
 import com.glancy.backend.entity.User;
@@ -45,5 +47,14 @@ public class UserController {
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         User user = userService.getUserRaw(id);
         return ResponseEntity.ok(user);
+    }
+
+    /**
+     * 用户登录
+     */
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest req) {
+        LoginResponse resp = userService.login(req);
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 }

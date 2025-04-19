@@ -3,6 +3,8 @@ package com.glancy.backend.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.glancy.backend.dto.LoginRequest;
+import com.glancy.backend.dto.LoginResponse;
 import com.glancy.backend.dto.UserRegistrationRequest;
 import com.glancy.backend.dto.UserResponse;
 import com.glancy.backend.entity.User;
@@ -48,5 +50,26 @@ public class UserService {
     public User getUserRaw(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+    }
+
+    @Transactional(readOnly = true)
+    public LoginResponse login(LoginRequest req) {
+        User user = null;
+
+        if (req.getUsername() != null && !req.getUsername().isEmpty()) {
+            user = userRepository.findByUsernameAndDeletedFalse(req.getUsername())
+                    .orElseThrow(() -> new IllegalArgumentException("用户不存在或已注销"));
+        } else if (req.getEmail() != null && !req.getEmail().isEmpty()) {
+            user = userRepository.findByEmailAndDeletedFalse(req.getEmail())
+                    .orElseThrow(() -> new IllegalArgumentException("用户不存在或已注销"));
+        } else {
+            throw new IllegalArgumentException("用户名或邮箱必须填写其一");
+        }
+
+        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("密码错误");
+        }
+
+        return new LoginResponse(user.getId(), user.getUsername(), user.getEmail());
     }
 }
