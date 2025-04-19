@@ -19,16 +19,34 @@ jobs:
           echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
-
+          
       - name: Deploy to Remote Server
         run: |
           ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
             set -e
             cd /home/ecs-user/glancy-backend
+
+            echo "📦 拉取最新代码"
             git pull origin main
-            mvn clean package -DskipTests
-            echo "Killing old process..."
-            pkill -f 'glancy-backend.jar' || true
-            echo "Starting new jar..."
-            nohup java -jar target/*.jar > backend.log 2>&1 &
+
+            echo "🔧 打包项目"
+            ./mvnw clean package -DskipTests
+
+            echo "🛑 终止旧服务（如有）"
+            PID=$(ps -ef | grep 'glancy-backend.*.jar' | grep -v grep | awk '{print $2}')
+            if [ -n "$PID" ]; then
+              kill -9 $PID
+              echo "✅ 已杀掉旧进程 PID=$PID"
+            else
+              echo "ℹ️ 未找到旧进程，跳过 kill"
+            fi
+
+            echo "🚀 启动新服务"
+            nohup java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar > backend.log 2>&1 &
+
+            echo "✅ 部署完成"
           EOF
+
+            - name: Notify Deployment Success
+              run: |
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"Deployment to Dev Server was successful!"}' ${{ secrets.SLACK_WEBHOOK_URL }}
