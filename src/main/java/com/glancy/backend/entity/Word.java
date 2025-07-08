@@ -3,6 +3,8 @@ package com.glancy.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "words")
@@ -16,8 +18,14 @@ public class Word {
     @Column(nullable = false, unique = true, length = 100)
     private String term;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String definition;
+    @ElementCollection
+    @CollectionTable(name = "word_definitions", joinColumns = @JoinColumn(name = "word_id"))
+    @Column(name = "definition", nullable = false, columnDefinition = "TEXT")
+    private List<String> definitions = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private Language language;
 
     @Column
     private String example;
