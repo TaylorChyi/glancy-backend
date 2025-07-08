@@ -59,4 +59,9 @@ java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar
 ### Contact
 - `POST /api/contact` – submit a contact message
 
+## Search Record Endpoints
+
+- `POST /api/search-records/user/{userId}` – add a new search record for the user
+- `GET /api/search-records/user/{userId}` – list search records of the user
+- `DELETE /api/search-records/user/{userId}` – clear all search records of the user
 
