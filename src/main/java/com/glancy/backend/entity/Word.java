@@ -30,6 +30,9 @@ public class Word {
     @Column(nullable = false, length = 10)
     private Language language;
 
+    @Column(length = 100)
+    private String phonetic;
+
     @Column
     private String example;
 

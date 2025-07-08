@@ -37,7 +37,7 @@ class WordServiceTest {
     @Test
     void testFindWord() {
         WordResponse resp = new WordResponse(1L, "hello",
-                List.of("greeting"), Language.ENGLISH, "Hello world");
+                List.of("greeting"), Language.ENGLISH, "Hello world", "həˈloʊ");
         when(deepSeekClient.fetchDefinition("hello", Language.ENGLISH))
                 .thenReturn(resp);
 
