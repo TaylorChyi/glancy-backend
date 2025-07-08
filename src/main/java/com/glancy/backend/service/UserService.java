@@ -8,6 +8,7 @@ import com.glancy.backend.dto.LoginResponse;
 import com.glancy.backend.dto.UserRegistrationRequest;
 import com.glancy.backend.dto.UserResponse;
 import com.glancy.backend.dto.ThirdPartyAccountRequest;
+import com.glancy.backend.dto.ThirdPartyAccountResponse;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.LoginDevice;
 import com.glancy.backend.entity.ThirdPartyAccount;
@@ -96,12 +97,21 @@ public class UserService {
     }
 
     @Transactional
-    public void bindThirdPartyAccount(Long userId, ThirdPartyAccountRequest req) {
+    public ThirdPartyAccountResponse bindThirdPartyAccount(Long userId, ThirdPartyAccountRequest req) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+
+        thirdPartyAccountRepository
+                .findByProviderAndExternalId(req.getProvider(), req.getExternalId())
+                .ifPresent(a -> {
+                    throw new IllegalArgumentException("该第三方账号已绑定");
+                });
+
         ThirdPartyAccount account = new ThirdPartyAccount();
         account.setUser(user);
         account.setProvider(req.getProvider());
-        account.setExternalId(req.getExternalId());
-        thirdPartyAccountRepository.save(account);
-    }}
+        account.setExternalId(req.getExternalId());        ThirdPartyAccount saved = thirdPartyAccountRepository.save(account);
+        return new ThirdPartyAccountResponse(saved.getId(), saved.getProvider(),
+                saved.getExternalId(), saved.getUser().getId());
+    }
+}

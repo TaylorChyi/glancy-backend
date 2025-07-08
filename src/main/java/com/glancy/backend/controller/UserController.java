@@ -10,6 +10,7 @@ import com.glancy.backend.dto.LoginResponse;
 import com.glancy.backend.dto.UserRegistrationRequest;
 import com.glancy.backend.dto.UserResponse;
 import com.glancy.backend.dto.ThirdPartyAccountRequest;
+import com.glancy.backend.dto.ThirdPartyAccountResponse;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.service.UserService;
 
@@ -63,8 +64,8 @@ public class UserController {
      * 绑定第三方账号
      */
     @PostMapping("/{id}/third-party-accounts")
-    public ResponseEntity<Void> bindThirdParty(@PathVariable Long id,
-                                               @Valid @RequestBody ThirdPartyAccountRequest req) {
-        userService.bindThirdPartyAccount(id, req);
-        return ResponseEntity.ok().build();
-    }}
+    public ResponseEntity<ThirdPartyAccountResponse> bindThirdParty(@PathVariable Long id,
+                                               @Valid @RequestBody ThirdPartyAccountRequest req) {        ThirdPartyAccountResponse resp = userService.bindThirdPartyAccount(id, req);
+        return new ResponseEntity<>(resp, HttpStatus.CREATED);
+    }
+}

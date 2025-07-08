@@ -86,7 +86,8 @@ class UserControllerTest {
 
     @Test
     void bindThirdParty() throws Exception {
-        doNothing().when(userService).bindThirdPartyAccount(eq(1L), any(ThirdPartyAccountRequest.class));
+        ThirdPartyAccountResponse resp = new ThirdPartyAccountResponse(1L, "p", "e", 1L);
+        when(userService.bindThirdPartyAccount(eq(1L), any(ThirdPartyAccountRequest.class))).thenReturn(resp);
 
         ThirdPartyAccountRequest req = new ThirdPartyAccountRequest();
         req.setProvider("p");
@@ -95,5 +96,6 @@ class UserControllerTest {
         mockMvc.perform(post("/api/users/1/third-party-accounts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1L));
     }}
