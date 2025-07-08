@@ -5,9 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 @Repository
 public interface SearchRecordRepository extends JpaRepository<SearchRecord, Long> {
     List<SearchRecord> findByUserIdOrderByCreatedAtDesc(Long userId);
     void deleteByUserId(Long userId);
+    long countByUserIdAndCreatedAtBetween(Long userId, LocalDateTime start, LocalDateTime end);
 }

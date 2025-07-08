@@ -31,5 +31,7 @@ public class User {
     @Column(nullable = false)
     private Boolean deleted = false;
 
+    @Column(nullable = false)    private Boolean member = false;
+
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();}
