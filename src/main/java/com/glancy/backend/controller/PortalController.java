@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.glancy.backend.dto.SystemParameterRequest;
 import com.glancy.backend.dto.SystemParameterResponse;
+import com.glancy.backend.dto.LogLevelRequest;
 import com.glancy.backend.service.SystemParameterService;
+import com.glancy.backend.service.LoggingService;
 
 /**
  * Portal endpoints used by administrators to adjust runtime
@@ -20,9 +22,12 @@ import com.glancy.backend.service.SystemParameterService;
 public class PortalController {
 
     private final SystemParameterService parameterService;
+    private final LoggingService loggingService;
 
-    public PortalController(SystemParameterService parameterService) {
+    public PortalController(SystemParameterService parameterService,
+            LoggingService loggingService) {
         this.parameterService = parameterService;
+        this.loggingService = loggingService;
     }
 
     /**
@@ -51,5 +56,15 @@ public class PortalController {
     public ResponseEntity<List<SystemParameterResponse>> list() {
         List<SystemParameterResponse> resp = parameterService.list();
         return ResponseEntity.ok(resp);
+    }
+
+    /**
+     * Change the log level for a given logger.
+     */
+    @PostMapping("/log-level")
+    public ResponseEntity<Void> setLogLevel(
+            @Valid @RequestBody LogLevelRequest req) {
+        loggingService.setLogLevel(req.getLogger(), req.getLevel());
+        return ResponseEntity.ok().build();
     }
 }
