@@ -14,6 +14,10 @@ import com.glancy.backend.entity.User;
 import com.glancy.backend.repository.NotificationRepository;
 import com.glancy.backend.repository.UserRepository;
 
+/**
+ * Business logic around creating and listing notifications that may
+ * either be global announcements or user specific.
+ */
 @Service
 public class NotificationService {
 
@@ -25,6 +29,9 @@ public class NotificationService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Create a system level notification for all users.
+     */
     @Transactional
     public NotificationResponse createSystemNotification(NotificationRequest request) {
         Notification notification = new Notification();
@@ -34,6 +41,9 @@ public class NotificationService {
         return toResponse(saved);
     }
 
+    /**
+     * Create a notification for a single user.
+     */
     @Transactional
     public NotificationResponse createUserNotification(Long userId, NotificationRequest request) {
         User user = userRepository.findById(userId)
@@ -46,6 +56,9 @@ public class NotificationService {
         return toResponse(saved);
     }
 
+    /**
+     * Combine system notifications with those addressed to the given user.
+     */
     @Transactional(readOnly = true)
     public List<NotificationResponse> getNotificationsForUser(Long userId) {
         List<Notification> result = new ArrayList<>();

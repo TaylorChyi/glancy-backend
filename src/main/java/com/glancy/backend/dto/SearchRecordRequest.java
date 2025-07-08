@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+/**
+ * Request payload representing a user's word search.
+ */
 @Data
 public class SearchRecordRequest {
     @NotBlank(message = "搜索词不能为空")

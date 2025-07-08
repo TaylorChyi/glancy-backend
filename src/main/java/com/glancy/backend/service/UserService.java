@@ -18,6 +18,10 @@ import com.glancy.backend.repository.ThirdPartyAccountRepository;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+/**
+ * Provides core user management operations such as registration,
+ * login and third-party account binding.
+ */
 @Service
 public class UserService {
 
@@ -34,6 +38,9 @@ public class UserService {
         this.thirdPartyAccountRepository = thirdPartyAccountRepository;
     }
 
+    /**
+     * Register a new user ensuring username and email uniqueness.
+     */
     @Transactional
     public UserResponse register(UserRegistrationRequest req) {
         if (userRepository.findByUsernameAndDeletedFalse(req.getUsername()).isPresent()) {
@@ -53,6 +60,9 @@ public class UserService {
                 saved.getAvatar(), saved.getPhone());
     }
 
+    /**
+     * Logically delete a user account.
+     */
     @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
@@ -61,12 +71,18 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /**
+     * Retrieve a user by id, regardless of deletion flag.
+     */
     @Transactional(readOnly = true)
     public User getUserRaw(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
     }
 
+    /**
+     * Authenticate a user and record login device information if provided.
+     */
     @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest req) {
         User user = null;
@@ -96,6 +112,9 @@ public class UserService {
                 user.getAvatar(), user.getPhone());
     }
 
+    /**
+     * Bind an external account (e.g. social login) to an existing user.
+     */
     @Transactional
     public ThirdPartyAccountResponse bindThirdPartyAccount(Long userId, ThirdPartyAccountRequest req) {
         User user = userRepository.findById(userId)

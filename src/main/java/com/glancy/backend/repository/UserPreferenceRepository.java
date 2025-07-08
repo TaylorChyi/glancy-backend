@@ -7,6 +7,9 @@ import com.glancy.backend.entity.UserPreference;
 
 import java.util.Optional;
 
+/**
+ * Repository storing each user's configuration preferences.
+ */
 @Repository
 public interface UserPreferenceRepository extends JpaRepository<UserPreference, Long> {
     Optional<UserPreference> findByUserId(Long userId);

@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Dictionary word entry cached from the external service.
+ */
 @Entity
 @Table(name = "words")
 @Data

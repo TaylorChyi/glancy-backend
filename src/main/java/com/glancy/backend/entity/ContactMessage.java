@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+/**
+ * Stores a message submitted from the "Contact Us" form.
+ */
 @Entity
 @Table(name = "contact_messages")
 @Data

@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+/**
+ * FAQ entity representing a frequently asked question entry.
+ */
 @Entity
 @Table(name = "faqs")
 @Data

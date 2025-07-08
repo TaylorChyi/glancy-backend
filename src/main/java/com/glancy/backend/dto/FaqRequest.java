@@ -3,6 +3,9 @@ package com.glancy.backend.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+/**
+ * Data for creating a FAQ entry.
+ */
 @Data
 public class FaqRequest {
     @NotBlank(message = "问题不能为空")

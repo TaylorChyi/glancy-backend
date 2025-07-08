@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents a saved search history item returned to the client.
+ */
 @Data
 @AllArgsConstructor
 public class SearchRecordResponse {

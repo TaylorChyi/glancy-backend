@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Provides dictionary lookup functionality. Each request also
+ * records the search for history tracking.
+ */
 @RestController
 @RequestMapping("/api/words")
 public class WordController {
@@ -23,6 +27,9 @@ public class WordController {
         this.searchRecordService = searchRecordService;
     }
 
+    /**
+     * Look up a word definition and save the search record.
+     */
     @GetMapping
     public ResponseEntity<WordResponse> getWord(@RequestParam Long userId,
                                                 @RequestParam String term,

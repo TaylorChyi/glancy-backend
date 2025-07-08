@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Stores configurable settings for a user such as theme and language.
+ */
 @Entity
 @Table(name = "user_preferences")
 @Data

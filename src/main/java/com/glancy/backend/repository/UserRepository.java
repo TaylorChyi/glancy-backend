@@ -7,8 +7,10 @@ import com.glancy.backend.entity.User;
 
 import java.util.Optional;
 
+/**
+ * Repository for {@link User} entities with helpers to check unique fields.
+ */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsernameAndDeletedFalse(String username);
-    Optional<User> findByEmailAndDeletedFalse(String email);
-}
+    Optional<User> findByEmailAndDeletedFalse(String email);}

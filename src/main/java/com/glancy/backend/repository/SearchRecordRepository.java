@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.time.LocalDateTime;
 
+/**
+ * Repository for persisting and querying user search history.
+ */
 @Repository
 public interface SearchRecordRepository extends JpaRepository<SearchRecord, Long> {
     List<SearchRecord> findByUserIdOrderByCreatedAtDesc(Long userId);

@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+/**
+ * Notification entity representing both system and user messages.
+ */
 @Entity
 @Table(name = "notifications")
 @Data

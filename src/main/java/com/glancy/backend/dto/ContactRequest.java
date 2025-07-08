@@ -4,6 +4,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+/**
+ * Request body for submitting a contact message.
+ */
 @Data
 public class ContactRequest {
     @NotBlank(message = "姓名不能为空")

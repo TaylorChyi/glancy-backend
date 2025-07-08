@@ -9,6 +9,9 @@ import com.glancy.backend.dto.UserPreferenceRequest;
 import com.glancy.backend.dto.UserPreferenceResponse;
 import com.glancy.backend.service.UserPreferenceService;
 
+/**
+ * Manage user interface and language preferences.
+ */
 @RestController
 @RequestMapping("/api/preferences")
 public class UserPreferenceController {
@@ -18,6 +21,9 @@ public class UserPreferenceController {
         this.userPreferenceService = userPreferenceService;
     }
 
+    /**
+     * Persist UI and language preferences for a user.
+     */
     @PostMapping("/user/{userId}")
     public ResponseEntity<UserPreferenceResponse> savePreference(@PathVariable Long userId,
                                                                  @Valid @RequestBody UserPreferenceRequest req) {
@@ -25,6 +31,9 @@ public class UserPreferenceController {
         return new ResponseEntity<>(resp, HttpStatus.CREATED);
     }
 
+    /**
+     * Retrieve preferences previously saved for the user.
+     */
     @GetMapping("/user/{userId}")
     public ResponseEntity<UserPreferenceResponse> getPreference(@PathVariable Long userId) {
         UserPreferenceResponse resp = userPreferenceService.getPreference(userId);
