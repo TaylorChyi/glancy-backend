@@ -10,4 +10,6 @@ public class LoginRequest {
 
     @NotBlank(message = "密码不能为空")
     private String password;
-}
+
+    // Optional device information used during login
+    private String deviceInfo;}
