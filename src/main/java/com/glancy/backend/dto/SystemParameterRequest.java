@@ -8,9 +8,9 @@ import lombok.Data;
  */
 @Data
 public class SystemParameterRequest {
-    @NotBlank(message = "参数名不能为空")
+    @NotBlank(message = "{validation.systemParameter.name.notblank}")
     private String name;
 
-    @NotBlank(message = "参数值不能为空")
+    @NotBlank(message = "{validation.systemParameter.value.notblank}")
     private String value;
 }

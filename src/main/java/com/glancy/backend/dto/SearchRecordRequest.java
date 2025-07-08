@@ -13,6 +13,6 @@ public class SearchRecordRequest {
     @NotBlank(message = "{validation.searchRecord.term.notblank}")
     private String term;
 
-    @NotNull(message = "语言不能为空")
+    @NotNull(message = "{validation.searchRecord.language.notnull}")
     private Language language;
 }
