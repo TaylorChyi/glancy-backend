@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -141,5 +142,19 @@ class UserServiceTest {
         List<LoginDevice> devices = loginDeviceRepository
                 .findByUserIdOrderByLoginTimeAsc(resp.getId());
         assertEquals(3, devices.size());
-        assertFalse(devices.stream().anyMatch(d -> "d1".equals(d.getDeviceInfo())));
-    }}
+        assertFalse(devices.stream().anyMatch(d -> "d1".equals(d.getDeviceInfo())));    }
+
+    @Test
+    void testExtendMembership() {
+        UserRegistrationRequest req = new UserRegistrationRequest();
+        req.setUsername("memberuser");
+        req.setPassword("pass123");
+        req.setEmail("m@example.com");
+        UserResponse resp = userService.register(req);
+
+        User user = userService.extendMembership(resp.getId(), 10);
+        assertNotNull(user.getMembershipExpiresAt());
+        assertTrue(user.getMembershipExpiresAt().isAfter(LocalDate.now()));
+    }
+}
+

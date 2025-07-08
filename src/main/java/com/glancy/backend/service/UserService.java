@@ -19,6 +19,7 @@ import com.glancy.backend.repository.ThirdPartyAccountRepository;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.List;
+import java.time.LocalDate;
 
 /**
  * Provides core user management operations such as registration,
@@ -173,5 +174,20 @@ public class UserService {
         log.debug("Bound account {}:{} to user {}", saved.getProvider(), saved.getExternalId(), userId);
         return new ThirdPartyAccountResponse(saved.getId(), saved.getProvider(),
                 saved.getExternalId(), saved.getUser().getId());
+    }
+
+    /**
+     * Extend membership for given user by the specified number of days.
+     */
+    @Transactional
+    public User extendMembership(Long userId, int days) {
+        log.info("Extending membership for user {} by {} days", userId, days);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        LocalDate start = user.getMembershipExpiresAt() != null &&
+                user.getMembershipExpiresAt().isAfter(LocalDate.now())
+                ? user.getMembershipExpiresAt() : LocalDate.now();
+        user.setMembershipExpiresAt(start.plusDays(days));
+        return userRepository.save(user);
     }
 }

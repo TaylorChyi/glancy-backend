@@ -3,6 +3,7 @@ package com.glancy.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * Core user entity storing login credentials and profile info.
@@ -34,7 +35,11 @@ public class User {
     @Column(nullable = false)
     private Boolean deleted = false;
 
-    @Column(nullable = false)    private Boolean member = false;
+    @Column(nullable = false)
+    private Boolean member = false;
+
+    private LocalDate membershipExpiresAt;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();}
+    private LocalDateTime createdAt = LocalDateTime.now();
+}

@@ -44,7 +44,10 @@ public class SearchRecordService {
                     log.warn("User with id {} not found", userId);
                     return new IllegalArgumentException("用户不存在");
                 });
-        if (Boolean.FALSE.equals(user.getMember())) {
+        boolean activeMember = Boolean.TRUE.equals(user.getMember())
+                || (user.getMembershipExpiresAt() != null
+                    && user.getMembershipExpiresAt().isAfter(LocalDate.now()));
+        if (!activeMember) {
             LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
             LocalDateTime endOfDay = startOfDay.plusDays(1);
             long count = searchRecordRepository
