@@ -1,18 +1,62 @@
-# glancy-backend
+# Glancy Backend
 
-This project provides a simple Spring Boot backend with REST APIs for user management, notifications and FAQs.
+Glancy Backend is a Spring Boot service that powers the Glancy dictionary application. It exposes REST endpoints for user management, notifications, FAQs and contact messages.
 
-## FAQ Endpoints
+## Requirements
 
+- Java 17
+- MySQL database
+- Maven (the project includes the `mvnw` wrapper)
+
+## Setup
+
+1. Clone this repository.
+2. Provide a `DB_PASSWORD` value via a `.env` file or environment variable.
+3. Ensure MySQL is running with a database named `glancy_db` and credentials as defined in `src/main/resources/application.yml`.
+
+## Building and Running
+
+Start the application with:
+
+```bash
+./mvnw spring-boot:run
+```
+
+Or build a jar:
+
+```bash
+./mvnw clean package
+java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar
+```
+
+## Running Tests
+
+```bash
+./mvnw test
+```
+## API Endpoints
+
+### Users
+- `POST /api/users/register` – register a new user
+- `DELETE /api/users/{id}` – logically delete a user
+- `GET /api/users/{id}` – fetch user details
+- `POST /api/users/login` – user login
+- `POST /api/users/{id}/third-party-accounts` – bind a third‑party account
+
+### Notifications
+- `POST /api/notifications/system` – create a system notification
+- `POST /api/notifications/user/{userId}` – create a user notification
+- `GET /api/notifications/user/{userId}` – list notifications for a user
+
+### FAQs
 - `POST /api/faqs` – create a new FAQ
 - `GET /api/faqs` – list all FAQs
 
-## Contact Us Endpoint
+### User Preferences
+- `POST /api/preferences/user/{userId}` – save preferences for a user
+- `GET /api/preferences/user/{userId}` – fetch preferences for a user
 
-Submit contact messages via:
+### Contact
+- `POST /api/contact` – submit a contact message
 
-```
-POST /api/contact
-```
 
-The endpoint accepts `name`, `email` and `message` fields and returns the saved record.
