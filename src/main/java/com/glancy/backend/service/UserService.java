@@ -17,11 +17,13 @@ import com.glancy.backend.repository.LoginDeviceRepository;
 import com.glancy.backend.repository.ThirdPartyAccountRepository;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Provides core user management operations such as registration,
  * login and third-party account binding.
  */
+@Slf4j
 @Service
 public class UserService {
 
@@ -43,6 +45,7 @@ public class UserService {
      */
     @Transactional
     public UserResponse register(UserRegistrationRequest req) {
+        log.debug("Registering user {}", req.getUsername());
         if (userRepository.findByUsernameAndDeletedFalse(req.getUsername()).isPresent()) {
             throw new IllegalArgumentException("用户名已存在");
         }
@@ -65,6 +68,7 @@ public class UserService {
      */
     @Transactional
     public void deleteUser(Long id) {
+        log.debug("Deleting user {}", id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
         user.setDeleted(true);
@@ -76,6 +80,7 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public User getUserRaw(Long id) {
+        log.debug("Fetching user {}", id);
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
     }
@@ -85,6 +90,8 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest req) {
+        String identifier = req.getUsername() != null ? req.getUsername() : req.getEmail();
+        log.debug("Login attempt for {}", identifier);
         User user = null;
 
         if (req.getUsername() != null && !req.getUsername().isEmpty()) {
@@ -108,6 +115,7 @@ public class UserService {
             loginDeviceRepository.save(device);
         }
 
+        log.debug("User {} logged in", user.getId());
         return new LoginResponse(user.getId(), user.getUsername(), user.getEmail(),
                 user.getAvatar(), user.getPhone());
     }
@@ -117,6 +125,8 @@ public class UserService {
      */
     @Transactional
     public ThirdPartyAccountResponse bindThirdPartyAccount(Long userId, ThirdPartyAccountRequest req) {
+        log.debug("Binding third-party account {}:{} to user {}", req.getProvider(),
+                req.getExternalId(), userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
 
@@ -129,7 +139,9 @@ public class UserService {
         ThirdPartyAccount account = new ThirdPartyAccount();
         account.setUser(user);
         account.setProvider(req.getProvider());
-        account.setExternalId(req.getExternalId());        ThirdPartyAccount saved = thirdPartyAccountRepository.save(account);
+        account.setExternalId(req.getExternalId());
+        ThirdPartyAccount saved = thirdPartyAccountRepository.save(account);
+        log.debug("Bound account {}:{} to user {}", saved.getProvider(), saved.getExternalId(), userId);
         return new ThirdPartyAccountResponse(saved.getId(), saved.getProvider(),
                 saved.getExternalId(), saved.getUser().getId());
     }
