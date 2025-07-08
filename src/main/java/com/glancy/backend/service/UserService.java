@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.glancy.backend.dto.LoginRequest;
 import com.glancy.backend.dto.LoginResponse;
 import com.glancy.backend.dto.UserRegistrationRequest;
+import com.glancy.backend.dto.UserStatisticsResponse;
 import com.glancy.backend.dto.UserResponse;
 import com.glancy.backend.dto.ThirdPartyAccountRequest;
 import com.glancy.backend.dto.ThirdPartyAccountResponse;
@@ -174,6 +175,17 @@ public class UserService {
         log.debug("Bound account {}:{} to user {}", saved.getProvider(), saved.getExternalId(), userId);
         return new ThirdPartyAccountResponse(saved.getId(), saved.getProvider(),
                 saved.getExternalId(), saved.getUser().getId());
+    }
+  
+    /**
+     * Gather statistics about all user accounts.
+     */
+    @Transactional(readOnly = true)
+    public UserStatisticsResponse getStatistics() {
+        long total = userRepository.count();
+        long deleted = userRepository.countByDeletedTrue();
+        long members = userRepository.countByDeletedFalseAndMemberTrue();
+        return new UserStatisticsResponse(total, members, deleted);
     }
 
     /**
