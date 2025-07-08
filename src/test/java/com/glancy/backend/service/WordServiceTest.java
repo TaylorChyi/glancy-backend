@@ -2,27 +2,27 @@ package com.glancy.backend.service;
 
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
-import com.glancy.backend.entity.Word;
-import com.glancy.backend.repository.WordRepository;
+import com.glancy.backend.client.DeepSeekClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Transactional
 class WordServiceTest {
     @Autowired
     private WordService wordService;
-    @Autowired
-    private WordRepository wordRepository;
+    @MockBean
+    private DeepSeekClient deepSeekClient;
 
     @BeforeAll
     static void loadEnv() {
@@ -33,22 +33,15 @@ class WordServiceTest {
         }
     }
 
-    @BeforeEach
-    void setUp() {
-        wordRepository.deleteAll();
-    }
 
     @Test
     void testFindWord() {
-        Word w = new Word();
-        w.setTerm("hello");
-        w.setDefinitions(List.of("greeting"));
-        w.setLanguage(Language.ENGLISH);
-        w.setExample("Hello world");
-        Word saved = wordRepository.save(w);
+        WordResponse resp = new WordResponse(1L, "hello",
+                List.of("greeting"), Language.ENGLISH, "Hello world");
+        when(deepSeekClient.fetchDefinition("hello", Language.ENGLISH))
+                .thenReturn(resp);
 
-        WordResponse resp = wordService.findWord("hello", Language.ENGLISH);
-        assertEquals(saved.getId(), resp.getId());
-        assertEquals("greeting", resp.getDefinitions().get(0));
+        WordResponse result = wordService.findWord("hello", Language.ENGLISH);
+        assertEquals("greeting", result.getDefinitions().get(0));
     }
 }
