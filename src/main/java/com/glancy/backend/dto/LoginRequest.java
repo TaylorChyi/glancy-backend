@@ -11,7 +11,6 @@ public class LoginRequest {
     private String username;  // 可选
     private String email;     // 可选
 
-    @NotBlank(message = "密码不能为空")
+    @NotBlank(message = "{validation.login.password.notblank}")
     private String password;
-
     // Optional device information used during login    private String deviceInfo;}

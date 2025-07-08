@@ -8,6 +8,6 @@ import lombok.Data;
  */
 @Data
 public class NotificationRequest {
-    @NotBlank(message = "通知内容不能为空")
+    @NotBlank(message = "{validation.notification.message.notblank}")
     private String message;
 }
