@@ -174,4 +174,17 @@ public class UserService {
         return new ThirdPartyAccountResponse(saved.getId(), saved.getProvider(),
                 saved.getExternalId(), saved.getUser().getId());
     }
+
+    /**
+     * Remove membership for the given user.
+     */
+    @Transactional
+    public void removeMembership(Long userId) {
+        log.info("Removing membership for user {}", userId);
+        log.debug("Removing membership for user {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        user.setMember(false);
+        userRepository.save(user);
+    }
 }
