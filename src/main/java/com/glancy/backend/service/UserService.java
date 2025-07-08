@@ -174,4 +174,19 @@ public class UserService {
         return new ThirdPartyAccountResponse(saved.getId(), saved.getProvider(),
                 saved.getExternalId(), saved.getUser().getId());
     }
+
+    /**
+     * Enable membership status for the specified user.
+     */
+    @Transactional
+    public UserResponse enableMembership(Long userId) {
+        log.info("Enabling membership for user {}", userId);
+        log.debug("Enabling membership for user {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        user.setMember(true);
+        User saved = userRepository.save(user);
+        return new UserResponse(saved.getId(), saved.getUsername(), saved.getEmail(),
+                saved.getAvatar(), saved.getPhone());
+    }
 }

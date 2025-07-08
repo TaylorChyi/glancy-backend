@@ -141,5 +141,18 @@ class UserServiceTest {
         List<LoginDevice> devices = loginDeviceRepository
                 .findByUserIdOrderByLoginTimeAsc(resp.getId());
         assertEquals(3, devices.size());
-        assertFalse(devices.stream().anyMatch(d -> "d1".equals(d.getDeviceInfo())));
-    }}
+        assertFalse(devices.stream().anyMatch(d -> "d1".equals(d.getDeviceInfo())));    }
+
+    @Test
+    void testEnableMembership() {
+        UserRegistrationRequest req = new UserRegistrationRequest();
+        req.setUsername("memberuser");
+        req.setPassword("pass123");
+        req.setEmail("member@example.com");
+        UserResponse resp = userService.register(req);
+
+        UserResponse updated = userService.enableMembership(resp.getId());
+        assertTrue(userRepository.findById(resp.getId()).orElseThrow().getMember());
+        assertEquals(resp.getId(), updated.getId());
+    }
+}

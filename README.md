@@ -70,4 +70,5 @@ java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar
 - `POST /api/portal/parameters` – create or update a runtime parameter
 - `GET /api/portal/parameters/{name}` – get the value of a parameter
 - `GET /api/portal/parameters` – list all parameters
+- `POST /api/portal/users/{userId}/membership` – enable membership for a user
 

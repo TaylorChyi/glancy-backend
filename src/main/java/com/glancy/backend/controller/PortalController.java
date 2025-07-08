@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import com.glancy.backend.dto.SystemParameterRequest;
 import com.glancy.backend.dto.SystemParameterResponse;
 import com.glancy.backend.service.SystemParameterService;
+import com.glancy.backend.service.UserService;
+import com.glancy.backend.dto.UserResponse;
 
 /**
  * Portal endpoints used by administrators to adjust runtime
@@ -20,9 +22,11 @@ import com.glancy.backend.service.SystemParameterService;
 public class PortalController {
 
     private final SystemParameterService parameterService;
+    private final UserService userService;
 
-    public PortalController(SystemParameterService parameterService) {
+    public PortalController(SystemParameterService parameterService, UserService userService) {
         this.parameterService = parameterService;
+        this.userService = userService;
     }
 
     /**
@@ -50,6 +54,15 @@ public class PortalController {
     @GetMapping("/parameters")
     public ResponseEntity<List<SystemParameterResponse>> list() {
         List<SystemParameterResponse> resp = parameterService.list();
+        return ResponseEntity.ok(resp);
+    }
+
+    /**
+     * Enable membership for a user.
+     */
+    @PostMapping("/users/{userId}/membership")
+    public ResponseEntity<UserResponse> enableMembership(@PathVariable Long userId) {
+        UserResponse resp = userService.enableMembership(userId);
         return ResponseEntity.ok(resp);
     }
 }
