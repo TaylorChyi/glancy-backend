@@ -6,6 +6,7 @@ import com.glancy.backend.entity.SearchRecord;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.repository.SearchRecordRepository;
 import com.glancy.backend.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class SearchRecordService {
      */
     @Transactional
     public SearchRecordResponse saveRecord(Long userId, SearchRecordRequest request) {
+        log.info("Saving search record for user {} with term '{}'", userId, request.getTerm());
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.warn("User with id {} not found", userId);
@@ -65,6 +67,7 @@ public class SearchRecordService {
      */
     @Transactional(readOnly = true)
     public List<SearchRecordResponse> getRecords(Long userId) {
+        log.info("Fetching search records for user {}", userId);
         return searchRecordRepository.findByUserIdOrderByCreatedAtDesc(userId)
                 .stream().map(this::toResponse).collect(Collectors.toList());
     }
@@ -74,6 +77,7 @@ public class SearchRecordService {
      */
     @Transactional
     public void clearRecords(Long userId) {
+        log.info("Clearing search records for user {}", userId);
         searchRecordRepository.deleteByUserId(userId);
     }
 
