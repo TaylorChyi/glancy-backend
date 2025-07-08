@@ -4,6 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.MemberStatusResponse;
 import com.glancy.backend.service.SystemParameterService;
 import com.glancy.backend.service.UserService;
+import com.glancy.backend.dto.UserStatisticsResponse;
+import com.glancy.backend.dto.SystemParameterRequest;
+import com.glancy.backend.dto.SystemParameterResponse;
+import com.glancy.backend.service.UserService;
+import com.glancy.backend.service.SystemParameterService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,6 +20,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PortalController.class)
 class PortalControllerTest {
@@ -40,5 +49,28 @@ class PortalControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.member").value(true))
                 .andExpect(jsonPath("$.userId").value(1L));
+    }
+  
+    @Test
+    void userStats() throws Exception {
+        UserStatisticsResponse resp = new UserStatisticsResponse(2, 1, 0);
+        when(userService.getStatistics()).thenReturn(resp);
+        mockMvc.perform(get("/api/portal/user-stats"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalUsers").value(2));
+    }
+
+    @Test
+    void upsertParameter() throws Exception {
+        SystemParameterResponse resp = new SystemParameterResponse(1L, "n", "v");
+        when(parameterService.upsert(any(SystemParameterRequest.class))).thenReturn(resp);
+        SystemParameterRequest req = new SystemParameterRequest();
+        req.setName("n");
+        req.setValue("v");
+        mockMvc.perform(post("/api/portal/parameters")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1L));
     }
 }

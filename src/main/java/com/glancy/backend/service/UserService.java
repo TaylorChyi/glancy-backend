@@ -7,9 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import com.glancy.backend.dto.LoginRequest;
 import com.glancy.backend.dto.LoginResponse;
 import com.glancy.backend.dto.UserRegistrationRequest;
+import com.glancy.backend.dto.UserStatisticsResponse;
 import com.glancy.backend.dto.UserResponse;
 import com.glancy.backend.dto.ThirdPartyAccountRequest;
 import com.glancy.backend.dto.ThirdPartyAccountResponse;
+import com.glancy.backend.dto.AvatarResponse;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.LoginDevice;
 import com.glancy.backend.entity.ThirdPartyAccount;
@@ -184,5 +186,40 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
         return Boolean.TRUE.equals(user.getMember());
+    }
+  
+    /**
+     * Gather statistics about all user accounts.
+     */
+    @Transactional(readOnly = true)
+    public UserStatisticsResponse getStatistics() {
+        long total = userRepository.count();
+        long deleted = userRepository.countByDeletedTrue();
+        long members = userRepository.countByDeletedFalseAndMemberTrue();
+        return new UserStatisticsResponse(total, members, deleted);
+    }
+
+    /**
+     * Retrieve only the avatar URL of a user.
+     */
+    @Transactional(readOnly = true)
+    public AvatarResponse getAvatar(Long userId) {
+        log.info("Fetching avatar for user {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        return new AvatarResponse(user.getAvatar());
+    }
+
+    /**
+     * Update the avatar URL for the specified user.
+     */
+    @Transactional
+    public AvatarResponse updateAvatar(Long userId, String avatar) {
+        log.info("Updating avatar for user {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        user.setAvatar(avatar);
+        User saved = userRepository.save(user);
+        return new AvatarResponse(saved.getAvatar());
     }
 }

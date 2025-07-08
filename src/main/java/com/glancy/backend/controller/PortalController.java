@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.*;
 import com.glancy.backend.dto.SystemParameterRequest;
 import com.glancy.backend.dto.SystemParameterResponse;
 import com.glancy.backend.dto.MemberStatusResponse;
-import com.glancy.backend.service.SystemParameterService;
 import com.glancy.backend.service.UserService;
+import com.glancy.backend.dto.UserStatisticsResponse;
+import com.glancy.backend.service.UserService;
+import com.glancy.backend.dto.LogLevelRequest;
+import com.glancy.backend.service.SystemParameterService;
+import com.glancy.backend.service.LoggingService;
 
 /**
  * Portal endpoints used by administrators to adjust runtime
@@ -23,11 +27,12 @@ public class PortalController {
 
     private final SystemParameterService parameterService;
     private final UserService userService;
+    private final LoggingService loggingService;
 
-    public PortalController(SystemParameterService parameterService,
-                            UserService userService) {
+    public PortalController(SystemParameterService parameterService, UserService userService, LoggingService loggingService) {
         this.parameterService = parameterService;
         this.userService = userService;
+        this.loggingService = loggingService;
     }
 
     /**
@@ -66,5 +71,24 @@ public class PortalController {
         boolean member = userService.isMember(id);
         MemberStatusResponse resp = new MemberStatusResponse(id, member);
         return ResponseEntity.ok(resp);
+    }
+  
+    /**
+     * Provide aggregated user statistics.
+     */
+    @GetMapping("/user-stats")
+    public ResponseEntity<UserStatisticsResponse> userStats() {
+        UserStatisticsResponse resp = userService.getStatistics();
+        return ResponseEntity.ok(resp);
+    }
+
+    /**
+     * Change the log level for a given logger.
+     */
+    @PostMapping("/log-level")
+    public ResponseEntity<Void> setLogLevel(
+            @Valid @RequestBody LogLevelRequest req) {
+        loggingService.setLogLevel(req.getLogger(), req.getLevel());
+        return ResponseEntity.ok().build();
     }
 }
