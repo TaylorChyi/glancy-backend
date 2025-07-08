@@ -9,6 +9,7 @@ import com.glancy.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,13 +40,17 @@ public class SearchRecordService {
     public SearchRecordResponse saveRecord(Long userId, SearchRecordRequest request) {
         log.info("Saving search record for user {} with term '{}'", userId, request.getTerm());
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> {
+                    log.warn("User with id {} not found", userId);
+                    return new IllegalArgumentException("用户不存在");
+                });
         if (Boolean.FALSE.equals(user.getMember())) {
             LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
             LocalDateTime endOfDay = startOfDay.plusDays(1);
             long count = searchRecordRepository
                     .countByUserIdAndCreatedAtBetween(userId, startOfDay, endOfDay);
             if (count >= 10) {
+                log.warn("User {} exceeded daily search limit", userId);
                 throw new IllegalStateException("非会员每天只能搜索10次");
             }
         }

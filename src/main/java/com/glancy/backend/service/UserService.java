@@ -18,6 +18,7 @@ import com.glancy.backend.repository.LoginDeviceRepository;
 import com.glancy.backend.repository.ThirdPartyAccountRepository;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Provides core user management operations such as registration,
@@ -46,10 +47,13 @@ public class UserService {
     @Transactional
     public UserResponse register(UserRegistrationRequest req) {
         log.info("Registering user {}", req.getUsername());
+        log.debug("Registering user {}", req.getUsername());
         if (userRepository.findByUsernameAndDeletedFalse(req.getUsername()).isPresent()) {
+            log.warn("Username {} already exists", req.getUsername());
             throw new IllegalArgumentException("用户名已存在");
         }
         if (userRepository.findByEmailAndDeletedFalse(req.getEmail()).isPresent()) {
+            log.warn("Email {} is already in use", req.getEmail());
             throw new IllegalArgumentException("邮箱已被使用");
         }
         User user = new User();
@@ -69,6 +73,7 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         log.info("Deleting user {}", id);
+        log.debug("Deleting user {}", id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
         user.setDeleted(true);
@@ -81,6 +86,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public User getUserRaw(Long id) {
         log.info("Fetching user {}", id);
+        log.debug("Fetching user {}", id);
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
     }
@@ -91,19 +97,29 @@ public class UserService {
     @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest req) {
         log.info("Attempting login for {}", req.getUsername() != null ? req.getUsername() : req.getEmail());
+        String identifier = req.getUsername() != null ? req.getUsername() : req.getEmail();
+        log.debug("Login attempt for {}", identifier);
         User user = null;
 
         if (req.getUsername() != null && !req.getUsername().isEmpty()) {
             user = userRepository.findByUsernameAndDeletedFalse(req.getUsername())
-                    .orElseThrow(() -> new IllegalArgumentException("用户不存在或已注销"));
+                    .orElseThrow(() -> {
+                        log.warn("User {} not found or deleted", req.getUsername());
+                        return new IllegalArgumentException("用户不存在或已注销");
+                    });
         } else if (req.getEmail() != null && !req.getEmail().isEmpty()) {
             user = userRepository.findByEmailAndDeletedFalse(req.getEmail())
-                    .orElseThrow(() -> new IllegalArgumentException("用户不存在或已注销"));
+                    .orElseThrow(() -> {
+                        log.warn("User with email {} not found or deleted", req.getEmail());
+                        return new IllegalArgumentException("用户不存在或已注销");
+                    });
         } else {
+            log.warn("Username or email must be provided for login");
             throw new IllegalArgumentException("用户名或邮箱必须填写其一");
         }
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+            log.warn("Password mismatch for user {}", user.getUsername());
             throw new IllegalArgumentException("密码错误");
         }
 
@@ -115,6 +131,7 @@ public class UserService {
         }
 
         log.info("User {} logged in", user.getId());
+        log.debug("User {} logged in", user.getId());
         return new LoginResponse(user.getId(), user.getUsername(), user.getEmail(),
                 user.getAvatar(), user.getPhone());
     }
@@ -125,12 +142,18 @@ public class UserService {
     @Transactional
     public ThirdPartyAccountResponse bindThirdPartyAccount(Long userId, ThirdPartyAccountRequest req) {
         log.info("Binding {} account for user {}", req.getProvider(), userId);
+        log.debug("Binding third-party account {}:{} to user {}", req.getProvider(),
+                req.getExternalId(), userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> {
+                    log.warn("User with id {} not found", userId);
+                    return new IllegalArgumentException("用户不存在");
+                });
 
         thirdPartyAccountRepository
                 .findByProviderAndExternalId(req.getProvider(), req.getExternalId())
                 .ifPresent(a -> {
+                    log.warn("Third-party account {}:{} already bound", req.getProvider(), req.getExternalId());
                     throw new IllegalArgumentException("该第三方账号已绑定");
                 });
 
@@ -139,6 +162,7 @@ public class UserService {
         account.setProvider(req.getProvider());
         account.setExternalId(req.getExternalId());
         ThirdPartyAccount saved = thirdPartyAccountRepository.save(account);
+        log.debug("Bound account {}:{} to user {}", saved.getProvider(), saved.getExternalId(), userId);
         return new ThirdPartyAccountResponse(saved.getId(), saved.getProvider(),
                 saved.getExternalId(), saved.getUser().getId());
     }
