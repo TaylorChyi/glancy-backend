@@ -14,4 +14,5 @@ public class WordResponse {
     private List<String> definitions;
     private Language language;
     private String example;
+    private String phonetic;
 }
