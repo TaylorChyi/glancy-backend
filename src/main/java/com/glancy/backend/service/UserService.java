@@ -18,7 +18,7 @@ import com.glancy.backend.repository.LoginDeviceRepository;
 import com.glancy.backend.repository.ThirdPartyAccountRepository;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 
 /**
  * Provides core user management operations such as registration,
@@ -128,6 +128,14 @@ public class UserService {
             device.setUser(user);
             device.setDeviceInfo(req.getDeviceInfo());
             loginDeviceRepository.save(device);
+
+            List<LoginDevice> devices =
+                    loginDeviceRepository.findByUserIdOrderByLoginTimeAsc(user.getId());
+            if (devices.size() > 3) {
+                for (int i = 0; i < devices.size() - 3; i++) {
+                    loginDeviceRepository.delete(devices.get(i));
+                }
+            }
         }
 
         log.info("User {} logged in", user.getId());
