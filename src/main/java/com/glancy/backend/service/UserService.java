@@ -174,4 +174,15 @@ public class UserService {
         return new ThirdPartyAccountResponse(saved.getId(), saved.getProvider(),
                 saved.getExternalId(), saved.getUser().getId());
     }
+
+    /**
+     * Check whether a user has purchased membership.
+     */
+    @Transactional(readOnly = true)
+    public boolean isMember(Long userId) {
+        log.info("Checking membership status for user {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        return Boolean.TRUE.equals(user.getMember());
+    }
 }
