@@ -6,8 +6,10 @@ import com.glancy.backend.entity.SearchRecord;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.repository.SearchRecordRepository;
 import com.glancy.backend.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
  * Manages persistence of search records and enforces daily limits
  * for non-member users.
  */
+@Slf4j
 @Service
 public class SearchRecordService {
     private final SearchRecordRepository searchRecordRepository;
@@ -35,14 +38,19 @@ public class SearchRecordService {
      */
     @Transactional
     public SearchRecordResponse saveRecord(Long userId, SearchRecordRequest request) {
+        log.info("Saving search record for user {} with term '{}'", userId, request.getTerm());
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> {
+                    log.warn("User with id {} not found", userId);
+                    return new IllegalArgumentException("用户不存在");
+                });
         if (Boolean.FALSE.equals(user.getMember())) {
             LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
             LocalDateTime endOfDay = startOfDay.plusDays(1);
             long count = searchRecordRepository
                     .countByUserIdAndCreatedAtBetween(userId, startOfDay, endOfDay);
             if (count >= 10) {
+                log.warn("User {} exceeded daily search limit", userId);
                 throw new IllegalStateException("非会员每天只能搜索10次");
             }
         }
@@ -59,6 +67,7 @@ public class SearchRecordService {
      */
     @Transactional(readOnly = true)
     public List<SearchRecordResponse> getRecords(Long userId) {
+        log.info("Fetching search records for user {}", userId);
         return searchRecordRepository.findByUserIdOrderByCreatedAtDesc(userId)
                 .stream().map(this::toResponse).collect(Collectors.toList());
     }
@@ -68,6 +77,7 @@ public class SearchRecordService {
      */
     @Transactional
     public void clearRecords(Long userId) {
+        log.info("Clearing search records for user {}", userId);
         searchRecordRepository.deleteByUserId(userId);
     }
 
