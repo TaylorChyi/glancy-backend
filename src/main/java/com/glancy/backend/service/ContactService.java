@@ -2,6 +2,7 @@ package com.glancy.backend.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import com.glancy.backend.dto.ContactRequest;
 import com.glancy.backend.dto.ContactResponse;
@@ -12,6 +13,7 @@ import com.glancy.backend.repository.ContactMessageRepository;
  * Handles persistence of contact messages sent from the front-end
  * contact form.
  */
+@Slf4j
 @Service
 public class ContactService {
 
@@ -26,6 +28,7 @@ public class ContactService {
      */
     @Transactional
     public ContactResponse submit(ContactRequest request) {
+        log.info("Submitting contact message from {}", request.getEmail());
         ContactMessage message = new ContactMessage();
         message.setName(request.getName());
         message.setEmail(request.getEmail());
