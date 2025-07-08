@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 public class SearchRecordService {
@@ -27,6 +29,15 @@ public class SearchRecordService {
     public SearchRecordResponse saveRecord(Long userId, SearchRecordRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        if (Boolean.FALSE.equals(user.getMember())) {
+            LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+            LocalDateTime endOfDay = startOfDay.plusDays(1);
+            long count = searchRecordRepository
+                    .countByUserIdAndCreatedAtBetween(userId, startOfDay, endOfDay);
+            if (count >= 10) {
+                throw new IllegalStateException("非会员每天只能搜索10次");
+            }
+        }
         SearchRecord record = new SearchRecord();
         record.setUser(user);
         record.setTerm(request.getTerm());
