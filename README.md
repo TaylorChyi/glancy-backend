@@ -65,3 +65,9 @@ java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar
 - `GET /api/search-records/user/{userId}` – list search records of the user
 - `DELETE /api/search-records/user/{userId}` – clear all search records of the user
 
+
+### Portal
+- `POST /api/portal/parameters` – create or update a runtime parameter
+- `GET /api/portal/parameters/{name}` – get the value of a parameter
+- `GET /api/portal/parameters` – list all parameters
+
