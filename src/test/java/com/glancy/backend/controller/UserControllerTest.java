@@ -26,7 +26,7 @@ class UserControllerTest {
 
     @Test
     void testRegister() throws Exception {
-        UserResponse resp = new UserResponse(1L, "testuser", "test@example.com");
+        UserResponse resp = new UserResponse(1L, "testuser", "test@example.com", null, null);
         when(userService.register(any(UserRegistrationRequest.class))).thenReturn(resp);
 
         mockMvc.perform(post("/api/users/register")
