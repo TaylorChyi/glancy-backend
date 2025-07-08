@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import com.glancy.backend.dto.NotificationRequest;
 import com.glancy.backend.dto.NotificationResponse;
@@ -18,6 +19,7 @@ import com.glancy.backend.repository.UserRepository;
  * Business logic around creating and listing notifications that may
  * either be global announcements or user specific.
  */
+@Slf4j
 @Service
 public class NotificationService {
 
@@ -34,6 +36,7 @@ public class NotificationService {
      */
     @Transactional
     public NotificationResponse createSystemNotification(NotificationRequest request) {
+        log.info("Creating system notification: {}", request.getMessage());
         Notification notification = new Notification();
         notification.setMessage(request.getMessage());
         notification.setSystemLevel(true);
@@ -46,6 +49,7 @@ public class NotificationService {
      */
     @Transactional
     public NotificationResponse createUserNotification(Long userId, NotificationRequest request) {
+        log.info("Creating notification for user {}: {}", userId, request.getMessage());
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
         Notification notification = new Notification();
@@ -61,6 +65,7 @@ public class NotificationService {
      */
     @Transactional(readOnly = true)
     public List<NotificationResponse> getNotificationsForUser(Long userId) {
+        log.info("Fetching notifications for user {}", userId);
         List<Notification> result = new ArrayList<>();
         result.addAll(notificationRepository.findBySystemLevelTrue());
         result.addAll(notificationRepository.findByUserId(userId));
