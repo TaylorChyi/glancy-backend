@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.glancy.backend.dto.SystemParameterRequest;
 import com.glancy.backend.dto.SystemParameterResponse;
+import com.glancy.backend.dto.UserStatisticsResponse;
+import com.glancy.backend.service.UserService;
 import com.glancy.backend.service.SystemParameterService;
 
 /**
@@ -20,9 +22,10 @@ import com.glancy.backend.service.SystemParameterService;
 public class PortalController {
 
     private final SystemParameterService parameterService;
-
-    public PortalController(SystemParameterService parameterService) {
+    private final UserService userService;
+    public PortalController(SystemParameterService parameterService, UserService userService) {
         this.parameterService = parameterService;
+        this.userService = userService;
     }
 
     /**
@@ -52,4 +55,13 @@ public class PortalController {
         List<SystemParameterResponse> resp = parameterService.list();
         return ResponseEntity.ok(resp);
     }
+    /**
+     * Provide aggregated user statistics.
+     */
+    @GetMapping("/user-stats")
+    public ResponseEntity<UserStatisticsResponse> userStats() {
+        UserStatisticsResponse resp = userService.getStatistics();
+        return ResponseEntity.ok(resp);
+    }
+
 }
