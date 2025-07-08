@@ -8,10 +8,10 @@ import lombok.Data;
  */
 @Data
 public class UserPreferenceRequest {
-    @NotBlank
+    @NotBlank(message = "{validation.userPreference.theme.notblank}")
     private String theme;
-    @NotBlank
+    @NotBlank(message = "{validation.userPreference.systemLanguage.notblank}")
     private String systemLanguage;
-    @NotBlank
+    @NotBlank(message = "{validation.userPreference.searchLanguage.notblank}")
     private String searchLanguage;
 }

@@ -8,9 +8,9 @@ import lombok.Data;
  */
 @Data
 public class FaqRequest {
-    @NotBlank(message = "问题不能为空")
+    @NotBlank(message = "{validation.faq.question.notblank}")
     private String question;
 
-    @NotBlank(message = "答案不能为空")
+    @NotBlank(message = "{validation.faq.answer.notblank}")
     private String answer;
 }
