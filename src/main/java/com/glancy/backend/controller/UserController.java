@@ -11,6 +11,8 @@ import com.glancy.backend.dto.UserRegistrationRequest;
 import com.glancy.backend.dto.UserResponse;
 import com.glancy.backend.dto.ThirdPartyAccountRequest;
 import com.glancy.backend.dto.ThirdPartyAccountResponse;
+import com.glancy.backend.dto.AvatarRequest;
+import com.glancy.backend.dto.AvatarResponse;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.service.UserService;
 
@@ -68,8 +70,30 @@ public class UserController {
      * Bind a third-party account to the specified user.
      */
     @PostMapping("/{id}/third-party-accounts")
-    public ResponseEntity<ThirdPartyAccountResponse> bindThirdParty(@PathVariable Long id,
-                                               @Valid @RequestBody ThirdPartyAccountRequest req) {        ThirdPartyAccountResponse resp = userService.bindThirdPartyAccount(id, req);
+    public ResponseEntity<ThirdPartyAccountResponse> bindThirdParty(
+            @PathVariable Long id,
+            @Valid @RequestBody ThirdPartyAccountRequest req) {
+        ThirdPartyAccountResponse resp = userService.bindThirdPartyAccount(id, req);
         return new ResponseEntity<>(resp, HttpStatus.CREATED);
+    }
+
+    /**
+     * Get the avatar URL for a specific user.
+     */
+    @GetMapping("/{id}/avatar")
+    public ResponseEntity<AvatarResponse> getAvatar(@PathVariable Long id) {
+        AvatarResponse resp = userService.getAvatar(id);
+        return ResponseEntity.ok(resp);
+    }
+
+    /**
+     * Update the avatar URL for a user.
+     */
+    @PutMapping("/{id}/avatar")
+    public ResponseEntity<AvatarResponse> updateAvatar(
+            @PathVariable Long id,
+            @Valid @RequestBody AvatarRequest req) {
+        AvatarResponse resp = userService.updateAvatar(id, req.getAvatar());
+        return ResponseEntity.ok(resp);
     }
 }

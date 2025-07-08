@@ -3,6 +3,7 @@ package com.glancy.backend.service;
 import com.glancy.backend.dto.UserRegistrationRequest;
 import com.glancy.backend.dto.UserResponse;
 import com.glancy.backend.dto.LoginRequest;
+import com.glancy.backend.dto.AvatarResponse;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.LoginDevice;
 import com.glancy.backend.repository.UserRepository;
@@ -141,5 +142,20 @@ class UserServiceTest {
         List<LoginDevice> devices = loginDeviceRepository
                 .findByUserIdOrderByLoginTimeAsc(resp.getId());
         assertEquals(3, devices.size());
-        assertFalse(devices.stream().anyMatch(d -> "d1".equals(d.getDeviceInfo())));
-    }}
+        assertFalse(devices.stream().anyMatch(d -> "d1".equals(d.getDeviceInfo())));    }
+
+    @Test
+    void testUpdateAvatar() {
+        UserRegistrationRequest req = new UserRegistrationRequest();
+        req.setUsername("avataruser");
+        req.setPassword("pass123");
+        req.setEmail("avatar@example.com");
+        UserResponse resp = userService.register(req);
+
+        AvatarResponse updated = userService.updateAvatar(resp.getId(), "url");
+        assertEquals("url", updated.getAvatar());
+
+        AvatarResponse fetched = userService.getAvatar(resp.getId());
+        assertEquals("url", fetched.getAvatar());
+    }
+}

@@ -98,4 +98,30 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L));
-    }}
+    }
+
+    @Test
+    void getAvatar() throws Exception {
+        AvatarResponse resp = new AvatarResponse("url");
+        when(userService.getAvatar(1L)).thenReturn(resp);
+
+        mockMvc.perform(get("/api/users/1/avatar"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.avatar").value("url"));
+    }
+
+    @Test
+    void updateAvatar() throws Exception {
+        AvatarResponse resp = new AvatarResponse("url");
+        when(userService.updateAvatar(eq(1L), eq("url"))).thenReturn(resp);
+
+        AvatarRequest req = new AvatarRequest();
+        req.setAvatar("url");
+
+        mockMvc.perform(put("/api/users/1/avatar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.avatar").value("url"));
+    }
+}
