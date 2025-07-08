@@ -1,0 +1,61 @@
+package com.glancy.backend.service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.glancy.backend.dto.NotificationRequest;
+import com.glancy.backend.dto.NotificationResponse;
+import com.glancy.backend.entity.Notification;
+import com.glancy.backend.entity.User;
+import com.glancy.backend.repository.NotificationRepository;
+import com.glancy.backend.repository.UserRepository;
+
+@Service
+public class NotificationService {
+
+    private final NotificationRepository notificationRepository;
+    private final UserRepository userRepository;
+
+    public NotificationService(NotificationRepository notificationRepository, UserRepository userRepository) {
+        this.notificationRepository = notificationRepository;
+        this.userRepository = userRepository;
+    }
+
+    @Transactional
+    public NotificationResponse createSystemNotification(NotificationRequest request) {
+        Notification notification = new Notification();
+        notification.setMessage(request.getMessage());
+        notification.setSystemLevel(true);
+        Notification saved = notificationRepository.save(notification);
+        return toResponse(saved);
+    }
+
+    @Transactional
+    public NotificationResponse createUserNotification(Long userId, NotificationRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        Notification notification = new Notification();
+        notification.setMessage(request.getMessage());
+        notification.setSystemLevel(false);
+        notification.setUser(user);
+        Notification saved = notificationRepository.save(notification);
+        return toResponse(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public List<NotificationResponse> getNotificationsForUser(Long userId) {
+        List<Notification> result = new ArrayList<>();
+        result.addAll(notificationRepository.findBySystemLevelTrue());
+        result.addAll(notificationRepository.findByUserId(userId));
+        return result.stream().map(this::toResponse).collect(Collectors.toList());
+    }
+
+    private NotificationResponse toResponse(Notification n) {
+        Long uid = n.getUser() != null ? n.getUser().getId() : null;
+        return new NotificationResponse(n.getId(), n.getMessage(), n.getSystemLevel(), uid);
+    }
+}

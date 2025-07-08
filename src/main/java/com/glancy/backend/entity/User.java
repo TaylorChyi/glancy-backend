@@ -22,9 +22,14 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    // Optional avatar image URL
+    private String avatar;
+
+    // Optional phone number
+    private String phone;
+
     @Column(nullable = false)
     private Boolean deleted = false;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-}
+    private LocalDateTime createdAt = LocalDateTime.now();}
