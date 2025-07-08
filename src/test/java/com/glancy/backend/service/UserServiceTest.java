@@ -2,8 +2,11 @@ package com.glancy.backend.service;
 
 import com.glancy.backend.dto.UserRegistrationRequest;
 import com.glancy.backend.dto.UserResponse;
+import com.glancy.backend.dto.LoginRequest;
 import com.glancy.backend.entity.User;
+import com.glancy.backend.entity.LoginDevice;
 import com.glancy.backend.repository.UserRepository;
+import com.glancy.backend.repository.LoginDeviceRepository;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -12,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,6 +29,8 @@ class UserServiceTest {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private LoginDeviceRepository loginDeviceRepository;
 
     @BeforeAll
     static void loadEnv() {
@@ -40,6 +46,7 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
+        loginDeviceRepository.deleteAll();
         userRepository.deleteAll();
     }
 
@@ -108,4 +115,31 @@ class UserServiceTest {
         });
         assertEquals("邮箱已被使用", ex.getMessage());
     }
-}
+
+    @Test
+    void testLoginDeviceLimit() {
+        // create user
+        UserRegistrationRequest req = new UserRegistrationRequest();
+        req.setUsername("deviceuser");
+        req.setPassword("pass123");
+        req.setEmail("device@example.com");
+        UserResponse resp = userService.register(req);
+
+        LoginRequest loginReq = new LoginRequest();
+        loginReq.setUsername("deviceuser");
+        loginReq.setPassword("pass123");
+
+        loginReq.setDeviceInfo("d1");
+        userService.login(loginReq);
+        loginReq.setDeviceInfo("d2");
+        userService.login(loginReq);
+        loginReq.setDeviceInfo("d3");
+        userService.login(loginReq);
+        loginReq.setDeviceInfo("d4");
+        userService.login(loginReq);
+
+        List<LoginDevice> devices = loginDeviceRepository
+                .findByUserIdOrderByLoginTimeAsc(resp.getId());
+        assertEquals(3, devices.size());
+        assertFalse(devices.stream().anyMatch(d -> "d1".equals(d.getDeviceInfo())));
+    }}
