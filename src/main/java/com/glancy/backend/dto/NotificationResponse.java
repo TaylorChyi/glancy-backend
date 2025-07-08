@@ -3,6 +3,9 @@ package com.glancy.backend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * DTO returned when a notification is created or queried.
+ */
 @Data
 @AllArgsConstructor
 public class NotificationResponse {

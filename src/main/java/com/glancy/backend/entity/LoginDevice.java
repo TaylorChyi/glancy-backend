@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Records each device a user has logged in from.
+ */
 @Entity
 @Table(name = "login_devices")
 @Data

@@ -3,6 +3,9 @@ package com.glancy.backend.dto;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+/**
+ * Payload for creating a new user account.
+ */
 @Data
 public class UserRegistrationRequest {
     @NotBlank(message = "用户名不能为空")
@@ -20,5 +23,4 @@ public class UserRegistrationRequest {
     // Optional avatar URL
     private String avatar;
 
-    // Optional phone number
-    private String phone;}
+    // Optional phone number    private String phone;}

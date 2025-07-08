@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+/**
+ * Core user entity storing login credentials and profile info.
+ */
 @Entity
 @Table(name = "users")
 @Data

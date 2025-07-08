@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Record of a single dictionary search performed by a user.
+ */
 @Entity
 @Table(name = "search_records")
 @Data

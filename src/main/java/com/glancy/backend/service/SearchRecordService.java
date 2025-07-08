@@ -14,6 +14,10 @@ import java.util.stream.Collectors;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Manages persistence of search records and enforces daily limits
+ * for non-member users.
+ */
 @Service
 public class SearchRecordService {
     private final SearchRecordRepository searchRecordRepository;
@@ -25,6 +29,10 @@ public class SearchRecordService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Save a search record for a user and apply daily limits if the
+     * user is not a member.
+     */
     @Transactional
     public SearchRecordResponse saveRecord(Long userId, SearchRecordRequest request) {
         User user = userRepository.findById(userId)
@@ -46,12 +54,18 @@ public class SearchRecordService {
         return toResponse(saved);
     }
 
+    /**
+     * Retrieve a user's search history ordered by creation time.
+     */
     @Transactional(readOnly = true)
     public List<SearchRecordResponse> getRecords(Long userId) {
         return searchRecordRepository.findByUserIdOrderByCreatedAtDesc(userId)
                 .stream().map(this::toResponse).collect(Collectors.toList());
     }
 
+    /**
+     * Remove all search records for the given user.
+     */
     @Transactional
     public void clearRecords(Long userId) {
         searchRecordRepository.deleteByUserId(userId);

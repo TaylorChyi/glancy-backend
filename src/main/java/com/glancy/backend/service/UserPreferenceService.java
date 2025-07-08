@@ -10,6 +10,10 @@ import com.glancy.backend.entity.UserPreference;
 import com.glancy.backend.repository.UserPreferenceRepository;
 import com.glancy.backend.repository.UserRepository;
 
+/**
+ * Stores and retrieves per-user settings such as theme and preferred
+ * languages.
+ */
 @Service
 public class UserPreferenceService {
     private final UserPreferenceRepository userPreferenceRepository;
@@ -21,6 +25,9 @@ public class UserPreferenceService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Save UI and language preferences for a user.
+     */
     @Transactional
     public UserPreferenceResponse savePreference(Long userId, UserPreferenceRequest req) {
         User user = userRepository.findById(userId)
@@ -35,6 +42,9 @@ public class UserPreferenceService {
         return toResponse(saved);
     }
 
+    /**
+     * Retrieve preferences previously saved for the user.
+     */
     @Transactional(readOnly = true)
     public UserPreferenceResponse getPreference(Long userId) {
         UserPreference pref = userPreferenceRepository.findByUserId(userId)

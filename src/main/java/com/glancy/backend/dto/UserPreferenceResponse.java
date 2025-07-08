@@ -3,6 +3,9 @@ package com.glancy.backend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * DTO representing saved user preferences.
+ */
 @Data
 @AllArgsConstructor
 public class UserPreferenceResponse {

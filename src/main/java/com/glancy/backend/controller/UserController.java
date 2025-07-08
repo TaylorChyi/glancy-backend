@@ -14,6 +14,10 @@ import com.glancy.backend.dto.ThirdPartyAccountResponse;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.service.UserService;
 
+/**
+ * User management endpoints including registration, login and
+ * third-party account binding.
+ */
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -25,7 +29,7 @@ public class UserController {
     }
 
     /**
-     * 用户注册
+     * Register a new user account.
      */
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@Valid @RequestBody UserRegistrationRequest req) {
@@ -34,7 +38,7 @@ public class UserController {
     }
 
     /**
-     * 删除/注销用户（逻辑删除）
+     * Delete (logically) an existing user account.
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
@@ -43,7 +47,7 @@ public class UserController {
     }
 
     /**
-     * 获取用户信息（包含逻辑删除状态）
+     * Fetch user information regardless of deletion status.
      */
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
@@ -52,7 +56,7 @@ public class UserController {
     }
 
     /**
-     * 用户登录
+     * Authenticate a user with username/email and password.
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest req) {
@@ -61,7 +65,7 @@ public class UserController {
     }
 
     /**
-     * 绑定第三方账号
+     * Bind a third-party account to the specified user.
      */
     @PostMapping("/{id}/third-party-accounts")
     public ResponseEntity<ThirdPartyAccountResponse> bindThirdParty(@PathVariable Long id,

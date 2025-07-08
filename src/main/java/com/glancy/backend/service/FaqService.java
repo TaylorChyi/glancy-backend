@@ -11,6 +11,10 @@ import com.glancy.backend.dto.FaqResponse;
 import com.glancy.backend.entity.Faq;
 import com.glancy.backend.repository.FaqRepository;
 
+/**
+ * Business logic for FAQ management. Allows admins to create and
+ * retrieve frequently asked questions.
+ */
 @Service
 public class FaqService {
 
@@ -20,6 +24,9 @@ public class FaqService {
         this.faqRepository = faqRepository;
     }
 
+    /**
+     * Persist a new FAQ entry.
+     */
     @Transactional
     public FaqResponse createFaq(FaqRequest request) {
         Faq faq = new Faq();
@@ -29,6 +36,9 @@ public class FaqService {
         return toResponse(saved);
     }
 
+    /**
+     * Retrieve all stored FAQ entries.
+     */
     @Transactional(readOnly = true)
     public List<FaqResponse> getAllFaqs() {
         return faqRepository.findAll().stream().map(this::toResponse).collect(Collectors.toList());

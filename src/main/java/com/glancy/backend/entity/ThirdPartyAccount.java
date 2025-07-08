@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Links a user to an account from an external authentication provider.
+ */
 @Entity
 @Table(name = "third_party_accounts")
 @Data
