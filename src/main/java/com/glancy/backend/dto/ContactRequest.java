@@ -9,13 +9,13 @@ import lombok.Data;
  */
 @Data
 public class ContactRequest {
-    @NotBlank(message = "姓名不能为空")
+    @NotBlank(message = "{validation.contact.name.notblank}")
     private String name;
 
-    @NotBlank(message = "邮箱不能为空")
+    @NotBlank(message = "{validation.contact.email.notblank}")
     @Email(message = "邮箱格式不正确")
     private String email;
 
-    @NotBlank(message = "内容不能为空")
+    @NotBlank(message = "{validation.contact.message.notblank}")
     private String message;
 }
