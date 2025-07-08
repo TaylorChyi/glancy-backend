@@ -10,6 +10,7 @@ import com.glancy.backend.dto.UserRegistrationRequest;
 import com.glancy.backend.dto.UserResponse;
 import com.glancy.backend.dto.ThirdPartyAccountRequest;
 import com.glancy.backend.dto.ThirdPartyAccountResponse;
+import com.glancy.backend.dto.AvatarResponse;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.LoginDevice;
 import com.glancy.backend.entity.ThirdPartyAccount;
@@ -173,5 +174,29 @@ public class UserService {
         log.debug("Bound account {}:{} to user {}", saved.getProvider(), saved.getExternalId(), userId);
         return new ThirdPartyAccountResponse(saved.getId(), saved.getProvider(),
                 saved.getExternalId(), saved.getUser().getId());
+    }
+
+    /**
+     * Retrieve only the avatar URL of a user.
+     */
+    @Transactional(readOnly = true)
+    public AvatarResponse getAvatar(Long userId) {
+        log.info("Fetching avatar for user {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        return new AvatarResponse(user.getAvatar());
+    }
+
+    /**
+     * Update the avatar URL for the specified user.
+     */
+    @Transactional
+    public AvatarResponse updateAvatar(Long userId, String avatar) {
+        log.info("Updating avatar for user {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        user.setAvatar(avatar);
+        User saved = userRepository.save(user);
+        return new AvatarResponse(saved.getAvatar());
     }
 }
