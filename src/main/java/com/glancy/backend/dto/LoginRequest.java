@@ -13,5 +13,6 @@ public class LoginRequest {
 
     @NotBlank(message = "{validation.login.password.notblank}")
     private String password;
-    // Optional device information used during login    private String deviceInfo;
+    // Optional device information used during login    
+    private String deviceInfo;
 }
