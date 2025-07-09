@@ -22,4 +22,6 @@ public class UserRegistrationRequest {
 
     // Optional avatar URL
     private String avatar;
-    // Optional phone number    private String phone;}
+    // Optional phone number    
+    private String phone;
+}
