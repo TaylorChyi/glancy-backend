@@ -18,16 +18,12 @@ spring:
                 dialect: org.hibernate.dialect.MySQLDialect
                 format_sql: true
 
-management:    endpoints:
-        web:
-            exposure:
-                include: health,info
+management:    
+  endpoints:
+    web:
+      exposure:
+          include: health,info
 
 logging:
     level:
         com.glancy.backend: DEBUG
-
-management:
-  endpoints:
-    web:
-      exposure:        include: health,info
