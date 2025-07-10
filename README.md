@@ -36,6 +36,9 @@ java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar
 ```
 ## API Endpoints
 
+### Health
+- `GET /api/ping` – verify that the service is running
+
 ### Users
 - `POST /api/users/register` – register a new user
 - `DELETE /api/users/{id}` – logically delete a user
