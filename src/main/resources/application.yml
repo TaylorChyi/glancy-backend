@@ -30,3 +30,9 @@ management:
 logging:
     level:
         com.glancy.backend: DEBUG
+
+thirdparty:
+    deepseek:
+        base-url: https://api.deepseek.com
+    gemini:
+        base-url: https://api.gemini.com
