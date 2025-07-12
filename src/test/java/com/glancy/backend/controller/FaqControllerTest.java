@@ -3,6 +3,7 @@ package com.glancy.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.FaqRequest;
 import com.glancy.backend.dto.FaqResponse;
+import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.FaqService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(FaqController.class)
 class FaqControllerTest {
+
+    @MockBean
+    private AlertService alertService;
 
     @Autowired
     private MockMvc mockMvc;

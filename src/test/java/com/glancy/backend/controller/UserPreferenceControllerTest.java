@@ -3,6 +3,7 @@ package com.glancy.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.UserPreferenceRequest;
 import com.glancy.backend.dto.UserPreferenceResponse;
+import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.UserPreferenceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserPreferenceController.class)
 class UserPreferenceControllerTest {
-
+    @MockBean
+    private AlertService alertService;
+    
     @Autowired
     private MockMvc mockMvc;
 

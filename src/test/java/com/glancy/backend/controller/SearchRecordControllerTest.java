@@ -3,6 +3,7 @@ package com.glancy.backend.controller;
 import com.glancy.backend.dto.SearchRecordRequest;
 import com.glancy.backend.dto.SearchRecordResponse;
 import com.glancy.backend.entity.Language;
+import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.SearchRecordService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(SearchRecordController.class)
 class SearchRecordControllerTest {
-
+    @MockBean
+    private AlertService alertService;
+    
     @Autowired
     private MockMvc mockMvc;
     @MockBean

@@ -3,6 +3,7 @@ package com.glancy.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.TrafficRecordRequest;
 import com.glancy.backend.dto.TrafficRecordResponse;
+import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.TrafficRecordService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(PortalTrafficController.class)
 class PortalTrafficControllerTest {
-
+    @MockBean
+    private AlertService alertService;
+    
     @Autowired
     private MockMvc mockMvc;
 
