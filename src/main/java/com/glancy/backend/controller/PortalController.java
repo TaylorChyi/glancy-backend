@@ -28,7 +28,10 @@ public class PortalController {
     private final UserService userService;
     private final LoggingService loggingService;
 
-    public PortalController(SystemParameterService parameterService, UserService userService, LoggingService loggingService) {
+    public PortalController(
+            SystemParameterService parameterService,
+            UserService userService,
+            LoggingService loggingService) {
         this.parameterService = parameterService;
         this.userService = userService;
         this.loggingService = loggingService;
