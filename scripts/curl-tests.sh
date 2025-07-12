@@ -102,6 +102,12 @@ curl -i -X PUT -H "Content-Type: application/json" \
 section "Delete alert recipient"
 curl -i -X DELETE "$BASE_URL/api/portal/alert-recipients/1"
 
+section "Set email notifications enabled"
+curl -i -X POST "$BASE_URL/api/portal/email-enabled?enabled=true"
+
+section "Get email notifications enabled"
+curl -i "$BASE_URL/api/portal/email-enabled"
+
 section "Record portal traffic"
 curl -i -H "Content-Type: application/json" \
     -d '{"path":"/","ip":"127.0.0.1","userAgent":"curl"}' \

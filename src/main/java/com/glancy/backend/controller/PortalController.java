@@ -27,6 +27,7 @@ public class PortalController {
     private final SystemParameterService parameterService;
     private final UserService userService;
     private final LoggingService loggingService;
+    private static final String EMAIL_PARAM = "email.notifications.enabled";
 
     public PortalController(
             SystemParameterService parameterService,
@@ -109,5 +110,30 @@ public class PortalController {
             @Valid @RequestBody LogLevelRequest req) {
         loggingService.setLogLevel(req.getLogger(), req.getLevel());
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Enable or disable alert emails globally.
+     */
+    @PostMapping("/email-enabled")
+    public ResponseEntity<Void> setEmailEnabled(@RequestParam boolean enabled) {
+        SystemParameterRequest req = new SystemParameterRequest();
+        req.setName(EMAIL_PARAM);
+        req.setValue(Boolean.toString(enabled));
+        parameterService.upsert(req);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Check if alert emails are enabled. Defaults to false.
+     */
+    @GetMapping("/email-enabled")
+    public ResponseEntity<Boolean> isEmailEnabled() {
+        try {
+            SystemParameterResponse resp = parameterService.getByName(EMAIL_PARAM);
+            return ResponseEntity.ok(Boolean.parseBoolean(resp.getValue()));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.ok(false);
+        }
     }
 }

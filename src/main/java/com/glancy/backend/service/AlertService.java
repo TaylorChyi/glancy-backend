@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import com.glancy.backend.repository.SystemParameterRepository;
+import com.glancy.backend.entity.SystemParameter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,17 +22,27 @@ public class AlertService {
 
     private final JavaMailSender mailSender;
     private final AlertRecipientRepository recipientRepository;
+    private final SystemParameterRepository parameterRepository;
 
     public AlertService(JavaMailSender mailSender,
-                        AlertRecipientRepository recipientRepository) {
+                        AlertRecipientRepository recipientRepository,
+                        SystemParameterRepository parameterRepository) {
         this.mailSender = mailSender;
         this.recipientRepository = recipientRepository;
+        this.parameterRepository = parameterRepository;
     }
 
     /**
      * Send an alert email with the provided subject and body.
      */
     public void sendAlert(String subject, String body) {
+        boolean enabled = parameterRepository.findByName("email.notifications.enabled")
+                .map(SystemParameter::getValue)
+                .map(Boolean::parseBoolean)
+                .orElse(false);
+        if (!enabled) {
+            return;
+        }
         List<String> recipients = recipientRepository.findAll().stream()
                 .map(AlertRecipient::getEmail)
                 .filter(e -> e != null && !e.isBlank())
