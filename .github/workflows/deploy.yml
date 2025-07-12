@@ -25,7 +25,7 @@ jobs:
         run: |
           ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
             set -e
-            cd /home/taylor/glancy-backend
+            cd /home/ecs-user/glancy-backend
 
             echo "📦 修改远程仓库为 SSH"
             git remote set-url origin git@github.com:TaylorChyi/glancy-backend.git  # ✅ 确保用 SSH
