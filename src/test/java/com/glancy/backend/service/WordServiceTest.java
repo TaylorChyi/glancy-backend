@@ -3,6 +3,7 @@ package com.glancy.backend.service;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.client.DeepSeekClient;
+import com.glancy.backend.client.ChatGptClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,8 @@ class WordServiceTest {
     private WordService wordService;
     @MockBean
     private DeepSeekClient deepSeekClient;
+    @MockBean
+    private ChatGptClient chatGptClient;
 
     @BeforeAll
     static void loadEnv() {
