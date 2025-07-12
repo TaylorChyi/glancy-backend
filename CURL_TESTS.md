@@ -25,3 +25,9 @@ curl -i -H "Content-Type: application/json" \
 ```
 
 更多示例请查看 README.md 以及上述脚本。
+
+### 查询单词
+
+```bash
+curl -i "http://localhost:8080/api/words?userId=1&term=hello&language=ENGLISH"
+```

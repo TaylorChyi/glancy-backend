@@ -30,12 +30,13 @@ class WordControllerTest {
     @MockBean
     private AlertService alertService;
 
-    // @Test
+    @Test
     void testGetWord() throws Exception {
         WordResponse resp = new WordResponse(1L, "hello", List.of("g"), Language.ENGLISH, "ex", "həˈloʊ");
         when(wordService.findWordFromDeepSeek(eq("hello"), eq(Language.ENGLISH))).thenReturn(resp);
 
         mockMvc.perform(get("/api/words")
+                        .param("userId", "1")
                         .param("term", "hello")
                         .param("language", "ENGLISH")
                         .accept(MediaType.APPLICATION_JSON))
