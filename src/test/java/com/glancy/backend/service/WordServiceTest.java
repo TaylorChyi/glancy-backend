@@ -47,4 +47,15 @@ class WordServiceTest {
         WordResponse result = wordService.findWord("hello", Language.ENGLISH);
         assertEquals("greeting", result.getDefinitions().get(0));
     }
+
+    @Test
+    void testFindWordWithGpt() {
+        WordResponse resp = new WordResponse(null, "hi",
+                List.of("salutation"), Language.ENGLISH, null, null);
+        when(chatGptClient.fetchDefinition("hi", Language.ENGLISH))
+                .thenReturn(resp);
+
+        WordResponse result = wordService.findWordWithGpt("hi", Language.ENGLISH);
+        assertEquals("salutation", result.getDefinitions().get(0));
+    }
 }
