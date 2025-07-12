@@ -96,4 +96,13 @@ public class UserController {
         AvatarResponse resp = userService.updateAvatar(id, req.getAvatar());
         return ResponseEntity.ok(resp);
     }
+
+    /**
+     * Get the total number of active users.
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> countUsers() {
+        long count = userService.countActiveUsers();
+        return ResponseEntity.ok(count);
+    }
 }

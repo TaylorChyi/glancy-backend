@@ -124,4 +124,12 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.avatar").value("url"));
     }
+
+    @Test
+    void countUsers() throws Exception {
+        when(userService.countActiveUsers()).thenReturn(5L);
+        mockMvc.perform(get("/api/users/count"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("5"));
+    }
 }

@@ -207,6 +207,14 @@ public class UserService {
     }
 
     /**
+     * Count all active (non-deleted) users.
+     */
+    @Transactional(readOnly = true)
+    public long countActiveUsers() {
+        return userRepository.countByDeletedFalse();
+    }
+
+    /**
      * Retrieve only the avatar URL of a user.
      */
     @Transactional(readOnly = true)
