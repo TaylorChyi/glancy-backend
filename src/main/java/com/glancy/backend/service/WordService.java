@@ -16,22 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 public class WordService {
-    private final DeepSeekClient deepSeekClient;
+    private DeepSeekClient deepSeekClient;
     private final ChatGptClient chatGptClient;
-
-    public WordService(DeepSeekClient deepSeekClient, ChatGptClient chatGptClient) {
-        this.deepSeekClient = deepSeekClient;
-        this.chatGptClient = chatGptClient;
     private final GoogleTtsClient googleTtsClient;
-
-    public WordService(DeepSeekClient deepSeekClient,
-                       GoogleTtsClient googleTtsClient) {
-        this.deepSeekClient = deepSeekClient;
-        this.googleTtsClient = googleTtsClient;
     private final GeminiClient geminiClient;
 
-    public WordService(DeepSeekClient deepSeekClient, GeminiClient geminiClient) {
+    public WordService(DeepSeekClient deepSeekClient, ChatGptClient chatGptClient, GoogleTtsClient googleTtsClient, GeminiClient geminiClient) {
         this.deepSeekClient = deepSeekClient;
+        this.chatGptClient = chatGptClient;
+        this.googleTtsClient = googleTtsClient;
         this.geminiClient = geminiClient;
     }
 
@@ -51,6 +44,7 @@ public class WordService {
     public WordResponse findWordWithGpt(String term, Language language) {
         log.info("Fetching definition for term '{}' using ChatGPT in language {}", term, language);
         return chatGptClient.fetchDefinition(term, language);
+    }
 
     @Transactional(readOnly = true)
     public byte[] getAudio(String term, Language language) {
@@ -67,6 +61,7 @@ public class WordService {
     public byte[] getPronunciation(String term, Language language) {
         log.info("Fetching pronunciation for term '{}' in language {}", term, language);
         return googleTtsClient.fetchPronunciation(term, language);
+    }
     /**
      * Retrieve word details using the Gemini provider.
      */
@@ -74,6 +69,7 @@ public class WordService {
     public WordResponse findWordFromGemini(String term, Language language) {
         log.info("Fetching definition from Gemini for term '{}' in language {}", term, language);
         return geminiClient.fetchDefinition(term, language);
+    }
 
     @Transactional(readOnly = true)
     public byte[] getAudioFromDeepSeek(String term, Language language) {

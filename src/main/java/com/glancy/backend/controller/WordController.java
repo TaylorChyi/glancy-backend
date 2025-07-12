@@ -43,7 +43,7 @@ public class WordController {
         searchRecordService.saveRecord(userId, req);
         WordResponse resp = gpt ?
                 wordService.findWordWithGpt(term, language) :
-                wordService.findWord(term, language);
+                wordService.findWordFromDeepSeek(term, language);
         return ResponseEntity.ok(resp);
     }
 

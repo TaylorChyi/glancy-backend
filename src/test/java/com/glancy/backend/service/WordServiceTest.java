@@ -48,7 +48,7 @@ class WordServiceTest {
         when(deepSeekClient.fetchDefinition("hello", Language.ENGLISH))
                 .thenReturn(resp);
 
-        WordResponse result = wordService.findWord("hello", Language.ENGLISH);
+        WordResponse result = wordService.findWordFromDeepSeek("hello", Language.ENGLISH);
         assertEquals("greeting", result.getDefinitions().get(0));
     }
 
@@ -62,6 +62,7 @@ class WordServiceTest {
 
         WordResponse result = wordService.findWordWithGpt("hi", Language.ENGLISH);
         assertEquals("salutation", result.getDefinitions().get(0));
+    }
 
     void testGetPronunciation() {
         byte[] data = new byte[] {1, 2, 3};
@@ -82,6 +83,7 @@ class WordServiceTest {
 
         WordResponse result = wordService.findWordFromGemini("hello", Language.ENGLISH);
         assertEquals("salutation", result.getDefinitions().get(0));
+    }
 
     void testGetAudio() {
         byte[] data = new byte[] {1, 2, 3};
