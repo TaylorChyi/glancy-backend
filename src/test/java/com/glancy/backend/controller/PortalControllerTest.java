@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -63,5 +64,19 @@ class PortalControllerTest {
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L));
+    }
+
+    @Test
+    void activateMember() throws Exception {
+        doNothing().when(userService).activateMembership(1L);
+        mockMvc.perform(post("/api/portal/users/1/member"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void removeMember() throws Exception {
+        doNothing().when(userService).removeMembership(1L);
+        mockMvc.perform(delete("/api/portal/users/1/member"))
+                .andExpect(status().isOk());
     }
 }

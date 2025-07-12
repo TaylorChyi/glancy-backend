@@ -177,4 +177,21 @@ class UserServiceTest {
         long count = userService.countActiveUsers();
         assertEquals(1, count);
     }
+
+    @Test
+    void testMembershipOps() {
+        UserRegistrationRequest req = new UserRegistrationRequest();
+        req.setUsername("member");
+        req.setPassword("p");
+        req.setEmail("m@example.com");
+        UserResponse resp = userService.register(req);
+
+        userService.activateMembership(resp.getId());
+        User user = userRepository.findById(resp.getId()).orElseThrow();
+        assertTrue(user.getMember());
+
+        userService.removeMembership(resp.getId());
+        User user2 = userRepository.findById(resp.getId()).orElseThrow();
+        assertFalse(user2.getMember());
+    }
 }

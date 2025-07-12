@@ -57,6 +57,7 @@ public class WordService {
         log.info("Fetching audio for term '{}' in language {}", term, language);
         return deepSeekClient.fetchAudio(term, language);
 
+
     }
 
     /**

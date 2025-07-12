@@ -53,6 +53,7 @@ class WordServiceTest {
     }
 
     @Test
+
     void testFindWordWithGpt() {
         WordResponse resp = new WordResponse(null, "hi",
                 List.of("salutation"), Language.ENGLISH, null, null);

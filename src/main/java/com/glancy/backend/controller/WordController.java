@@ -57,6 +57,7 @@ public class WordController {
         return ResponseEntity.ok(data);
     }
 
+
     /**
      * Retrieve pronunciation audio using Google TTS.
      */
