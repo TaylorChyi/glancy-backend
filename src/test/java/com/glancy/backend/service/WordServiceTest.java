@@ -3,6 +3,7 @@ package com.glancy.backend.service;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.client.DeepSeekClient;
+import com.glancy.backend.client.GoogleTtsClient;
 import com.glancy.backend.client.GeminiClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,6 +26,7 @@ class WordServiceTest {
     @MockBean
     private DeepSeekClient deepSeekClient;
     @MockBean
+    private GoogleTtsClient googleTtsClient;
     private GeminiClient geminiClient;
 
     @BeforeAll
@@ -49,6 +51,17 @@ class WordServiceTest {
     }
 
     @Test
+    void testGetPronunciation() {
+        byte[] data = new byte[] {1, 2, 3};
+        when(googleTtsClient.fetchPronunciation("hi", Language.ENGLISH))
+                .thenReturn(data);
+
+        byte[] result = wordService.getPronunciation("hi", Language.ENGLISH);
+        assertArrayEquals(data, result);
+    }
+
+    @Test
+
     void testFindWordFromGemini() {
         WordResponse resp = new WordResponse(1L, "hello",
                 List.of("salutation"), Language.ENGLISH, "Hello world", "həˈloʊ");
