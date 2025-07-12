@@ -3,6 +3,7 @@ package com.glancy.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.ContactRequest;
 import com.glancy.backend.dto.ContactResponse;
+import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.ContactService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ContactController.class)
 class ContactControllerTest {
+
+    @MockBean
+    private AlertService alertService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -35,7 +39,7 @@ class ContactControllerTest {
 
         ContactRequest req = new ContactRequest();
         req.setName("n");
-        req.setEmail("e");
+        req.setEmail("test@example.com");
         req.setMessage("m");
 
         mockMvc.perform(post("/api/contact")
