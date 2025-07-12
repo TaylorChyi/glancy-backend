@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import com.glancy.backend.dto.SystemParameterRequest;
 import com.glancy.backend.dto.SystemParameterResponse;
 import com.glancy.backend.dto.UserStatisticsResponse;
+import com.glancy.backend.dto.DailyActiveUserResponse;
 import com.glancy.backend.service.UserService;
 import com.glancy.backend.dto.LogLevelRequest;
 import com.glancy.backend.service.SystemParameterService;
@@ -67,6 +68,15 @@ public class PortalController {
     @GetMapping("/user-stats")
     public ResponseEntity<UserStatisticsResponse> userStats() {
         UserStatisticsResponse resp = userService.getStatistics();
+        return ResponseEntity.ok(resp);
+    }
+
+    /**
+     * Get today's active user stats.
+     */
+    @GetMapping("/daily-active")
+    public ResponseEntity<DailyActiveUserResponse> dailyActive() {
+        DailyActiveUserResponse resp = userService.getDailyActiveStats();
         return ResponseEntity.ok(resp);
     }
 
