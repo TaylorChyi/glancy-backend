@@ -3,6 +3,7 @@ package com.glancy.backend.controller;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.dto.SearchRecordRequest;
 import com.glancy.backend.entity.Language;
+import org.springframework.http.MediaType;
 import com.glancy.backend.service.WordService;
 import com.glancy.backend.service.SearchRecordService;
 import org.springframework.http.MediaType;
@@ -34,12 +35,15 @@ public class WordController {
     @GetMapping
     public ResponseEntity<WordResponse> getWord(@RequestParam Long userId,
                                                 @RequestParam String term,
-                                                @RequestParam Language language) {
+                                                @RequestParam Language language,
+                                                @RequestParam(name = "gpt", required = false, defaultValue = "false") boolean gpt) {
         SearchRecordRequest req = new SearchRecordRequest();
         req.setTerm(term);
         req.setLanguage(language);
         searchRecordService.saveRecord(userId, req);
-        WordResponse resp = wordService.findWord(term, language);
+        WordResponse resp = gpt ?
+                wordService.findWordWithGpt(term, language) :
+                wordService.findWord(term, language);
         return ResponseEntity.ok(resp);
     }
 
@@ -51,5 +55,16 @@ public class WordController {
                                            @RequestParam Language language) {
         byte[] data = wordService.getAudio(term, language);
         return ResponseEntity.ok(data);
+    }
+
+
+    /**
+     * Retrieve pronunciation audio using Google TTS.
+     */
+    @GetMapping(value = "/pronunciation", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> getPronunciation(@RequestParam String term,
+                                                   @RequestParam Language language) {
+        byte[] audio = wordService.getPronunciation(term, language);
+        return ResponseEntity.ok().body(audio);
     }
 }

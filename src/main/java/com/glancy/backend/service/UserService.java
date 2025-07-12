@@ -278,4 +278,5 @@ public class UserService {
         user.setMember(false);
         userRepository.save(user);
     }
+
 }
