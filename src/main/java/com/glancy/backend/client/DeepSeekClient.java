@@ -15,11 +15,14 @@ import org.springframework.http.ResponseEntity;
 public class DeepSeekClient {
     private final RestTemplate restTemplate;
     private final String baseUrl;
+    private final String apiKey;
 
     public DeepSeekClient(RestTemplate restTemplate,
-                          @Value("${deepseek.base-url:https://api.deepseek.com}") String baseUrl) {
+                          @Value("${deepseek.base-url:https://api.deepseek.com}") String baseUrl,
+                          @Value("${deepseek.api-key:}") String apiKey) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
+        this.apiKey = apiKey;
     }
 
     public WordResponse fetchDefinition(String term, Language language) {
@@ -28,7 +31,18 @@ public class DeepSeekClient {
                 .queryParam("term", term)
                 .queryParam("language", language.name().toLowerCase())
                 .toUriString();
-        return restTemplate.getForObject(url, WordResponse.class);
+        HttpHeaders headers = new HttpHeaders();
+        if (apiKey != null && !apiKey.isEmpty()) {
+            headers.setBearerAuth(apiKey);
+        }
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        ResponseEntity<WordResponse> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                WordResponse.class
+        );
+        return response.getBody();
     }
 
     public byte[] fetchAudio(String term, Language language) {
@@ -38,6 +52,9 @@ public class DeepSeekClient {
                 .queryParam("language", language.name().toLowerCase())
                 .toUriString();
         HttpHeaders headers = new HttpHeaders();
+        if (apiKey != null && !apiKey.isEmpty()) {
+            headers.setBearerAuth(apiKey);
+        }
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
         ResponseEntity<byte[]> response = restTemplate.exchange(
                 url,
