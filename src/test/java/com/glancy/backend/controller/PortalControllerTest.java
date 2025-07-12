@@ -2,6 +2,7 @@ package com.glancy.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.UserStatisticsResponse;
+import com.glancy.backend.dto.DailyActiveUserResponse;
 import com.glancy.backend.dto.SystemParameterRequest;
 import com.glancy.backend.dto.SystemParameterResponse;
 import com.glancy.backend.service.UserService;
@@ -39,6 +40,15 @@ class PortalControllerTest {
         mockMvc.perform(get("/api/portal/user-stats"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalUsers").value(2));
+    }
+
+    @Test
+    void dailyActive() throws Exception {
+        DailyActiveUserResponse resp = new DailyActiveUserResponse(1, 0.5);
+        when(userService.getDailyActiveStats()).thenReturn(resp);
+        mockMvc.perform(get("/api/portal/daily-active"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.activeUsers").value(1));
     }
 
     @Test

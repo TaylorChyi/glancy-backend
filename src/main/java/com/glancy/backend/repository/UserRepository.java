@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.glancy.backend.entity.User;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -12,9 +13,15 @@ import java.util.Optional;
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsernameAndDeletedFalse(String username);    Optional<User> findByEmailAndDeletedFalse(String email);
+    Optional<User> findByUsernameAndDeletedFalse(String username);
+
+    Optional<User> findByEmailAndDeletedFalse(String email);
 
     long countByDeletedTrue();
+
     long countByDeletedFalse();
+
     long countByDeletedFalseAndMemberTrue();
+
+    long countByDeletedFalseAndLastLoginAtAfter(LocalDateTime time);
 }

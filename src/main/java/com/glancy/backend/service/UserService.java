@@ -12,6 +12,7 @@ import com.glancy.backend.dto.UserResponse;
 import com.glancy.backend.dto.ThirdPartyAccountRequest;
 import com.glancy.backend.dto.ThirdPartyAccountResponse;
 import com.glancy.backend.dto.AvatarResponse;
+import com.glancy.backend.dto.DailyActiveUserResponse;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.LoginDevice;
 import com.glancy.backend.entity.ThirdPartyAccount;
@@ -19,6 +20,8 @@ import com.glancy.backend.repository.UserRepository;
 import com.glancy.backend.repository.LoginDeviceRepository;
 import com.glancy.backend.repository.ThirdPartyAccountRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.List;
 
@@ -96,7 +99,7 @@ public class UserService {
     /**
      * Authenticate a user and record login device information if provided.
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public LoginResponse login(LoginRequest req) {
         log.info("Attempting login for {}", req.getUsername() != null ? req.getUsername() : req.getEmail());
         String identifier = req.getUsername() != null ? req.getUsername() : req.getEmail();
@@ -139,6 +142,9 @@ public class UserService {
                 }
             }
         }
+
+        user.setLastLoginAt(LocalDateTime.now());
+        userRepository.save(user);
 
         log.info("User {} logged in", user.getId());
         log.debug("User {} logged in", user.getId());
@@ -186,6 +192,18 @@ public class UserService {
         long deleted = userRepository.countByDeletedTrue();
         long members = userRepository.countByDeletedFalseAndMemberTrue();
         return new UserStatisticsResponse(total, members, deleted);
+    }
+
+    /**
+     * Calculate today's active users and their rate among all users.
+     */
+    @Transactional(readOnly = true)
+    public DailyActiveUserResponse getDailyActiveStats() {
+        LocalDateTime start = LocalDate.now().atStartOfDay();
+        long active = userRepository.countByDeletedFalseAndLastLoginAtAfter(start);
+        long total = userRepository.countByDeletedFalse();
+        double rate = total == 0 ? 0d : (double) active / total;
+        return new DailyActiveUserResponse(active, rate);
     }
 
     /**
