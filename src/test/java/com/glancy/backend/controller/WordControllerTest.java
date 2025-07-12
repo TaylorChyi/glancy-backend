@@ -48,4 +48,15 @@ class WordControllerTest {
                         .param("language", "ENGLISH"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void testGetAudio() throws Exception {
+        byte[] data = new byte[] {1, 2, 3};
+        when(wordService.getAudio(eq("hello"), eq(Language.ENGLISH))).thenReturn(data);
+
+        mockMvc.perform(get("/api/words/audio")
+                        .param("term", "hello")
+                        .param("language", "ENGLISH"))
+                .andExpect(status().isOk());
+    }
 }

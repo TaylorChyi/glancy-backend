@@ -32,6 +32,13 @@ public class WordService {
         return deepSeekClient.fetchDefinition(term, language);
     }
 
+    @Transactional(readOnly = true)
+    public byte[] getAudio(String term, Language language) {
+        log.info("Fetching audio for term '{}' in language {}", term, language);
+        return deepSeekClient.fetchAudio(term, language);
+
+    }
+
     /**
      * Retrieve pronunciation audio bytes from Google TTS.
      */
