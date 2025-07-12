@@ -75,5 +75,8 @@ java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar
 - `GET /api/portal/parameters/{name}` – get the value of a parameter
 - `GET /api/portal/parameters` – list all parameters
 - `GET /api/portal/user-stats` – fetch overall user counts
+- `POST /api/portal/alert-recipients` – add an alert email address
+- `GET /api/portal/alert-recipients` – list alert email addresses
+- `DELETE /api/portal/alert-recipients/{id}` – remove an alert email address
 - `GET /api/portal/daily-active` – daily active users and rate
 
