@@ -77,4 +77,5 @@ java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar
 - `POST /api/portal/alert-recipients` – add an alert email address
 - `GET /api/portal/alert-recipients` – list alert email addresses
 - `DELETE /api/portal/alert-recipients/{id}` – remove an alert email address
+- `GET /api/portal/daily-active` – daily active users and rate
 
