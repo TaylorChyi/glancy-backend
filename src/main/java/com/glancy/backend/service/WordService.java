@@ -3,6 +3,7 @@ package com.glancy.backend.service;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.client.DeepSeekClient;
+import com.glancy.backend.client.ChatGptClient;
 import com.glancy.backend.client.GoogleTtsClient;
 import com.glancy.backend.client.GeminiClient;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class WordService {
     private final DeepSeekClient deepSeekClient;
+    private final ChatGptClient chatGptClient;
+
+    public WordService(DeepSeekClient deepSeekClient, ChatGptClient chatGptClient) {
+        this.deepSeekClient = deepSeekClient;
+        this.chatGptClient = chatGptClient;
     private final GoogleTtsClient googleTtsClient;
 
     public WordService(DeepSeekClient deepSeekClient,
@@ -37,6 +43,14 @@ public class WordService {
         log.info("Fetching definition for term '{}' in language {}", term, language);
         return deepSeekClient.fetchDefinition(term, language);
     }
+
+    /**
+     * Retrieve word details using ChatGPT.
+     */
+    @Transactional(readOnly = true)
+    public WordResponse findWordWithGpt(String term, Language language) {
+        log.info("Fetching definition for term '{}' using ChatGPT in language {}", term, language);
+        return chatGptClient.fetchDefinition(term, language);
 
     @Transactional(readOnly = true)
     public byte[] getAudio(String term, Language language) {

@@ -3,6 +3,7 @@ package com.glancy.backend.service;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.client.DeepSeekClient;
+import com.glancy.backend.client.ChatGptClient;
 import com.glancy.backend.client.GoogleTtsClient;
 import com.glancy.backend.client.GeminiClient;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -26,6 +27,7 @@ class WordServiceTest {
     @MockBean
     private DeepSeekClient deepSeekClient;
     @MockBean
+    private ChatGptClient chatGptClient;
     private GoogleTtsClient googleTtsClient;
     private GeminiClient geminiClient;
 
@@ -51,6 +53,15 @@ class WordServiceTest {
     }
 
     @Test
+    void testFindWordWithGpt() {
+        WordResponse resp = new WordResponse(null, "hi",
+                List.of("salutation"), Language.ENGLISH, null, null);
+        when(chatGptClient.fetchDefinition("hi", Language.ENGLISH))
+                .thenReturn(resp);
+
+        WordResponse result = wordService.findWordWithGpt("hi", Language.ENGLISH);
+        assertEquals("salutation", result.getDefinitions().get(0));
+
     void testGetPronunciation() {
         byte[] data = new byte[] {1, 2, 3};
         when(googleTtsClient.fetchPronunciation("hi", Language.ENGLISH))

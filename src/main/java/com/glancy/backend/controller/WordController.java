@@ -35,12 +35,15 @@ public class WordController {
     @GetMapping
     public ResponseEntity<WordResponse> getWord(@RequestParam Long userId,
                                                 @RequestParam String term,
-                                                @RequestParam Language language) {
+                                                @RequestParam Language language,
+                                                @RequestParam(name = "gpt", required = false, defaultValue = "false") boolean gpt) {
         SearchRecordRequest req = new SearchRecordRequest();
         req.setTerm(term);
         req.setLanguage(language);
         searchRecordService.saveRecord(userId, req);
-        WordResponse resp = wordService.findWord(term, language);
+        WordResponse resp = gpt ?
+                wordService.findWordWithGpt(term, language) :
+                wordService.findWord(term, language);
         return ResponseEntity.ok(resp);
     }
 
