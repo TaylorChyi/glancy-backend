@@ -6,6 +6,8 @@ import com.glancy.backend.dto.DailyActiveUserResponse;
 import com.glancy.backend.dto.SystemParameterRequest;
 import com.glancy.backend.dto.SystemParameterResponse;
 import com.glancy.backend.service.UserService;
+import com.glancy.backend.service.AlertService;
+import com.glancy.backend.service.LoggingService;
 import com.glancy.backend.service.SystemParameterService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(PortalController.class)
 class PortalControllerTest {
+    @MockBean
+    private AlertService alertService;
+    
+    @MockBean
+    private LoggingService loggingService;
 
     @Autowired
     private MockMvc mockMvc;

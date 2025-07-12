@@ -3,6 +3,7 @@ package com.glancy.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.*;
 import com.glancy.backend.entity.User;
+import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 class UserControllerTest {
+    @MockBean
+    private AlertService alertService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -32,13 +35,13 @@ class UserControllerTest {
 
     @Test
     void register() throws Exception {
-        UserResponse resp = new UserResponse(1L, "u", "e", null, null);
+        UserResponse resp = new UserResponse(1L, "testuser", "test@example.com", null, null);
         when(userService.register(any(UserRegistrationRequest.class))).thenReturn(resp);
 
         UserRegistrationRequest req = new UserRegistrationRequest();
-        req.setUsername("u");
+        req.setUsername("testuser");
         req.setPassword("pass123");
-        req.setEmail("e");
+        req.setEmail("test@example.com");
 
         mockMvc.perform(post("/api/users/register")
                         .contentType(MediaType.APPLICATION_JSON)
