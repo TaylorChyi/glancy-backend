@@ -3,6 +3,7 @@ package com.glancy.backend.service;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.client.DeepSeekClient;
+import com.glancy.backend.client.GeminiClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,8 @@ class WordServiceTest {
     private WordService wordService;
     @MockBean
     private DeepSeekClient deepSeekClient;
+    @MockBean
+    private GeminiClient geminiClient;
 
     @BeforeAll
     static void loadEnv() {
@@ -43,5 +46,16 @@ class WordServiceTest {
 
         WordResponse result = wordService.findWord("hello", Language.ENGLISH);
         assertEquals("greeting", result.getDefinitions().get(0));
+    }
+
+    @Test
+    void testFindWordFromGemini() {
+        WordResponse resp = new WordResponse(1L, "hello",
+                List.of("salutation"), Language.ENGLISH, "Hello world", "həˈloʊ");
+        when(geminiClient.fetchDefinition("hello", Language.ENGLISH))
+                .thenReturn(resp);
+
+        WordResponse result = wordService.findWordFromGemini("hello", Language.ENGLISH);
+        assertEquals("salutation", result.getDefinitions().get(0));
     }
 }
