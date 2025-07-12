@@ -6,6 +6,7 @@ import com.glancy.backend.entity.Language;
 import org.springframework.http.MediaType;
 import com.glancy.backend.service.WordService;
 import com.glancy.backend.service.SearchRecordService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,7 +52,6 @@ public class WordController {
                                            @RequestParam Language language) {
         byte[] data = wordService.getAudio(term, language);
         return ResponseEntity.ok(data);
-
     }
 
     /**
