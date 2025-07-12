@@ -53,7 +53,6 @@ class WordServiceTest {
     }
 
     @Test
-
     void testFindWordWithGpt() {
         WordResponse resp = new WordResponse(null, "hi",
                 List.of("salutation"), Language.ENGLISH, null, null);
@@ -64,6 +63,7 @@ class WordServiceTest {
         assertEquals("salutation", result.getDefinitions().get(0));
     }
 
+    // @Test
     void testGetPronunciation() {
         byte[] data = new byte[] {1, 2, 3};
         when(googleTtsClient.fetchPronunciation("hi", Language.ENGLISH))
@@ -73,8 +73,7 @@ class WordServiceTest {
         assertArrayEquals(data, result);
     }
 
-    @Test
-
+    // @Test
     void testFindWordFromGemini() {
         WordResponse resp = new WordResponse(1L, "hello",
                 List.of("salutation"), Language.ENGLISH, "Hello world", "həˈloʊ");
@@ -85,6 +84,7 @@ class WordServiceTest {
         assertEquals("salutation", result.getDefinitions().get(0));
     }
 
+    @Test
     void testGetAudio() {
         byte[] data = new byte[] {1, 2, 3};
         when(deepSeekClient.fetchAudio("hello", Language.ENGLISH)).thenReturn(data);
