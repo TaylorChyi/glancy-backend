@@ -3,6 +3,7 @@ package com.glancy.backend.service;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.client.DeepSeekClient;
+import com.glancy.backend.client.GoogleTtsClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class WordService {
     private final DeepSeekClient deepSeekClient;
+    private final GoogleTtsClient googleTtsClient;
 
-    public WordService(DeepSeekClient deepSeekClient) {
+    public WordService(DeepSeekClient deepSeekClient,
+                       GoogleTtsClient googleTtsClient) {
         this.deepSeekClient = deepSeekClient;
+        this.googleTtsClient = googleTtsClient;
     }
 
     /**
@@ -26,5 +30,14 @@ public class WordService {
     public WordResponse findWord(String term, Language language) {
         log.info("Fetching definition for term '{}' in language {}", term, language);
         return deepSeekClient.fetchDefinition(term, language);
+    }
+
+    /**
+     * Retrieve pronunciation audio bytes from Google TTS.
+     */
+    @Transactional(readOnly = true)
+    public byte[] getPronunciation(String term, Language language) {
+        log.info("Fetching pronunciation for term '{}' in language {}", term, language);
+        return googleTtsClient.fetchPronunciation(term, language);
     }
 }

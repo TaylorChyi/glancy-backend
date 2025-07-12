@@ -3,6 +3,7 @@ package com.glancy.backend.controller;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.dto.SearchRecordRequest;
 import com.glancy.backend.entity.Language;
+import org.springframework.http.MediaType;
 import com.glancy.backend.service.WordService;
 import com.glancy.backend.service.SearchRecordService;
 import org.springframework.http.ResponseEntity;
@@ -40,5 +41,15 @@ public class WordController {
         searchRecordService.saveRecord(userId, req);
         WordResponse resp = wordService.findWord(term, language);
         return ResponseEntity.ok(resp);
+    }
+
+    /**
+     * Retrieve pronunciation audio for a word.
+     */
+    @GetMapping(value = "/pronunciation", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> getPronunciation(@RequestParam String term,
+                                                   @RequestParam Language language) {
+        byte[] audio = wordService.getPronunciation(term, language);
+        return ResponseEntity.ok().body(audio);
     }
 }
