@@ -41,7 +41,10 @@ java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar
 ```bash
 ./mvnw test
 ```
+## Quick API Check
+Example curl commands live in `CURL_TESTS.md`. Run `scripts/curl-tests.sh` to call common endpoints.
 ## API Endpoints
+
 
 ### Health
 - `GET /api/ping` – verify that the service is running
