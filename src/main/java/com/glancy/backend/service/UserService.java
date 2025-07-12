@@ -12,6 +12,7 @@ import com.glancy.backend.dto.UserResponse;
 import com.glancy.backend.dto.ThirdPartyAccountRequest;
 import com.glancy.backend.dto.ThirdPartyAccountResponse;
 import com.glancy.backend.dto.AvatarResponse;
+import com.glancy.backend.dto.UsernameResponse;
 import com.glancy.backend.dto.DailyActiveUserResponse;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.LoginDevice;
@@ -236,5 +237,21 @@ public class UserService {
         user.setAvatar(avatar);
         User saved = userRepository.save(user);
         return new AvatarResponse(saved.getAvatar());
+    }
+
+    /**
+     * Update the username for the specified user.
+     */
+    @Transactional
+    public UsernameResponse updateUsername(Long userId, String username) {
+        log.info("Updating username for user {}", userId);
+        userRepository.findByUsernameAndDeletedFalse(username).ifPresent(u -> {
+            throw new IllegalArgumentException("用户名已存在");
+        });
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        user.setUsername(username);
+        User saved = userRepository.save(user);
+        return new UsernameResponse(saved.getUsername());
     }
 }

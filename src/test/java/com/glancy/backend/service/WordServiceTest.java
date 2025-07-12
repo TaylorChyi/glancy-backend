@@ -57,5 +57,12 @@ class WordServiceTest {
 
         WordResponse result = wordService.findWordFromGemini("hello", Language.ENGLISH);
         assertEquals("salutation", result.getDefinitions().get(0));
+
+    void testGetAudio() {
+        byte[] data = new byte[] {1, 2, 3};
+        when(deepSeekClient.fetchAudio("hello", Language.ENGLISH)).thenReturn(data);
+
+        byte[] result = wordService.getAudio("hello", Language.ENGLISH);
+        assertArrayEquals(data, result);
     }
 }

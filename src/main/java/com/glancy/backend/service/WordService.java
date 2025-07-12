@@ -26,7 +26,7 @@ public class WordService {
      * Retrieve word details from the external API.
      */
     @Transactional(readOnly = true)
-    public WordResponse findWord(String term, Language language) {
+    public WordResponse findWordFromDeepSeek(String term, Language language) {
         log.info("Fetching definition for term '{}' in language {}", term, language);
         return deepSeekClient.fetchDefinition(term, language);
     }
@@ -38,5 +38,10 @@ public class WordService {
     public WordResponse findWordFromGemini(String term, Language language) {
         log.info("Fetching definition from Gemini for term '{}' in language {}", term, language);
         return geminiClient.fetchDefinition(term, language);
+
+    @Transactional(readOnly = true)
+    public byte[] getAudioFromDeepSeek(String term, Language language) {
+        log.info("Fetching audio for term '{}' in language {}", term, language);
+        return deepSeekClient.fetchAudio(term, language);
     }
 }
