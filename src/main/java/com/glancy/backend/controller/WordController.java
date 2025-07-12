@@ -3,8 +3,10 @@ package com.glancy.backend.controller;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.dto.SearchRecordRequest;
 import com.glancy.backend.entity.Language;
+import org.springframework.http.MediaType;
 import com.glancy.backend.service.WordService;
 import com.glancy.backend.service.SearchRecordService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,5 +45,25 @@ public class WordController {
                 wordService.findWordWithGpt(term, language) :
                 wordService.findWord(term, language);
         return ResponseEntity.ok(resp);
+    }
+
+    /**
+     * Retrieve the pronunciation audio for a word.
+     */
+    @GetMapping(value = "/audio", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> getAudio(@RequestParam String term,
+                                           @RequestParam Language language) {
+        byte[] data = wordService.getAudio(term, language);
+        return ResponseEntity.ok(data);
+    }
+
+    /**
+     * Retrieve pronunciation audio using Google TTS.
+     */
+    @GetMapping(value = "/pronunciation", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> getPronunciation(@RequestParam String term,
+                                                   @RequestParam Language language) {
+        byte[] audio = wordService.getPronunciation(term, language);
+        return ResponseEntity.ok().body(audio);
     }
 }

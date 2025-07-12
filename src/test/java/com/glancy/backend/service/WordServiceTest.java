@@ -4,6 +4,8 @@ import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.client.DeepSeekClient;
 import com.glancy.backend.client.ChatGptClient;
+import com.glancy.backend.client.GoogleTtsClient;
+import com.glancy.backend.client.GeminiClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,8 @@ class WordServiceTest {
     private DeepSeekClient deepSeekClient;
     @MockBean
     private ChatGptClient chatGptClient;
+    private GoogleTtsClient googleTtsClient;
+    private GeminiClient geminiClient;
 
     @BeforeAll
     static void loadEnv() {
@@ -57,5 +61,32 @@ class WordServiceTest {
 
         WordResponse result = wordService.findWordWithGpt("hi", Language.ENGLISH);
         assertEquals("salutation", result.getDefinitions().get(0));
+
+    void testGetPronunciation() {
+        byte[] data = new byte[] {1, 2, 3};
+        when(googleTtsClient.fetchPronunciation("hi", Language.ENGLISH))
+                .thenReturn(data);
+
+        byte[] result = wordService.getPronunciation("hi", Language.ENGLISH);
+        assertArrayEquals(data, result);
+    }
+
+    @Test
+
+    void testFindWordFromGemini() {
+        WordResponse resp = new WordResponse(1L, "hello",
+                List.of("salutation"), Language.ENGLISH, "Hello world", "həˈloʊ");
+        when(geminiClient.fetchDefinition("hello", Language.ENGLISH))
+                .thenReturn(resp);
+
+        WordResponse result = wordService.findWordFromGemini("hello", Language.ENGLISH);
+        assertEquals("salutation", result.getDefinitions().get(0));
+
+    void testGetAudio() {
+        byte[] data = new byte[] {1, 2, 3};
+        when(deepSeekClient.fetchAudio("hello", Language.ENGLISH)).thenReturn(data);
+
+        byte[] result = wordService.getAudio("hello", Language.ENGLISH);
+        assertArrayEquals(data, result);
     }
 }
