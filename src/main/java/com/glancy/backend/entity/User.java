@@ -1,7 +1,9 @@
 package com.glancy.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 /**
@@ -34,7 +36,11 @@ public class User {
     @Column(nullable = false)
     private Boolean deleted = false;
 
-    @Column(nullable = false)    private Boolean member = false;
+    @Column(nullable = false)
+    private Boolean member = false;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();}
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime lastLoginAt;
+}
