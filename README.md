@@ -45,6 +45,7 @@ java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar
 - `GET /api/users/{id}` – fetch user details
 - `POST /api/users/login` – user login
 - `POST /api/users/{id}/third-party-accounts` – bind a third‑party account (returns the bound account)
+- `GET /api/users/count` – total number of active users
 
 ### Notifications
 - `POST /api/notifications/system` – create a system notification

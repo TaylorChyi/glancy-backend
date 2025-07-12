@@ -158,4 +158,23 @@ class UserServiceTest {
         AvatarResponse fetched = userService.getAvatar(resp.getId());
         assertEquals("url", fetched.getAvatar());
     }
+
+    @Test
+    void testCountActiveUsers() {
+        User u1 = new User();
+        u1.setUsername("a1");
+        u1.setPassword("p");
+        u1.setEmail("a1@example.com");
+        userRepository.save(u1);
+
+        User u2 = new User();
+        u2.setUsername("a2");
+        u2.setPassword("p");
+        u2.setEmail("a2@example.com");
+        u2.setDeleted(true);
+        userRepository.save(u2);
+
+        long count = userService.countActiveUsers();
+        assertEquals(1, count);
+    }
 }
