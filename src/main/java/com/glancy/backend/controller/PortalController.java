@@ -84,6 +84,24 @@ public class PortalController {
     }
 
     /**
+     * Activate membership for a user.
+     */
+    @PostMapping("/users/{id}/member")
+    public ResponseEntity<Void> activateMember(@PathVariable Long id) {
+        userService.activateMembership(id);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Remove membership from a user.
+     */
+    @DeleteMapping("/users/{id}/member")
+    public ResponseEntity<Void> removeMember(@PathVariable Long id) {
+        userService.removeMembership(id);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * Change the log level for a given logger.
      */
     @PostMapping("/log-level")

@@ -237,4 +237,28 @@ public class UserService {
         User saved = userRepository.save(user);
         return new AvatarResponse(saved.getAvatar());
     }
+
+    /**
+     * Set a user as member.
+     */
+    @Transactional
+    public void activateMembership(Long userId) {
+        log.info("Activating membership for user {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        user.setMember(true);
+        userRepository.save(user);
+    }
+
+    /**
+     * Remove member status from a user.
+     */
+    @Transactional
+    public void removeMembership(Long userId) {
+        log.info("Removing membership for user {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        user.setMember(false);
+        userRepository.save(user);
+    }
 }
