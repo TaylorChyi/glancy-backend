@@ -13,6 +13,8 @@ import com.glancy.backend.dto.ThirdPartyAccountRequest;
 import com.glancy.backend.dto.ThirdPartyAccountResponse;
 import com.glancy.backend.dto.AvatarRequest;
 import com.glancy.backend.dto.AvatarResponse;
+import com.glancy.backend.dto.UsernameRequest;
+import com.glancy.backend.dto.UsernameResponse;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.service.UserService;
 
@@ -94,6 +96,17 @@ public class UserController {
             @PathVariable Long id,
             @Valid @RequestBody AvatarRequest req) {
         AvatarResponse resp = userService.updateAvatar(id, req.getAvatar());
+        return ResponseEntity.ok(resp);
+    }
+
+    /**
+     * Update the username for a user.
+     */
+    @PutMapping("/{id}/username")
+    public ResponseEntity<UsernameResponse> updateUsername(
+            @PathVariable Long id,
+            @Valid @RequestBody UsernameRequest req) {
+        UsernameResponse resp = userService.updateUsername(id, req.getUsername());
         return ResponseEntity.ok(resp);
     }
 
