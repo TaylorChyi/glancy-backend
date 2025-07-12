@@ -88,6 +88,7 @@ Example curl commands live in `CURL_TESTS.md`. Run `scripts/curl-tests.sh` to ca
 - `GET /api/portal/user-stats` – fetch overall user counts
 - `POST /api/portal/alert-recipients` – add an alert email address
 - `GET /api/portal/alert-recipients` – list alert email addresses
+- `PUT /api/portal/alert-recipients/{id}` – update an alert email address
 - `DELETE /api/portal/alert-recipients/{id}` – remove an alert email address
 - `GET /api/portal/daily-active` – daily active users and rate
 

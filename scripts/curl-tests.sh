@@ -91,6 +91,11 @@ curl -i -H "Content-Type: application/json" \
 section "List alert recipients"
 curl -i "$BASE_URL/api/portal/alert-recipients"
 
+section "Update alert recipient"
+curl -i -X PUT -H "Content-Type: application/json" \
+    -d '{"email":"alert2@example.com"}' \
+    "$BASE_URL/api/portal/alert-recipients/1"
+
 section "Delete alert recipient"
 curl -i -X DELETE "$BASE_URL/api/portal/alert-recipients/1"
 

@@ -41,6 +41,21 @@ public class AlertRecipientService {
     }
 
     /**
+     * Update an existing email address.
+     */
+    @Transactional
+    public AlertRecipientResponse updateRecipient(Long id, AlertRecipientRequest request) {
+        AlertRecipient recipient = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("收件人不存在"));
+        if (!recipient.getEmail().equals(request.getEmail()) && repository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("邮箱已存在");
+        }
+        recipient.setEmail(request.getEmail());
+        AlertRecipient saved = repository.save(recipient);
+        return toResponse(saved);
+    }
+
+    /**
      * Remove an email address by id.
      */
     @Transactional
