@@ -34,6 +34,16 @@ public class AlertRecipientController {
     }
 
     /**
+     * Update an alert recipient email address.
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<AlertRecipientResponse> update(@PathVariable Long id,
+            @Valid @RequestBody AlertRecipientRequest req) {
+        AlertRecipientResponse resp = alertRecipientService.updateRecipient(id, req);
+        return ResponseEntity.ok(resp);
+    }
+
+    /**
      * List all alert recipient email addresses.
      */
     @GetMapping
