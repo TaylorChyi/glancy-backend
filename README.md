@@ -14,6 +14,13 @@ Glancy Backend is a Spring Boot service that powers the Glancy dictionary applic
 2. Provide a `DB_PASSWORD` value via a `.env` file or environment variable.
 3. Ensure MySQL is running with a database named `glancy_db` and credentials as defined in `src/main/resources/application.yml`.
 
+## Database Initialization
+
+Run the schema script to create the required tables:
+```bash
+mysql -u glancy_user -p glancy_db < src/main/resources/sql/schema.sql
+```
+
 ## Building and Running
 
 Start the application with:
