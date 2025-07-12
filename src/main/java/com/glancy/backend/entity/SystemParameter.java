@@ -20,6 +20,6 @@ public class SystemParameter {
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 
-    @Column(nullable = false, length = 255)
+    @Column(name = "param_value", nullable = false, length = 255)
     private String value;
 }

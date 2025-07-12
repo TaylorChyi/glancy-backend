@@ -86,4 +86,25 @@ class PortalControllerTest {
         mockMvc.perform(delete("/api/portal/users/1/member"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void setEmailEnabled() throws Exception {
+        SystemParameterResponse resp = new SystemParameterResponse(1L,
+                "email.notifications.enabled", "true");
+        when(parameterService.upsert(any(SystemParameterRequest.class)))
+                .thenReturn(resp);
+        mockMvc.perform(post("/api/portal/email-enabled?enabled=true"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getEmailEnabled() throws Exception {
+        SystemParameterResponse resp = new SystemParameterResponse(1L,
+                "email.notifications.enabled", "true");
+        when(parameterService.getByName("email.notifications.enabled"))
+                .thenReturn(resp);
+        mockMvc.perform(get("/api/portal/email-enabled"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
 }
