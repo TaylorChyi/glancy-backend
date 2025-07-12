@@ -27,4 +27,10 @@ public class WordService {
         log.info("Fetching definition for term '{}' in language {}", term, language);
         return deepSeekClient.fetchDefinition(term, language);
     }
+
+    @Transactional(readOnly = true)
+    public byte[] getAudio(String term, Language language) {
+        log.info("Fetching audio for term '{}' in language {}", term, language);
+        return deepSeekClient.fetchAudio(term, language);
+    }
 }
