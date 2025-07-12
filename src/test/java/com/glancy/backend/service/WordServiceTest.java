@@ -44,4 +44,13 @@ class WordServiceTest {
         WordResponse result = wordService.findWord("hello", Language.ENGLISH);
         assertEquals("greeting", result.getDefinitions().get(0));
     }
+
+    @Test
+    void testGetAudio() {
+        byte[] data = new byte[] {1, 2, 3};
+        when(deepSeekClient.fetchAudio("hello", Language.ENGLISH)).thenReturn(data);
+
+        byte[] result = wordService.getAudio("hello", Language.ENGLISH);
+        assertArrayEquals(data, result);
+    }
 }
