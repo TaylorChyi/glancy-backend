@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,6 +52,8 @@ class SearchRecordServiceTest {
         user.setPassword("p");
         user.setEmail("s@example.com");
         userRepository.save(user);
+        user.setLastLoginAt(LocalDateTime.now());
+        userRepository.save(user);
 
         SearchRecordRequest req = new SearchRecordRequest();
         req.setTerm("hello");
@@ -64,5 +67,22 @@ class SearchRecordServiceTest {
 
         searchRecordService.clearRecords(user.getId());
         assertTrue(searchRecordService.getRecords(user.getId()).isEmpty());
+    }
+
+    @Test
+    void testSaveRecordWithoutLogin() {
+        User user = new User();
+        user.setUsername("nologin");
+        user.setPassword("p");
+        user.setEmail("n@example.com");
+        userRepository.save(user);
+
+        SearchRecordRequest req = new SearchRecordRequest();
+        req.setTerm("hi");
+        req.setLanguage(Language.ENGLISH);
+
+        Exception ex = assertThrows(IllegalStateException.class,
+                () -> searchRecordService.saveRecord(user.getId(), req));
+        assertEquals("用户未登录", ex.getMessage());
     }
 }

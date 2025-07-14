@@ -43,6 +43,10 @@ public class SearchRecordService {
                     log.warn("User with id {} not found", userId);
                     return new IllegalArgumentException("用户不存在");
                 });
+        if (user.getLastLoginAt() == null) {
+            log.warn("User {} is not logged in", userId);
+            throw new IllegalStateException("用户未登录");
+        }
         if (Boolean.FALSE.equals(user.getMember())) {
             LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
             LocalDateTime endOfDay = startOfDay.plusDays(1);
