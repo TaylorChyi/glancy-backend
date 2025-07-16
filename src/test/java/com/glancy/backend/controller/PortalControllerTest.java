@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.context.annotation.Import;
 
@@ -114,6 +115,7 @@ class PortalControllerTest {
                 .andExpect(content().string("true"));
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void setLogLevelAuthorized() throws Exception {
         LogLevelRequest req = new LogLevelRequest();
@@ -129,6 +131,7 @@ class PortalControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void setLogLevelUnauthorized() throws Exception {
         LogLevelRequest req = new LogLevelRequest();
@@ -143,6 +146,7 @@ class PortalControllerTest {
                 .andExpect(status().isForbidden());
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void setLogLevelInvalid() throws Exception {
         LogLevelRequest req = new LogLevelRequest();
