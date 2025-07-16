@@ -15,14 +15,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.context.annotation.Import;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
 @WebMvcTest(PortalController.class)
+@Import(com.glancy.backend.config.SecurityConfig.class)
 class PortalControllerTest {
     @MockBean
     private AlertService alertService;
@@ -45,7 +48,7 @@ class PortalControllerTest {
     void userStats() throws Exception {
         UserStatisticsResponse resp = new UserStatisticsResponse(2, 1, 0);
         when(userService.getStatistics()).thenReturn(resp);
-        mockMvc.perform(get("/api/portal/user-stats"))
+        mockMvc.perform(get("/api/portal/user-stats").with(httpBasic("admin", "password")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalUsers").value(2));
     }
@@ -54,7 +57,7 @@ class PortalControllerTest {
     void dailyActive() throws Exception {
         DailyActiveUserResponse resp = new DailyActiveUserResponse(1, 0.5);
         when(userService.getDailyActiveStats()).thenReturn(resp);
-        mockMvc.perform(get("/api/portal/daily-active"))
+        mockMvc.perform(get("/api/portal/daily-active").with(httpBasic("admin", "password")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.activeUsers").value(1));
     }
@@ -67,6 +70,7 @@ class PortalControllerTest {
         req.setName("n");
         req.setValue("v");
         mockMvc.perform(post("/api/portal/parameters")
+                        .with(httpBasic("admin", "password"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
@@ -76,14 +80,14 @@ class PortalControllerTest {
     @Test
     void activateMember() throws Exception {
         doNothing().when(userService).activateMembership(1L);
-        mockMvc.perform(post("/api/portal/users/1/member"))
+        mockMvc.perform(post("/api/portal/users/1/member").with(httpBasic("admin", "password")))
                 .andExpect(status().isOk());
     }
 
     @Test
     void removeMember() throws Exception {
         doNothing().when(userService).removeMembership(1L);
-        mockMvc.perform(delete("/api/portal/users/1/member"))
+        mockMvc.perform(delete("/api/portal/users/1/member").with(httpBasic("admin", "password")))
                 .andExpect(status().isOk());
     }
 
@@ -93,7 +97,7 @@ class PortalControllerTest {
                 "email.notifications.enabled", "true");
         when(parameterService.upsert(any(SystemParameterRequest.class)))
                 .thenReturn(resp);
-        mockMvc.perform(post("/api/portal/email-enabled?enabled=true"))
+        mockMvc.perform(post("/api/portal/email-enabled?enabled=true").with(httpBasic("admin", "password")))
                 .andExpect(status().isOk());
     }
 
@@ -103,7 +107,7 @@ class PortalControllerTest {
                 "email.notifications.enabled", "true");
         when(parameterService.getByName("email.notifications.enabled"))
                 .thenReturn(resp);
-        mockMvc.perform(get("/api/portal/email-enabled"))
+        mockMvc.perform(get("/api/portal/email-enabled").with(httpBasic("admin", "password")))
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
     }
