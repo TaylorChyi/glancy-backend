@@ -41,38 +41,25 @@ public class ChatGptClient {
         List<Map<String, String>> messages;
         if (language == Language.SPANISH) {
             messages = List.of(
-                    Map.of("role", "system", "content", "Eres un asistente de diccionario."),
-              }
-        if (language == Language.FRENCH) {
+                Map.of("role", "system", "content", "Eres un asistente de diccionario."),
+                Map.of("role", "user", "content",
+                    "Explica '" + term + "' en español. " +
+                    "Responde con el formato:\nDefinición: <texto>\nSinónimos: <lista separada por comas>")
+            );
+        } else if (language == Language.FRENCH) {
             messages = List.of(
-                    Map.of(
-                            "role",
-                            "system",
-                            "content",
-                            "Vous êtes un assistant de dictionnaire."
-                    ),
-                    Map.of(
-                            "role",
-                            "user",
-                            "content",
-                            "Explica '" + term + "' en español. "
-                                    + "Responde con el formato:\nDefinición: <texto>\nSinónimos: <lista separada por comas>"
-                            "Fournis la définition de '" + term + "' en français au format:\n" +
-                                    "Définition: ...\nSynonymes: ...\n" +
-                                    "Les synonymes doivent être séparés par des virgules."
-                    )
+                Map.of("role", "system", "content", "Vous êtes un assistant de dictionnaire."),
+                Map.of("role", "user", "content",
+                    "Fournis la définition de '" + term + "' en français au format:\n" +
+                    "Définition: ...\nSynonymes: ...\n" +
+                    "Les synonymes doivent être séparés par des virgules.")
             );
         } else {
             messages = List.of(
-                    Map.of("role", "system", "content", "You are a dictionary assistant."),
-                    Map.of(
-                            "role",
-                            "user",
-                            "content",
-                            "Define '" + term + "' in "
-                                    + language.name().toLowerCase()
-                                    + " and provide synonyms separated by comma."
-                    )
+                Map.of("role", "system", "content", "You are a dictionary assistant."),
+                Map.of("role", "user", "content",
+                    "Define '" + term + "' in " + language.name().toLowerCase() +
+                    " and provide synonyms separated by comma.")
             );
         }
         payload.put("messages", messages);
