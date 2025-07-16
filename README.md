@@ -92,3 +92,8 @@ Example curl commands live in `CURL_TESTS.md`. Run `scripts/curl-tests.sh` to ca
 - `DELETE /api/portal/alert-recipients/{id}` – remove an alert email address
 - `GET /api/portal/daily-active` – daily active users and rate
 
+
+## 版本管理
+
+项目版本号定义在 `pom.xml` 中。默认合并时只递增补丁版本号。若提升中版本号，请在 PR 中说明，GitHub Actions 会在检测到中版本号变更时自动部署。
+
