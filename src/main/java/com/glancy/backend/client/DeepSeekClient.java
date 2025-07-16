@@ -18,8 +18,8 @@ public class DeepSeekClient {
     private final String apiKey;
 
     public DeepSeekClient(RestTemplate restTemplate,
-                          @Value("${deepseek.base-url:https://api.deepseek.com}") String baseUrl,
-                          @Value("${deepseek.api-key:}") String apiKey) {
+                          @Value("${thirdparty.deepseek.base-url:https://api.deepseek.com}") String baseUrl,
+                          @Value("${thirdparty.deepseek.api-key:}") String apiKey) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
         this.apiKey = apiKey;

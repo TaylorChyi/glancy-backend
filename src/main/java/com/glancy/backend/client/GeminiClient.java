@@ -16,7 +16,7 @@ public class GeminiClient {
     private final String baseUrl;
 
     public GeminiClient(RestTemplate restTemplate,
-                        @Value("${gemini.base-url:https://api.gemini.com}") String baseUrl) {
+                        @Value("${thirdparty.gemini.base-url:https://api.gemini.com}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }

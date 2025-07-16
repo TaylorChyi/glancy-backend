@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
@@ -20,8 +21,10 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
 @WebMvcTest(AlertRecipientController.class)
+@Import(com.glancy.backend.config.SecurityConfig.class)
 class AlertRecipientControllerTest {
     @MockBean
     private AlertService alertService;
@@ -44,6 +47,7 @@ class AlertRecipientControllerTest {
         req.setEmail("a@example.com");
 
         mockMvc.perform(post("/api/portal/alert-recipients")
+                        .with(httpBasic("admin", "password"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
@@ -54,7 +58,7 @@ class AlertRecipientControllerTest {
     void listRecipients() throws Exception {
         when(alertRecipientService.listRecipients()).thenReturn(List.of(new AlertRecipientResponse(1L, "a@example.com")));
 
-        mockMvc.perform(get("/api/portal/alert-recipients"))
+        mockMvc.perform(get("/api/portal/alert-recipients").with(httpBasic("admin", "password")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1L));
     }
@@ -68,6 +72,7 @@ class AlertRecipientControllerTest {
         req.setEmail("b@example.com");
 
         mockMvc.perform(put("/api/portal/alert-recipients/1")
+                        .with(httpBasic("admin", "password"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
@@ -77,7 +82,7 @@ class AlertRecipientControllerTest {
     @Test
     void deleteRecipient() throws Exception {
         doNothing().when(alertRecipientService).deleteRecipient(1L);
-        mockMvc.perform(delete("/api/portal/alert-recipients/1"))
+        mockMvc.perform(delete("/api/portal/alert-recipients/1").with(httpBasic("admin", "password")))
                 .andExpect(status().isOk());
     }
 }
