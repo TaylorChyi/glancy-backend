@@ -145,12 +145,14 @@ public class UserService {
         }
 
         user.setLastLoginAt(LocalDateTime.now());
+        String token = java.util.UUID.randomUUID().toString();
+        user.setLoginToken(token);
         userRepository.save(user);
 
         log.info("User {} logged in", user.getId());
         log.debug("User {} logged in", user.getId());
         return new LoginResponse(user.getId(), user.getUsername(), user.getEmail(),
-                user.getAvatar(), user.getPhone());
+                user.getAvatar(), user.getPhone(), token);
     }
 
     /**
@@ -213,6 +215,13 @@ public class UserService {
     @Transactional(readOnly = true)
     public long countActiveUsers() {
         return userRepository.countByDeletedFalse();
+    }
+
+    @Transactional(readOnly = true)
+    public void validateToken(Long userId, String token) {
+        userRepository.findById(userId)
+                .filter(u -> token != null && token.equals(u.getLoginToken()))
+                .orElseThrow(() -> new IllegalArgumentException("无效的用户令牌"));
     }
 
     /**

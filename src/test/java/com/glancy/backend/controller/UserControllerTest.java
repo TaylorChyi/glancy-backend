@@ -76,7 +76,7 @@ class UserControllerTest {
 
     @Test
     void login() throws Exception {
-        LoginResponse resp = new LoginResponse(1L, "u", "e", null, null);
+        LoginResponse resp = new LoginResponse(1L, "u", "e", null, null, "tkn");
         when(userService.login(any(LoginRequest.class))).thenReturn(resp);
 
         LoginRequest req = new LoginRequest();
