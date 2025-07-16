@@ -28,7 +28,9 @@ class WordServiceTest {
     private DeepSeekClient deepSeekClient;
     @MockBean
     private ChatGptClient chatGptClient;
+    @MockBean
     private GoogleTtsClient googleTtsClient;
+    @MockBean
     private GeminiClient geminiClient;
 
     @BeforeAll
@@ -63,7 +65,7 @@ class WordServiceTest {
         assertEquals("salutation", result.getDefinitions().get(0));
     }
 
-    // @Test
+    @Test
     void testGetPronunciation() {
         byte[] data = new byte[] {1, 2, 3};
         when(googleTtsClient.fetchPronunciation("hi", Language.ENGLISH))
@@ -73,7 +75,7 @@ class WordServiceTest {
         assertArrayEquals(data, result);
     }
 
-    // @Test
+    @Test
     void testFindWordFromGemini() {
         WordResponse resp = new WordResponse(1L, "hello",
                 List.of("salutation"), Language.ENGLISH, "Hello world", "həˈloʊ");
@@ -81,7 +83,7 @@ class WordServiceTest {
                 .thenReturn(resp);
 
         WordResponse result = wordService.findWordFromGemini("hello", Language.ENGLISH);
-        assertEquals("salutation", result.getDefinitions().get(0));
+        assertEquals(resp, result);
     }
 
     @Test
