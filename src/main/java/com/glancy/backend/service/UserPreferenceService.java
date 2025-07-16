@@ -41,6 +41,7 @@ public class UserPreferenceService {
         pref.setTheme(req.getTheme());
         pref.setSystemLanguage(req.getSystemLanguage());
         pref.setSearchLanguage(req.getSearchLanguage());
+        pref.setDictionaryModel(req.getDictionaryModel());
         UserPreference saved = userPreferenceRepository.save(pref);
         return toResponse(saved);
     }
@@ -58,6 +59,7 @@ public class UserPreferenceService {
 
     private UserPreferenceResponse toResponse(UserPreference pref) {
         return new UserPreferenceResponse(pref.getId(), pref.getUser().getId(),
-                pref.getTheme(), pref.getSystemLanguage(), pref.getSearchLanguage());
+                pref.getTheme(), pref.getSystemLanguage(),
+                pref.getSearchLanguage(), pref.getDictionaryModel());
     }
 }

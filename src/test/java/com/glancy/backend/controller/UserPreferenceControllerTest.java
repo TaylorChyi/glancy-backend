@@ -5,6 +5,7 @@ import com.glancy.backend.dto.UserPreferenceRequest;
 import com.glancy.backend.dto.UserPreferenceResponse;
 import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.UserPreferenceService;
+import com.glancy.backend.entity.DictionaryModel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,13 +37,14 @@ class UserPreferenceControllerTest {
 
     @Test
     void savePreference() throws Exception {
-        UserPreferenceResponse resp = new UserPreferenceResponse(1L, 2L, "dark", "en", "en");
+        UserPreferenceResponse resp = new UserPreferenceResponse(1L, 2L, "dark", "en", "en", DictionaryModel.DEEPSEEK);
         when(userPreferenceService.savePreference(eq(2L), any(UserPreferenceRequest.class))).thenReturn(resp);
 
         UserPreferenceRequest req = new UserPreferenceRequest();
         req.setTheme("dark");
         req.setSystemLanguage("en");
         req.setSearchLanguage("en");
+        req.setDictionaryModel(DictionaryModel.DEEPSEEK);
 
         mockMvc.perform(post("/api/preferences/user/2")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -53,7 +55,7 @@ class UserPreferenceControllerTest {
 
     @Test
     void getPreference() throws Exception {
-        UserPreferenceResponse resp = new UserPreferenceResponse(1L, 2L, "dark", "en", "en");
+        UserPreferenceResponse resp = new UserPreferenceResponse(1L, 2L, "dark", "en", "en", DictionaryModel.DEEPSEEK);
         when(userPreferenceService.getPreference(2L)).thenReturn(resp);
 
         mockMvc.perform(get("/api/preferences/user/2"))

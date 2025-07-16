@@ -2,6 +2,7 @@ package com.glancy.backend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import com.glancy.backend.entity.DictionaryModel;
 
 /**
  * DTO representing saved user preferences.
@@ -14,4 +15,5 @@ public class UserPreferenceResponse {
     private String theme;
     private String systemLanguage;
     private String searchLanguage;
+    private DictionaryModel dictionaryModel;
 }
