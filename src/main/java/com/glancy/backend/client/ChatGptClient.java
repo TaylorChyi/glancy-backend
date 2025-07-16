@@ -38,17 +38,37 @@ public class ChatGptClient {
 
         Map<String, Object> payload = new HashMap<>();
         payload.put("model", "gpt-3.5-turbo");
-        List<Map<String, String>> messages = List.of(
-                Map.of("role", "system", "content", "You are a dictionary assistant."),
-                Map.of(
-                        "role",
-                        "user",
-                        "content",
-                        "Define '" + term + "' in "
-                                + language.name().toLowerCase()
-                                + " and provide synonyms separated by comma."
-                )
-        );
+        List<Map<String, String>> messages;
+        if (language == Language.FRENCH) {
+            messages = List.of(
+                    Map.of(
+                            "role",
+                            "system",
+                            "content",
+                            "Vous êtes un assistant de dictionnaire."
+                    ),
+                    Map.of(
+                            "role",
+                            "user",
+                            "content",
+                            "Fournis la définition de '" + term + "' en français au format:\n" +
+                                    "Définition: ...\nSynonymes: ...\n" +
+                                    "Les synonymes doivent être séparés par des virgules."
+                    )
+            );
+        } else {
+            messages = List.of(
+                    Map.of("role", "system", "content", "You are a dictionary assistant."),
+                    Map.of(
+                            "role",
+                            "user",
+                            "content",
+                            "Define '" + term + "' in "
+                                    + language.name().toLowerCase()
+                                    + " and provide synonyms separated by comma."
+                    )
+            );
+        }
         payload.put("messages", messages);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);

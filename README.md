@@ -96,6 +96,19 @@ Japanese prompt guidance can be found in `PROMPT_GUIDE_JA.md`.
 - `DELETE /api/portal/alert-recipients/{id}` – remove an alert email address
 - `GET /api/portal/daily-active` – daily active users and rate
 
+## ChatGPT Prompt
+
+When requesting French definitions, the backend sends the following instruction to GPT:
+
+```
+Vous \u00eates un assistant de dictionnaire.
+Fournis la d\u00e9finition de '<terme>' en fran\u00e7ais au format:
+D\u00e9finition: ...
+Synonymes: ...
+Les synonymes doivent \u00eatre s\u00e9par\u00e9s par des virgules.
+```
+
+This format ensures stable parsing of the returned text.
 
 ## 版本管理
 
