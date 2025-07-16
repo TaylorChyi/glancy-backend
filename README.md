@@ -51,6 +51,7 @@ For prompt templates used when querying models, see `docs/PROMPT_CN.md`.
 Japanese prompt guidance can be found in `PROMPT_GUIDE_JA.md`. 
 German prompt guidance is available in `PROMPT_GUIDE_DE.md`.
 English prompt guidance can be found in `PROMPT_GUIDE_EN.md`.
+Russian prompt guidance can be found in `PROMPT_GUIDE_RU.md`.
 ## API Endpoints
 
 
