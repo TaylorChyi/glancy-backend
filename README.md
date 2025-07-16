@@ -48,6 +48,7 @@ java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar
 ## Quick API Check
 Example curl commands live in `CURL_TESTS.md`. Run `scripts/curl-tests.sh` to call common endpoints.
 Japanese prompt guidance can be found in `PROMPT_GUIDE_JA.md`.
+English prompt guidance can be found in `PROMPT_GUIDE_EN.md`.
 ## API Endpoints
 
 
