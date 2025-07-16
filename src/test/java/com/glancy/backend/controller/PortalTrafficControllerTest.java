@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.context.annotation.Import;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,8 +21,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
 @WebMvcTest(PortalTrafficController.class)
+@Import(com.glancy.backend.config.SecurityConfig.class)
 class PortalTrafficControllerTest {
     @MockBean
     private AlertService alertService;
@@ -48,6 +51,7 @@ class PortalTrafficControllerTest {
         req.setUserAgent("ua");
 
         mockMvc.perform(post("/api/portal/traffic")
+                        .with(httpBasic("admin", "password"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
@@ -61,6 +65,7 @@ class PortalTrafficControllerTest {
                 .thenReturn(List.of(5L, 3L));
 
         mockMvc.perform(get("/api/portal/traffic/daily")
+                        .with(httpBasic("admin", "password"))
                         .param("start", "2024-01-01")
                         .param("end", "2024-01-02"))
                 .andExpect(status().isOk())

@@ -13,7 +13,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: 判定是否需要部署
+        id: version_check
+        run: |
+          current_version=$(grep -A1 '<artifactId>glancy-backend</artifactId>' pom.xml | grep '<version>' | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
+          previous_version=$(git show HEAD~1:pom.xml | grep -A1 '<artifactId>glancy-backend</artifactId>' | grep '<version>' | sed -E 's/.*<version>(.*)<\/version>.*/\1/' || echo '')
+          curr_minor=$(echo "$current_version" | cut -d. -f2)
+          prev_minor=$(echo "$previous_version" | cut -d. -f2)
+          if [ "$curr_minor" != "$prev_minor" ]; then
+            echo "deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "deploy=false" >> $GITHUB_OUTPUT
+          fi
+          echo "version=$current_version" >> $GITHUB_OUTPUT
+
       - name: Setup SSH
+        if: steps.version_check.outputs.deploy == 'true'
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
@@ -21,9 +36,10 @@ jobs:
           ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
           ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
-      - name: Deploy to Remote Server
+      - name: 部署到远程服务器
+        if: steps.version_check.outputs.deploy == 'true'
         run: |
-          ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+          ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF2'
             set -e
             cd /home/ecs-user/glancy-backend
 
@@ -46,7 +62,7 @@ jobs:
             fi
 
             echo "🚀 启动新服务"
-            nohup java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar > backend.log 2>&1 &
+            nohup java -jar target/glancy-backend-${{ steps.version_check.outputs.version }}.jar > backend.log 2>&1 &
 
             echo "✅ 部署完成"
           EOF

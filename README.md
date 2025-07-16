@@ -12,9 +12,11 @@ Glancy Backend is a Spring Boot service that powers the Glancy dictionary applic
 
 1. Clone this repository.
 2. Provide a `DB_PASSWORD` value via a `.env` file or environment variable.
-3. Ensure MySQL is running with a database named `glancy_db` and credentials as defined in `src/main/resources/application.yml`.
-4. Configure optional API base URLs in `application.yml` under the `thirdparty` section.
-5. `search.limit.nonMember` sets the daily search limit for non-members (default `10`).
+3. Ensure MySQL is running with a database named `glancy_db`, matching credentials, and SSL certificates configured as `useSSL=true` requires.
+4. Use the `local` Spring profile if SSL is unavailable: `./mvnw spring-boot:run -Dspring.profiles.active=local`.
+5. Configure optional API base URLs in `application.yml` under the `thirdparty` section.
+Ensure the MySQL server provides SSL certificates trusted by the JVM. Configure the truststore if necessary when running with `useSSL=true`.
+6. `search.limit.nonMember` sets the daily search limit for non-members (default `10`).
 
 ## Database Initialization
 
@@ -92,4 +94,9 @@ Example curl commands live in `CURL_TESTS.md`. Run `scripts/curl-tests.sh` to ca
 - `PUT /api/portal/alert-recipients/{id}` – update an alert email address
 - `DELETE /api/portal/alert-recipients/{id}` – remove an alert email address
 - `GET /api/portal/daily-active` – daily active users and rate
+
+
+## 版本管理
+
+项目版本号定义在 `pom.xml` 中。默认合并时只递增补丁版本号。若提升中版本号，请在 PR 中说明，GitHub Actions 会在检测到中版本号变更时自动部署。
 

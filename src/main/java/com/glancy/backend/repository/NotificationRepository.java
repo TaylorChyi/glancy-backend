@@ -14,4 +14,8 @@ import com.glancy.backend.entity.Notification;
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     List<Notification> findBySystemLevelTrue();
     List<Notification> findByUserId(Long userId);
+
+    List<Notification> findByUserIdOrderByCreatedAtDesc(Long userId);
+
+    List<Notification> findBySystemLevelTrueOrderByCreatedAtDesc();
 }

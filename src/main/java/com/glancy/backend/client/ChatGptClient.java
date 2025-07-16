@@ -21,8 +21,8 @@ public class ChatGptClient {
     private final String apiKey;
 
     public ChatGptClient(RestTemplate restTemplate,
-                         @Value("${openai.base-url:https://api.openai.com/v1}") String baseUrl,
-                         @Value("${openai.api-key:}") String apiKey) {
+                         @Value("${thirdparty.openai.base-url:https://api.openai.com/v1}") String baseUrl,
+                         @Value("${thirdparty.openai.api-key:}") String apiKey) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
         this.apiKey = apiKey;

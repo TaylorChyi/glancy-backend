@@ -1,8 +1,11 @@
 #!/bin/bash
 # Quick API smoke test using curl
 # BASE_URL defaults to http://localhost:8080
+# Optional third-party URLs can be set with environment variables like
+# THIRDPARTY_DEEPSEEK_BASE_URL or THIRDPARTY_OPENAI_BASE_URL.
 
 BASE_URL=${BASE_URL:-http://localhost:8080}
+ADMIN_AUTH="-u admin:password"
 
 function section() {
     echo -e "\n== $1 =="
@@ -30,7 +33,7 @@ section "List FAQs"
 curl -i "$BASE_URL/api/faqs"
 
 section "Create system notification"
-curl -i -H "Content-Type: application/json" \
+curl -i $ADMIN_AUTH -H "Content-Type: application/json" \
     -d '{"message":"System notice"}' \
     "$BASE_URL/api/notifications/system"
 
@@ -70,49 +73,49 @@ section "Clear search records"
 curl -i -X DELETE "$BASE_URL/api/search-records/user/1"
 
 section "Portal user stats"
-curl -i "$BASE_URL/api/portal/user-stats"
+curl -i $ADMIN_AUTH "$BASE_URL/api/portal/user-stats"
 
 section "Daily active users"
-curl -i "$BASE_URL/api/portal/daily-active"
+curl -i $ADMIN_AUTH "$BASE_URL/api/portal/daily-active"
 
 section "Add system parameter"
-curl -i -H "Content-Type: application/json" \
+curl -i $ADMIN_AUTH -H "Content-Type: application/json" \
     -d '{"name":"motd","value":"hello"}' \
     "$BASE_URL/api/portal/parameters"
 
 section "Get system parameter"
-curl -i "$BASE_URL/api/portal/parameters/motd"
+curl -i $ADMIN_AUTH "$BASE_URL/api/portal/parameters/motd"
 
 section "List system parameters"
-curl -i "$BASE_URL/api/portal/parameters"
+curl -i $ADMIN_AUTH "$BASE_URL/api/portal/parameters"
 
 section "Add alert recipient"
-curl -i -H "Content-Type: application/json" \
+curl -i $ADMIN_AUTH -H "Content-Type: application/json" \
     -d '{"email":"alert@example.com"}' \
     "$BASE_URL/api/portal/alert-recipients"
 
 section "List alert recipients"
-curl -i "$BASE_URL/api/portal/alert-recipients"
+curl -i $ADMIN_AUTH "$BASE_URL/api/portal/alert-recipients"
 
 section "Update alert recipient"
-curl -i -X PUT -H "Content-Type: application/json" \
+curl -i -X PUT $ADMIN_AUTH -H "Content-Type: application/json" \
     -d '{"email":"alert2@example.com"}' \
     "$BASE_URL/api/portal/alert-recipients/1"
 
 section "Delete alert recipient"
-curl -i -X DELETE "$BASE_URL/api/portal/alert-recipients/1"
+curl -i -X DELETE $ADMIN_AUTH "$BASE_URL/api/portal/alert-recipients/1"
 
 section "Set email notifications enabled"
-curl -i -X POST "$BASE_URL/api/portal/email-enabled?enabled=true"
+curl -i -X POST $ADMIN_AUTH "$BASE_URL/api/portal/email-enabled?enabled=true"
 
 section "Get email notifications enabled"
-curl -i "$BASE_URL/api/portal/email-enabled"
+curl -i $ADMIN_AUTH "$BASE_URL/api/portal/email-enabled"
 
 section "Record portal traffic"
-curl -i -H "Content-Type: application/json" \
+curl -i $ADMIN_AUTH -H "Content-Type: application/json" \
     -d '{"path":"/","ip":"127.0.0.1","userAgent":"curl"}' \
     "$BASE_URL/api/portal/traffic"
 
 section "Daily traffic counts"
-curl -i "$BASE_URL/api/portal/traffic/daily?start=2024-01-01&end=2024-01-02"
+curl -i $ADMIN_AUTH "$BASE_URL/api/portal/traffic/daily?start=2024-01-01&end=2024-01-02"
 
