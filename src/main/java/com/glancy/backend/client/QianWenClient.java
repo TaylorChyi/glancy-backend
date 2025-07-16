@@ -16,7 +16,7 @@ public class QianWenClient {
     private final String baseUrl;
 
     public QianWenClient(RestTemplate restTemplate,
-                         @Value("${qianwen.base-url:https://api.qianwen.com}") String baseUrl) {
+                         @Value("${thirdparty.qianwen.base-url:https://api.qianwen.com}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }

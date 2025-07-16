@@ -19,9 +19,9 @@ public class GlancyBackendApplication {
     public static void main(String[] args) {
         io.github.cdimascio.dotenv.Dotenv dotenv = io.github.cdimascio.dotenv.Dotenv.configure().load();
         System.setProperty("DB_PASSWORD", dotenv.get("DB_PASSWORD"));
-        String apiKey = dotenv.get("deepseek.api-key");
+        String apiKey = dotenv.get("thirdparty.deepseek.api-key");
         if (apiKey != null) {
-            System.setProperty("deepseek.api-key", apiKey);
+            System.setProperty("thirdparty.deepseek.api-key", apiKey);
         }
         SpringApplication.run(GlancyBackendApplication.class, args);
     }

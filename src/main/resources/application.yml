@@ -34,5 +34,13 @@ logging:
 thirdparty:
     deepseek:
         base-url: https://api.deepseek.com
+        api-key: ''
     gemini:
         base-url: https://api.gemini.com
+    openai:
+        base-url: https://api.openai.com/v1
+        api-key: ''
+    qianwen:
+        base-url: https://api.qianwen.com
+    google-tts:
+        base-url: https://translate.google.com

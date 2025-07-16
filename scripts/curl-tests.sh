@@ -1,6 +1,8 @@
 #!/bin/bash
 # Quick API smoke test using curl
 # BASE_URL defaults to http://localhost:8080
+# Optional third-party URLs can be set with environment variables like
+# THIRDPARTY_DEEPSEEK_BASE_URL or THIRDPARTY_OPENAI_BASE_URL.
 
 BASE_URL=${BASE_URL:-http://localhost:8080}
 
