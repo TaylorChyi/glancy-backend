@@ -23,7 +23,6 @@ public class GlancyBackendApplication {
         if (apiKey != null) {
             System.setProperty("deepseek.api-key", apiKey);
         }
-        log.info("Loaded DB_PASSWORD: {}", dotenv.get("DB_PASSWORD"));
         SpringApplication.run(GlancyBackendApplication.class, args);
     }
 
