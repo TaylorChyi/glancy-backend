@@ -66,11 +66,13 @@ class NotificationControllerTest {
 
     @Test
     void getNotificationsForUser() throws Exception {
-        NotificationResponse resp = new NotificationResponse(1L, "msg", false, 2L);
-        when(notificationService.getNotificationsForUser(2L)).thenReturn(List.of(resp));
+        NotificationResponse uresp = new NotificationResponse(1L, "user", false, 2L);
+        NotificationResponse sresp = new NotificationResponse(2L, "sys", true, null);
+        when(notificationService.getNotificationsForUser(2L)).thenReturn(List.of(uresp, sresp));
 
         mockMvc.perform(get("/api/notifications/user/2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].userId").value(2L));
+                .andExpect(jsonPath("$[0].message").value("user"))
+                .andExpect(jsonPath("$[1].message").value("sys"));
     }
 }

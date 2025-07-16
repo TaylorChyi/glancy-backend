@@ -66,5 +66,7 @@ class NotificationServiceTest {
 
         List<NotificationResponse> list = notificationService.getNotificationsForUser(user.getId());
         assertEquals(2, list.size());
+        assertEquals("user msg", list.get(0).getMessage());
+        assertEquals("sys msg", list.get(1).getMessage());
     }
 }
