@@ -5,6 +5,7 @@ import com.glancy.backend.entity.Language;
 import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.SearchRecordService;
 import com.glancy.backend.service.WordService;
+import com.glancy.backend.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -31,14 +33,19 @@ class WordControllerTest {
     private SearchRecordService searchRecordService;
     @MockBean
     private AlertService alertService;
+    @MockBean
+    private UserService userService;
 
     @Test
     void testGetWord() throws Exception {
         WordResponse resp = new WordResponse(1L, "hello", List.of("g"), Language.ENGLISH, "ex", "həˈloʊ");
         when(wordService.findWordFromDeepSeek(eq("hello"), eq(Language.ENGLISH))).thenReturn(resp);
 
+        doNothing().when(userService).validateToken(1L, "tkn");
+
         mockMvc.perform(get("/api/words")
                         .param("userId", "1")
+                        .header("X-USER-TOKEN", "tkn")
                         .param("term", "hello")
                         .param("language", "ENGLISH")
                         .accept(MediaType.APPLICATION_JSON))

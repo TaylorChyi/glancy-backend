@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     deleted BOOLEAN NOT NULL DEFAULT FALSE,
     member BOOLEAN NOT NULL DEFAULT FALSE,
     createdAt DATETIME NOT NULL,
-    lastLoginAt DATETIME
+    lastLoginAt DATETIME,
+    loginToken VARCHAR(64)
 );
 
 CREATE TABLE IF NOT EXISTS faqs (

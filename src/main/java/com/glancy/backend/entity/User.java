@@ -45,4 +45,7 @@ public class User {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime lastLoginAt;
+
+    @JsonIgnore
+    private String loginToken;
 }

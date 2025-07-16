@@ -5,6 +5,7 @@ import com.glancy.backend.dto.SearchRecordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.SearchRecordService;
+import com.glancy.backend.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,6 +19,7 @@ import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -31,13 +33,18 @@ class SearchRecordControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private SearchRecordService searchRecordService;
+    @MockBean
+    private UserService userService;
 
     @Test
     void testCreate() throws Exception {
         SearchRecordResponse resp = new SearchRecordResponse(1L, 1L, "hello", Language.ENGLISH, LocalDateTime.now());
         when(searchRecordService.saveRecord(any(Long.class), any(SearchRecordRequest.class))).thenReturn(resp);
 
+        doNothing().when(userService).validateToken(1L, "tkn");
+
         mockMvc.perform(post("/api/search-records/user/1")
+                .header("X-USER-TOKEN", "tkn")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"term\":\"hello\",\"language\":\"ENGLISH\"}"))
                 .andExpect(status().isCreated())
@@ -50,7 +57,10 @@ class SearchRecordControllerTest {
         SearchRecordResponse resp = new SearchRecordResponse(1L, 1L, "hello", Language.ENGLISH, LocalDateTime.now());
         when(searchRecordService.getRecords(1L)).thenReturn(Collections.singletonList(resp));
 
-        mockMvc.perform(get("/api/search-records/user/1"))
+        doNothing().when(userService).validateToken(1L, "tkn");
+
+        mockMvc.perform(get("/api/search-records/user/1")
+                .header("X-USER-TOKEN", "tkn"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].term").value("hello"));

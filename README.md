@@ -58,6 +58,7 @@ Example curl commands live in `CURL_TESTS.md`. Run `scripts/curl-tests.sh` to ca
 - `DELETE /api/users/{id}` – logically delete a user
 - `GET /api/users/{id}` – fetch user details
 - `POST /api/users/login` – user login
+- 登录成功后将返回 `token`，后续需要在 `X-USER-TOKEN` 请求头中携带此值
 - `POST /api/users/{id}/third-party-accounts` – bind a third‑party account (returns the bound account)
 - `GET /api/users/count` – total number of active users
 
@@ -82,6 +83,7 @@ Example curl commands live in `CURL_TESTS.md`. Run `scripts/curl-tests.sh` to ca
 - `POST /api/search-records/user/{userId}` – add a new search record for the user
 - `GET /api/search-records/user/{userId}` – list search records of the user
 - `DELETE /api/search-records/user/{userId}` – clear all search records of the user
+  以上接口均需在 `X-USER-TOKEN` 请求头中提供登录令牌
 
 
 ### Portal

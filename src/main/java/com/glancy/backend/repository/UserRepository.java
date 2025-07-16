@@ -24,4 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countByDeletedFalseAndMemberTrue();
 
     long countByDeletedFalseAndLastLoginAtAfter(LocalDateTime time);
+
+    Optional<User> findByLoginToken(String loginToken);
 }

@@ -6,8 +6,10 @@ import com.glancy.backend.entity.Language;
 import org.springframework.http.MediaType;
 import com.glancy.backend.service.WordService;
 import com.glancy.backend.service.SearchRecordService;
+import com.glancy.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,11 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class WordController {
     private final WordService wordService;
     private final SearchRecordService searchRecordService;
+    private final UserService userService;
 
     public WordController(WordService wordService,
-                          SearchRecordService searchRecordService) {
+                          SearchRecordService searchRecordService,
+                          UserService userService) {
         this.wordService = wordService;
         this.searchRecordService = searchRecordService;
+        this.userService = userService;
     }
 
     /**
@@ -33,9 +38,11 @@ public class WordController {
      */
     @GetMapping
     public ResponseEntity<WordResponse> getWord(@RequestParam Long userId,
+                                                @RequestHeader("X-USER-TOKEN") String token,
                                                 @RequestParam String term,
                                                 @RequestParam Language language,
                                                 @RequestParam(name = "gpt", required = false, defaultValue = "false") boolean gpt) {
+        userService.validateToken(userId, token);
         SearchRecordRequest req = new SearchRecordRequest();
         req.setTerm(term);
         req.setLanguage(language);
