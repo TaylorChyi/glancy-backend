@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import com.glancy.backend.client.prompt.PromptStrategy;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,13 +20,16 @@ public class ChatGptClient {
     private final RestTemplate restTemplate;
     private final String baseUrl;
     private final String apiKey;
+    private final List<PromptStrategy> promptStrategies;
 
     public ChatGptClient(RestTemplate restTemplate,
                          @Value("${thirdparty.openai.base-url:https://api.openai.com/v1}") String baseUrl,
-                         @Value("${thirdparty.openai.api-key:}") String apiKey) {
+                         @Value("${thirdparty.openai.api-key:}") String apiKey,
+                         List<PromptStrategy> promptStrategies) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
         this.apiKey = apiKey;
+        this.promptStrategies = promptStrategies;
     }
 
     public WordResponse fetchDefinition(String term, Language language) {
@@ -38,30 +42,11 @@ public class ChatGptClient {
 
         Map<String, Object> payload = new HashMap<>();
         payload.put("model", "gpt-3.5-turbo");
-        List<Map<String, String>> messages;
-        if (language == Language.SPANISH) {
-            messages = List.of(
-                Map.of("role", "system", "content", "Eres un asistente de diccionario."),
-                Map.of("role", "user", "content",
-                    "Explica '" + term + "' en español. " +
-                    "Responde con el formato:\nDefinición: <texto>\nSinónimos: <lista separada por comas>")
-            );
-        } else if (language == Language.FRENCH) {
-            messages = List.of(
-                Map.of("role", "system", "content", "Vous êtes un assistant de dictionnaire."),
-                Map.of("role", "user", "content",
-                    "Fournis la définition de '" + term + "' en français au format:\n" +
-                    "Définition: ...\nSynonymes: ...\n" +
-                    "Les synonymes doivent être séparés par des virgules.")
-            );
-        } else {
-            messages = List.of(
-                Map.of("role", "system", "content", "You are a dictionary assistant."),
-                Map.of("role", "user", "content",
-                    "Define '" + term + "' in " + language.name().toLowerCase() +
-                    " and provide synonyms separated by comma.")
-            );
-        }
+        List<Map<String, String>> messages = promptStrategies.stream()
+                .filter(s -> s.supports(language))
+                .findFirst()
+                .orElseThrow()
+                .buildMessages(term, language);
         payload.put("messages", messages);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
