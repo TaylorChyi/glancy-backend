@@ -6,6 +6,8 @@ import com.glancy.backend.client.DeepSeekClient;
 import com.glancy.backend.client.ChatGptClient;
 import com.glancy.backend.client.GoogleTtsClient;
 import com.glancy.backend.client.GeminiClient;
+import com.glancy.backend.entity.Word;
+import com.glancy.backend.repository.WordRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,25 +18,37 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 public class WordService {
-    private DeepSeekClient deepSeekClient;
+    private final DeepSeekClient deepSeekClient;
     private final ChatGptClient chatGptClient;
     private final GoogleTtsClient googleTtsClient;
     private final GeminiClient geminiClient;
+    private final WordRepository wordRepository;
 
-    public WordService(DeepSeekClient deepSeekClient, ChatGptClient chatGptClient, GoogleTtsClient googleTtsClient, GeminiClient geminiClient) {
+    public WordService(DeepSeekClient deepSeekClient,
+                       ChatGptClient chatGptClient,
+                       GoogleTtsClient googleTtsClient,
+                       GeminiClient geminiClient,
+                       WordRepository wordRepository) {
         this.deepSeekClient = deepSeekClient;
         this.chatGptClient = chatGptClient;
         this.googleTtsClient = googleTtsClient;
         this.geminiClient = geminiClient;
+        this.wordRepository = wordRepository;
     }
 
     /**
      * Retrieve word details from the external API.
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public WordResponse findWordFromDeepSeek(String term, Language language) {
         log.info("Fetching definition for term '{}' in language {}", term, language);
-        return deepSeekClient.fetchDefinition(term, language);
+        return wordRepository.findByTermAndLanguageAndDeletedFalse(term, language)
+                .map(this::toResponse)
+                .orElseGet(() -> {
+                    WordResponse resp = deepSeekClient.fetchDefinition(term, language);
+                    saveWord(resp);
+                    return resp;
+                });
     }
 
     /**
@@ -75,5 +89,21 @@ public class WordService {
     public byte[] getAudioFromDeepSeek(String term, Language language) {
         log.info("Fetching audio for term '{}' in language {}", term, language);
         return deepSeekClient.fetchAudio(term, language);
+    }
+
+    private void saveWord(WordResponse resp) {
+        Word word = new Word();
+        word.setTerm(resp.getTerm());
+        word.setLanguage(resp.getLanguage());
+        word.setDefinitions(resp.getDefinitions());
+        word.setExample(resp.getExample());
+        word.setPhonetic(resp.getPhonetic());
+        Word saved = wordRepository.save(word);
+        resp.setId(saved.getId());
+    }
+
+    private WordResponse toResponse(Word word) {
+        return new WordResponse(word.getId(), word.getTerm(), word.getDefinitions(),
+                word.getLanguage(), word.getExample(), word.getPhonetic());
     }
 }
