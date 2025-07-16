@@ -1,7 +1,6 @@
 package com.glancy.backend.entity;
 
 import jakarta.persistence.*;
-import com.glancy.backend.entity.DictionaryModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
