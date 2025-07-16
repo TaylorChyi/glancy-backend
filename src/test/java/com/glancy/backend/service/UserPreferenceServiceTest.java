@@ -3,6 +3,7 @@ package com.glancy.backend.service;
 import com.glancy.backend.dto.UserPreferenceRequest;
 import com.glancy.backend.dto.UserPreferenceResponse;
 import com.glancy.backend.entity.User;
+import com.glancy.backend.entity.DictionaryModel;
 import com.glancy.backend.repository.UserPreferenceRepository;
 import com.glancy.backend.repository.UserRepository;
 
@@ -55,6 +56,7 @@ class UserPreferenceServiceTest {
         req.setTheme("light");
         req.setSystemLanguage("en");
         req.setSearchLanguage("zh");
+        req.setDictionaryModel(DictionaryModel.DEEPSEEK);
         UserPreferenceResponse saved = userPreferenceService.savePreference(user.getId(), req);
 
         assertNotNull(saved.getId());
@@ -63,5 +65,6 @@ class UserPreferenceServiceTest {
         UserPreferenceResponse fetched = userPreferenceService.getPreference(user.getId());
         assertEquals(saved.getId(), fetched.getId());
         assertEquals("zh", fetched.getSearchLanguage());
+        assertEquals(DictionaryModel.DEEPSEEK, fetched.getDictionaryModel());
     }
 }

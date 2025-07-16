@@ -35,7 +35,7 @@ class WordControllerTest {
     @Test
     void testGetWord() throws Exception {
         WordResponse resp = new WordResponse(1L, "hello", List.of("g"), Language.ENGLISH, "ex", "həˈloʊ");
-        when(wordService.findWordFromDeepSeek(eq("hello"), eq(Language.ENGLISH))).thenReturn(resp);
+        when(wordService.findWordForUser(eq(1L), eq("hello"), eq(Language.ENGLISH))).thenReturn(resp);
 
         mockMvc.perform(get("/api/words")
                         .param("userId", "1")
