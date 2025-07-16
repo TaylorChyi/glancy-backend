@@ -67,8 +67,9 @@ public class NotificationService {
     public List<NotificationResponse> getNotificationsForUser(Long userId) {
         log.info("Fetching notifications for user {}", userId);
         List<Notification> result = new ArrayList<>();
-        result.addAll(notificationRepository.findBySystemLevelTrue());
-        result.addAll(notificationRepository.findByUserId(userId));
+        result.addAll(notificationRepository.findBySystemLevelTrueOrderByCreatedAtDesc());
+        result.addAll(notificationRepository.findByUserIdOrderByCreatedAtDesc(userId));
+        result.sort((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()));
         return result.stream().map(this::toResponse).collect(Collectors.toList());
     }
 
