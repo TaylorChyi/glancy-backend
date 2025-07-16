@@ -12,7 +12,7 @@ public class GoogleTtsClient {
     private final String baseUrl;
 
     public GoogleTtsClient(RestTemplate restTemplate,
-                           @Value("${google.tts-base-url:https://translate.google.com}") String baseUrl) {
+                           @Value("${thirdparty.google-tts.base-url:https://translate.google.com}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }
