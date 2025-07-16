@@ -1,6 +1,8 @@
 package com.glancy.backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import com.glancy.backend.entity.DictionaryModel;
 import lombok.Data;
 
 /**
@@ -14,4 +16,7 @@ public class UserPreferenceRequest {
     private String systemLanguage;
     @NotBlank(message = "{validation.userPreference.searchLanguage.notblank}")
     private String searchLanguage;
+
+    @NotNull(message = "{validation.userPreference.dictionaryModel.notnull}")
+    private DictionaryModel dictionaryModel;
 }

@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     deleted BOOLEAN NOT NULL DEFAULT FALSE,
     member BOOLEAN NOT NULL DEFAULT FALSE,
     createdAt DATETIME NOT NULL,
-    lastLoginAt DATETIME
+    lastLoginAt DATETIME,
+    loginToken VARCHAR(64)
 );
 
 CREATE TABLE IF NOT EXISTS faqs (
@@ -104,6 +105,7 @@ CREATE TABLE IF NOT EXISTS user_preferences (
     theme VARCHAR(20) NOT NULL,
     systemLanguage VARCHAR(20) NOT NULL,
     searchLanguage VARCHAR(20) NOT NULL,
+    dictionaryModel VARCHAR(20) NOT NULL DEFAULT 'DEEPSEEK',
     CONSTRAINT fk_user_pref_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
