@@ -37,6 +37,9 @@ thirdparty:
         api-key: ''
     gemini:
         base-url: https://api.gemini.com
+
+portal:
+    admin-token: secret
     openai:
         base-url: https://api.openai.com/v1
         api-key: ''

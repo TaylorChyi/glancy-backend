@@ -5,6 +5,7 @@ import com.glancy.backend.dto.UserStatisticsResponse;
 import com.glancy.backend.dto.DailyActiveUserResponse;
 import com.glancy.backend.dto.SystemParameterRequest;
 import com.glancy.backend.dto.SystemParameterResponse;
+import com.glancy.backend.dto.LogLevelRequest;
 import com.glancy.backend.service.UserService;
 import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.LoggingService;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Import;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
@@ -110,5 +112,50 @@ class PortalControllerTest {
         mockMvc.perform(get("/api/portal/email-enabled").with(httpBasic("admin", "password")))
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
+    }
+
+    @Test
+    void setLogLevelAuthorized() throws Exception {
+        LogLevelRequest req = new LogLevelRequest();
+        req.setLogger("com.test");
+        req.setLevel("INFO");
+        when(loggingService.isTokenValid("secret")).thenReturn(true);
+        doNothing().when(loggingService).setLogLevel("com.test", "INFO");
+
+        mockMvc.perform(post("/api/portal/log-level")
+                        .header("X-ADMIN-TOKEN", "secret")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void setLogLevelUnauthorized() throws Exception {
+        LogLevelRequest req = new LogLevelRequest();
+        req.setLogger("com.test");
+        req.setLevel("INFO");
+        when(loggingService.isTokenValid("bad")).thenReturn(false);
+
+        mockMvc.perform(post("/api/portal/log-level")
+                        .header("X-ADMIN-TOKEN", "bad")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void setLogLevelInvalid() throws Exception {
+        LogLevelRequest req = new LogLevelRequest();
+        req.setLogger("com.test");
+        req.setLevel("NOPE");
+        when(loggingService.isTokenValid("secret")).thenReturn(true);
+        doThrow(new IllegalArgumentException("Invalid log level"))
+                .when(loggingService).setLogLevel("com.test", "NOPE");
+
+        mockMvc.perform(post("/api/portal/log-level")
+                        .header("X-ADMIN-TOKEN", "secret")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isBadRequest());
     }
 }
