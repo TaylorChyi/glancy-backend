@@ -8,6 +8,12 @@ import com.glancy.backend.client.GoogleTtsClient;
 import com.glancy.backend.client.GeminiClient;
 import com.glancy.backend.entity.Word;
 import com.glancy.backend.repository.WordRepository;
+import com.glancy.backend.repository.UserPreferenceRepository;
+import com.glancy.backend.entity.UserPreference;
+import com.glancy.backend.entity.DictionaryModel;
+import com.glancy.backend.service.dictionary.ChatGptStrategy;
+import com.glancy.backend.service.dictionary.DeepSeekStrategy;
+import com.glancy.backend.service.dictionary.GeminiStrategy;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +41,14 @@ class WordServiceTest {
     private GoogleTtsClient googleTtsClient;
     @MockBean
     private GeminiClient geminiClient;
+    @MockBean
+    private UserPreferenceRepository userPreferenceRepository;
+    @MockBean
+    private DeepSeekStrategy deepSeekStrategy;
+    @MockBean
+    private ChatGptStrategy chatGptStrategy;
+    @MockBean
+    private GeminiStrategy geminiStrategy;
     @Autowired
     private WordRepository wordRepository;
 
@@ -121,5 +135,18 @@ class WordServiceTest {
 
         byte[] result = wordService.getAudio("hello", Language.ENGLISH);
         assertArrayEquals(data, result);
+    }
+
+    @Test
+    void testFindWordForUser() {
+        UserPreference pref = new UserPreference();
+        pref.setDictionaryModel(DictionaryModel.CHAT_GPT);
+        when(userPreferenceRepository.findByUserId(1L)).thenReturn(java.util.Optional.of(pref));
+
+        WordResponse resp = new WordResponse(null, "hi", List.of("hello"), Language.ENGLISH, null, null);
+        when(chatGptStrategy.fetch("hi", Language.ENGLISH)).thenReturn(resp);
+
+        WordResponse result = wordService.findWordForUser(1L, "hi", Language.ENGLISH);
+        assertEquals(resp, result);
     }
 }
