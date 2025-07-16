@@ -65,5 +65,4 @@ jobs:
             nohup java -jar target/glancy-backend-${{ steps.version_check.outputs.version }}.jar > backend.log 2>&1 &
 
             echo "✅ 部署完成"
-          EOF2
-
+          EOF
