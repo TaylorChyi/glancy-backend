@@ -31,6 +31,10 @@ logging:
     level:
         com.glancy.backend: DEBUG
 
+search:
+    limit:
+        nonMember: 10
+
 thirdparty:
     deepseek:
         base-url: https://api.deepseek.com
