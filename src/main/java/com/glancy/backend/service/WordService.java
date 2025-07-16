@@ -6,6 +6,14 @@ import com.glancy.backend.client.DeepSeekClient;
 import com.glancy.backend.client.ChatGptClient;
 import com.glancy.backend.client.GoogleTtsClient;
 import com.glancy.backend.client.GeminiClient;
+import com.glancy.backend.entity.DictionaryModel;
+import com.glancy.backend.repository.UserPreferenceRepository;
+import com.glancy.backend.service.dictionary.ChatGptStrategy;
+import com.glancy.backend.service.dictionary.DeepSeekStrategy;
+import com.glancy.backend.service.dictionary.DictionaryStrategy;
+import com.glancy.backend.service.dictionary.GeminiStrategy;
+import java.util.HashMap;
+import java.util.Map;
 import com.glancy.backend.entity.Word;
 import com.glancy.backend.repository.WordRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -23,17 +31,27 @@ public class WordService {
     private final GoogleTtsClient googleTtsClient;
     private final GeminiClient geminiClient;
     private final WordRepository wordRepository;
+    private final UserPreferenceRepository userPreferenceRepository;
+    private final Map<DictionaryModel, DictionaryStrategy> strategies = new HashMap<>();
 
     public WordService(DeepSeekClient deepSeekClient,
                        ChatGptClient chatGptClient,
                        GoogleTtsClient googleTtsClient,
                        GeminiClient geminiClient,
-                       WordRepository wordRepository) {
+                       WordRepository wordRepository,
+                       UserPreferenceRepository userPreferenceRepository,
+                       DeepSeekStrategy deepSeekStrategy,
+                       ChatGptStrategy chatGptStrategy,
+                       GeminiStrategy geminiStrategy) {
         this.deepSeekClient = deepSeekClient;
         this.chatGptClient = chatGptClient;
         this.googleTtsClient = googleTtsClient;
         this.geminiClient = geminiClient;
         this.wordRepository = wordRepository;
+        this.userPreferenceRepository = userPreferenceRepository;
+        strategies.put(DictionaryModel.DEEPSEEK, deepSeekStrategy);
+        strategies.put(DictionaryModel.CHAT_GPT, chatGptStrategy);
+        strategies.put(DictionaryModel.GEMINI, geminiStrategy);
     }
 
     /**
@@ -83,6 +101,24 @@ public class WordService {
     public WordResponse findWordFromGemini(String term, Language language) {
         log.info("Fetching definition from Gemini for term '{}' in language {}", term, language);
         return geminiClient.fetchDefinition(term, language);
+    }
+
+    @Transactional
+    public WordResponse findWordForUser(Long userId, String term, Language language) {
+        var pref = userPreferenceRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("未找到用户设置"));
+        DictionaryModel model = pref.getDictionaryModel();
+        DictionaryStrategy strategy = strategies.get(model);
+        if (model == DictionaryModel.DEEPSEEK) {
+            return wordRepository.findByTermAndLanguageAndDeletedFalse(term, language)
+                    .map(this::toResponse)
+                    .orElseGet(() -> {
+                        WordResponse resp = strategy.fetch(term, language);
+                        saveWord(resp);
+                        return resp;
+                    });
+        }
+        return strategy.fetch(term, language);
     }
 
     @Transactional(readOnly = true)

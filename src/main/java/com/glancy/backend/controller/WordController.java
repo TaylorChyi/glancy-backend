@@ -40,16 +40,13 @@ public class WordController {
     public ResponseEntity<WordResponse> getWord(@RequestParam Long userId,
                                                 @RequestHeader("X-USER-TOKEN") String token,
                                                 @RequestParam String term,
-                                                @RequestParam Language language,
-                                                @RequestParam(name = "gpt", required = false, defaultValue = "false") boolean gpt) {
+                                                @RequestParam Language language) {
         userService.validateToken(userId, token);
         SearchRecordRequest req = new SearchRecordRequest();
         req.setTerm(term);
         req.setLanguage(language);
         searchRecordService.saveRecord(userId, req);
-        WordResponse resp = gpt ?
-                wordService.findWordWithGpt(term, language) :
-                wordService.findWordFromDeepSeek(term, language);
+        WordResponse resp = wordService.findWordForUser(userId, term, language);
         return ResponseEntity.ok(resp);
     }
 
