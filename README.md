@@ -12,8 +12,11 @@ Glancy Backend is a Spring Boot service that powers the Glancy dictionary applic
 
 1. Clone this repository.
 2. Provide a `DB_PASSWORD` value via a `.env` file or environment variable.
-3. Ensure MySQL is running with a database named `glancy_db` and credentials as defined in `src/main/resources/application.yml`.
-4. Configure optional API base URLs in `application.yml` under the `thirdparty` section.
+3. Ensure MySQL is running with a database named `glancy_db`, matching credentials, and SSL certificates configured as `useSSL=true` requires.
+4. Use the `local` Spring profile if SSL is unavailable: `./mvnw spring-boot:run -Dspring.profiles.active=local`.
+5. Configure optional API base URLs in `application.yml` under the `thirdparty` section.
+Ensure the MySQL server provides SSL certificates trusted by the JVM. Configure the truststore if necessary when running with `useSSL=true`.
+
 
 ## Database Initialization
 
