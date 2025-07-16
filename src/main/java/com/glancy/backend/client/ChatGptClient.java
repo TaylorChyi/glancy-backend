@@ -39,6 +39,10 @@ public class ChatGptClient {
         Map<String, Object> payload = new HashMap<>();
         payload.put("model", "gpt-3.5-turbo");
         List<Map<String, String>> messages;
+        if (language == Language.SPANISH) {
+            messages = List.of(
+                    Map.of("role", "system", "content", "Eres un asistente de diccionario."),
+              }
         if (language == Language.FRENCH) {
             messages = List.of(
                     Map.of(
@@ -51,6 +55,8 @@ public class ChatGptClient {
                             "role",
                             "user",
                             "content",
+                            "Explica '" + term + "' en español. "
+                                    + "Responde con el formato:\nDefinición: <texto>\nSinónimos: <lista separada por comas>"
                             "Fournis la définition de '" + term + "' en français au format:\n" +
                                     "Définition: ...\nSynonymes: ...\n" +
                                     "Les synonymes doivent être séparés par des virgules."
