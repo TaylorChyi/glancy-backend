@@ -14,6 +14,7 @@ Glancy Backend is a Spring Boot service that powers the Glancy dictionary applic
 2. Provide a `DB_PASSWORD` value via a `.env` file or environment variable.
 3. Ensure MySQL is running with a database named `glancy_db` and credentials as defined in `src/main/resources/application.yml`.
 4. Configure optional API base URLs in `application.yml` under the `thirdparty` section.
+5. `search.limit.nonMember` sets the daily search limit for non-members (default `10`).
 
 ## Database Initialization
 

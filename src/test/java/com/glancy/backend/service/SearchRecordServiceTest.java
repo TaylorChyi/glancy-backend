@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(properties = "search.limit.nonMember=2")
 @Transactional
 class SearchRecordServiceTest {
 
@@ -84,5 +84,26 @@ class SearchRecordServiceTest {
         Exception ex = assertThrows(IllegalStateException.class,
                 () -> searchRecordService.saveRecord(user.getId(), req));
         assertEquals("用户未登录", ex.getMessage());
+    }
+
+    @Test
+    void testNonMemberLimitExceeded() {
+        User user = new User();
+        user.setUsername("limit");
+        user.setPassword("p");
+        user.setEmail("l@example.com");
+        userRepository.save(user);
+        user.setLastLoginAt(LocalDateTime.now());
+        userRepository.save(user);
+
+        SearchRecordRequest req = new SearchRecordRequest();
+        req.setTerm("hi");
+        req.setLanguage(Language.ENGLISH);
+
+        searchRecordService.saveRecord(user.getId(), req);
+        searchRecordService.saveRecord(user.getId(), req);
+        Exception ex = assertThrows(IllegalStateException.class,
+                () -> searchRecordService.saveRecord(user.getId(), req));
+        assertEquals("非会员每天只能搜索2次", ex.getMessage());
     }
 }

@@ -7,6 +7,7 @@ import com.glancy.backend.entity.User;
 import com.glancy.backend.repository.SearchRecordRepository;
 import com.glancy.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +25,14 @@ import java.time.LocalDateTime;
 public class SearchRecordService {
     private final SearchRecordRepository searchRecordRepository;
     private final UserRepository userRepository;
+    private final int nonMemberSearchLimit;
 
     public SearchRecordService(SearchRecordRepository searchRecordRepository,
-                               UserRepository userRepository) {
+                               UserRepository userRepository,
+                               @Value("${search.limit.nonMember:10}") int nonMemberSearchLimit) {
         this.searchRecordRepository = searchRecordRepository;
         this.userRepository = userRepository;
+        this.nonMemberSearchLimit = nonMemberSearchLimit;
     }
 
     /**
@@ -52,9 +56,9 @@ public class SearchRecordService {
             LocalDateTime endOfDay = startOfDay.plusDays(1);
             long count = searchRecordRepository
                     .countByUserIdAndCreatedAtBetween(userId, startOfDay, endOfDay);
-            if (count >= 10) {
+            if (count >= nonMemberSearchLimit) {
                 log.warn("User {} exceeded daily search limit", userId);
-                throw new IllegalStateException("非会员每天只能搜索10次");
+                throw new IllegalStateException("非会员每天只能搜索" + nonMemberSearchLimit + "次");
             }
         }
         SearchRecord record = new SearchRecord();
