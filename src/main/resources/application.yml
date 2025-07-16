@@ -36,3 +36,6 @@ thirdparty:
         base-url: https://api.deepseek.com
     gemini:
         base-url: https://api.gemini.com
+
+portal:
+    admin-token: secret

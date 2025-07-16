@@ -107,8 +107,16 @@ public class PortalController {
      */
     @PostMapping("/log-level")
     public ResponseEntity<Void> setLogLevel(
+            @RequestHeader("X-ADMIN-TOKEN") String token,
             @Valid @RequestBody LogLevelRequest req) {
-        loggingService.setLogLevel(req.getLogger(), req.getLevel());
+        if (!loggingService.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        try {
+            loggingService.setLogLevel(req.getLogger(), req.getLevel());
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok().build();
     }
 
