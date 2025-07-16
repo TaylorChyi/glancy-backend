@@ -38,17 +38,31 @@ public class ChatGptClient {
 
         Map<String, Object> payload = new HashMap<>();
         payload.put("model", "gpt-3.5-turbo");
-        List<Map<String, String>> messages = List.of(
-                Map.of("role", "system", "content", "You are a dictionary assistant."),
-                Map.of(
-                        "role",
-                        "user",
-                        "content",
-                        "Define '" + term + "' in "
-                                + language.name().toLowerCase()
-                                + " and provide synonyms separated by comma."
-                )
-        );
+        List<Map<String, String>> messages;
+        if (language == Language.SPANISH) {
+            messages = List.of(
+                    Map.of("role", "system", "content", "Eres un asistente de diccionario."),
+                    Map.of(
+                            "role",
+                            "user",
+                            "content",
+                            "Explica '" + term + "' en español. "
+                                    + "Responde con el formato:\nDefinición: <texto>\nSinónimos: <lista separada por comas>"
+                    )
+            );
+        } else {
+            messages = List.of(
+                    Map.of("role", "system", "content", "You are a dictionary assistant."),
+                    Map.of(
+                            "role",
+                            "user",
+                            "content",
+                            "Define '" + term + "' in "
+                                    + language.name().toLowerCase()
+                                    + " and provide synonyms separated by comma."
+                    )
+            );
+        }
         payload.put("messages", messages);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
