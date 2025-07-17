@@ -17,8 +17,12 @@ public class GlancyBackendApplication {
      * from a .env file for convenience during development.
      */
     public static void main(String[] args) {
-        io.github.cdimascio.dotenv.Dotenv dotenv = io.github.cdimascio.dotenv.Dotenv.configure().load();
-        System.setProperty("DB_PASSWORD", dotenv.get("DB_PASSWORD"));
+        io.github.cdimascio.dotenv.Dotenv dotenv =
+                io.github.cdimascio.dotenv.Dotenv.configure().ignoreIfMissing().load();
+        String dbPassword = dotenv.get("DB_PASSWORD");
+        if (dbPassword != null) {
+            System.setProperty("DB_PASSWORD", dbPassword);
+        }
         String apiKey = dotenv.get("thirdparty.deepseek.api-key");
         if (apiKey != null) {
             System.setProperty("thirdparty.deepseek.api-key", apiKey);
