@@ -8,6 +8,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      VERSION_CHECK_ENABLED: "false"
 
     steps:
       - name: Checkout Code
@@ -16,14 +18,23 @@ jobs:
       - name: 判定是否需要部署
         id: version_check
         run: |
-          current_version=$(grep -A1 '<artifactId>glancy-backend</artifactId>' pom.xml | grep '<version>' | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
-          previous_version=$(git show HEAD~1:pom.xml | grep -A1 '<artifactId>glancy-backend</artifactId>' | grep '<version>' | sed -E 's/.*<version>(.*)<\/version>.*/\1/' || echo '')
-          curr_minor=$(echo "$current_version" | cut -d. -f2)
-          prev_minor=$(echo "$previous_version" | cut -d. -f2)
-          if [ "$curr_minor" != "$prev_minor" ]; then
-            echo "deploy=true" >> $GITHUB_OUTPUT
+          current_version=$(grep -A1 '<artifactId>glancy-backend</artifactId>' pom.xml \
+            | grep '<version>' \
+            | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
+          if [ "$VERSION_CHECK_ENABLED" = "true" ]; then
+            previous_version=$(git show HEAD~1:pom.xml \
+              | grep -A1 '<artifactId>glancy-backend</artifactId>' \
+              | grep '<version>' \
+              | sed -E 's/.*<version>(.*)<\/version>.*/\1/' || echo '')
+            curr_minor=$(echo "$current_version" | cut -d. -f2)
+            prev_minor=$(echo "$previous_version" | cut -d. -f2)
+            if [ "$curr_minor" != "$prev_minor" ]; then
+              echo "deploy=true" >> $GITHUB_OUTPUT
+            else
+              echo "deploy=false" >> $GITHUB_OUTPUT
+            fi
           else
-            echo "deploy=false" >> $GITHUB_OUTPUT
+            echo "deploy=true" >> $GITHUB_OUTPUT
           fi
           echo "version=$current_version" >> $GITHUB_OUTPUT
 
