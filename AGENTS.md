@@ -12,8 +12,26 @@ This project is a Spring Boot backend. Contributors should follow these rules:
 - If the Maven wrapper fails due to environment issues, state this in the PR.
 
 ## Pull Requests
-- Summarize major changes and reference modified files.
-- Include the Maven test results or failure reason in the PR body.
+- **All PR titles and bodies must be written in English.**
+- Begin every PR title with a tag in square brackets indicating the type of change.
+  Common tags include `[Fix]`, `[Feature]`, `[Refactor]`, and `[Docs]`.
+  Example: `[Fix] Correct login bug`.
+- Start the body with a `## Summary` section listing the main changes and referencing any key files.
+- Follow this with a `## Testing` section showing the `./mvnw test` output, or explain why tests could not run.
+- Optionally include a `## Notes` section for any extra context.
+
+Use this template to keep every pull request consistent:
+
+```markdown
+## Summary
+- explain the purpose of the change
+
+## Testing
+- `./mvnw test`
+
+## Notes
+- any optional remarks
+```
 
 ## API Development
 - 每新增一个 API，都必须编写相应的单元测试。
@@ -24,4 +42,3 @@ This project is a Spring Boot backend. Contributors should follow these rules:
 - 项目版本号定义在 `pom.xml` 中。
 - 默认每次合并仅递增补丁版本号，即最后一位加一。
 - 若需要提升中版本号，应在 PR 中声明，此类变更会触发 GitHub Actions 的自动部署流程。
-
