@@ -179,4 +179,23 @@ class WordServiceTest {
         WordResponse result = wordService.findWordForUser(2L, "hi", Language.ENGLISH);
         assertEquals(resp, result);
     }
+
+    @Test
+    void testSaveSameTermDifferentLanguage() {
+        Word wordEn = new Word();
+        wordEn.setTerm("hello");
+        wordEn.setLanguage(Language.ENGLISH);
+        wordEn.setDefinitions(List.of("greet"));
+        wordRepository.save(wordEn);
+
+        Word wordEs = new Word();
+        wordEs.setTerm("hello");
+        wordEs.setLanguage(Language.SPANISH);
+        wordEs.setDefinitions(List.of("hola"));
+
+        assertDoesNotThrow(() -> wordRepository.save(wordEs));
+
+        assertTrue(wordRepository.findByTermAndLanguageAndDeletedFalse("hello", Language.ENGLISH).isPresent());
+        assertTrue(wordRepository.findByTermAndLanguageAndDeletedFalse("hello", Language.SPANISH).isPresent());
+    }
 }
