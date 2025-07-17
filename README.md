@@ -120,3 +120,6 @@ This format ensures stable parsing of the returned text.
 
 项目版本号定义在 `pom.xml` 中。默认合并时只递增补丁版本号。若提升中版本号，请在 PR 中说明，GitHub Actions 会在检测到中版本号变更时自动部署。
 
+部署工作流包含变量 `VERSION_CHECK_ENABLED`，默认值为 `false`。当设置为 `true` 时，
+只有中版本号变化才会触发部署；否则始终部署。
+
