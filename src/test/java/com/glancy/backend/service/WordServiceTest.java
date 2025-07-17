@@ -6,6 +6,7 @@ import com.glancy.backend.client.DeepSeekClient;
 import com.glancy.backend.client.ChatGptClient;
 import com.glancy.backend.client.GoogleTtsClient;
 import com.glancy.backend.client.GeminiClient;
+import com.glancy.backend.client.QianWenClient;
 import com.glancy.backend.entity.Word;
 import com.glancy.backend.repository.WordRepository;
 import com.glancy.backend.repository.UserPreferenceRepository;
@@ -14,6 +15,7 @@ import com.glancy.backend.entity.DictionaryModel;
 import com.glancy.backend.service.dictionary.ChatGptStrategy;
 import com.glancy.backend.service.dictionary.DeepSeekStrategy;
 import com.glancy.backend.service.dictionary.GeminiStrategy;
+import com.glancy.backend.service.dictionary.QianWenStrategy;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +44,8 @@ class WordServiceTest {
     @MockBean
     private GeminiClient geminiClient;
     @MockBean
+    private QianWenClient qianWenClient;
+    @MockBean
     private UserPreferenceRepository userPreferenceRepository;
     @MockBean
     private DeepSeekStrategy deepSeekStrategy;
@@ -49,6 +53,8 @@ class WordServiceTest {
     private ChatGptStrategy chatGptStrategy;
     @MockBean
     private GeminiStrategy geminiStrategy;
+    @MockBean
+    private QianWenStrategy qianWenStrategy;
     @Autowired
     private WordRepository wordRepository;
 
@@ -129,6 +135,17 @@ class WordServiceTest {
     }
 
     @Test
+    void testFindWordFromQianWen() {
+        WordResponse resp = new WordResponse(1L, "hello",
+                List.of("salutation"), Language.ENGLISH, "Hello world", "həˈloʊ");
+        when(qianWenClient.fetchDefinition("hello", Language.ENGLISH))
+                .thenReturn(resp);
+
+        WordResponse result = wordService.findWordFromQianWen("hello", Language.ENGLISH);
+        assertEquals(resp, result);
+    }
+
+    @Test
     void testGetAudio() {
         byte[] data = new byte[] {1, 2, 3};
         when(deepSeekClient.fetchAudio("hello", Language.ENGLISH)).thenReturn(data);
@@ -147,6 +164,19 @@ class WordServiceTest {
         when(chatGptStrategy.fetch("hi", Language.ENGLISH)).thenReturn(resp);
 
         WordResponse result = wordService.findWordForUser(1L, "hi", Language.ENGLISH);
+        assertEquals(resp, result);
+    }
+
+    @Test
+    void testFindWordForUserQianWen() {
+        UserPreference pref = new UserPreference();
+        pref.setDictionaryModel(DictionaryModel.QIANWEN);
+        when(userPreferenceRepository.findByUserId(2L)).thenReturn(java.util.Optional.of(pref));
+
+        WordResponse resp = new WordResponse(null, "hi", List.of("hello"), Language.ENGLISH, null, null);
+        when(qianWenStrategy.fetch("hi", Language.ENGLISH)).thenReturn(resp);
+
+        WordResponse result = wordService.findWordForUser(2L, "hi", Language.ENGLISH);
         assertEquals(resp, result);
     }
 }
