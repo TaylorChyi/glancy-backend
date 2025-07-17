@@ -32,12 +32,13 @@ CREATE TABLE IF NOT EXISTS search_records (
 
 CREATE TABLE IF NOT EXISTS words (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    term VARCHAR(100) NOT NULL UNIQUE,
+    term VARCHAR(100) NOT NULL,
     language VARCHAR(10) NOT NULL,
     phonetic VARCHAR(100),
     example VARCHAR(255),
     deleted BOOLEAN NOT NULL DEFAULT FALSE,
-    createdAt DATETIME NOT NULL
+    createdAt DATETIME NOT NULL,
+    CONSTRAINT uk_words_term_language UNIQUE (term, language)
 );
 
 CREATE TABLE IF NOT EXISTS word_definitions (

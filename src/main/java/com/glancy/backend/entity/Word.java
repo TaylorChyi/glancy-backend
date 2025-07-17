@@ -10,7 +10,8 @@ import java.util.List;
  * Dictionary word entry cached from the external service.
  */
 @Entity
-@Table(name = "words")
+@Table(name = "words",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"term", "language"}))
 @Data
 @NoArgsConstructor
 public class Word {
@@ -18,7 +19,7 @@ public class Word {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(nullable = false, length = 100)
     private String term;
 
     @ElementCollection
