@@ -13,19 +13,23 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/portal/**", "/api/notifications/system").authenticated()
                 .anyRequest().permitAll()
             )
-            .httpBasic();
+            .httpBasic(httpBasic -> {}); // 显式启用 httpBasic 认证
         return http.build();
     }
 
     @Bean
     public UserDetailsService users() {
         return new InMemoryUserDetailsManager(
-            User.withUsername("admin").password("{noop}password").roles("ADMIN").build()
+            User.withUsername("admin")
+                .password("{noop}password") // 明文密码，实际使用中应改为加密密码
+                .roles("ADMIN")
+                .build()
         );
     }
 }
