@@ -137,12 +137,6 @@ public class WordService {
         return strategy.fetch(term, language);
     }
 
-    @Transactional(readOnly = true)
-    public byte[] getAudioFromDeepSeek(String term, Language language) {
-        log.info("Fetching audio for term '{}' in language {}", term, language);
-        return deepSeekClient.fetchAudio(term, language);
-    }
-
     private void saveWord(WordResponse resp) {
         Word word = new Word();
         word.setTerm(resp.getTerm());
