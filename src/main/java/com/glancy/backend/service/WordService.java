@@ -6,12 +6,14 @@ import com.glancy.backend.client.DeepSeekClient;
 import com.glancy.backend.client.ChatGptClient;
 import com.glancy.backend.client.GoogleTtsClient;
 import com.glancy.backend.client.GeminiClient;
+import com.glancy.backend.client.QianWenClient;
 import com.glancy.backend.entity.DictionaryModel;
 import com.glancy.backend.repository.UserPreferenceRepository;
 import com.glancy.backend.service.dictionary.ChatGptStrategy;
 import com.glancy.backend.service.dictionary.DeepSeekStrategy;
 import com.glancy.backend.service.dictionary.DictionaryStrategy;
 import com.glancy.backend.service.dictionary.GeminiStrategy;
+import com.glancy.backend.service.dictionary.QianWenStrategy;
 import java.util.HashMap;
 import java.util.Map;
 import com.glancy.backend.entity.Word;
@@ -30,6 +32,7 @@ public class WordService {
     private final ChatGptClient chatGptClient;
     private final GoogleTtsClient googleTtsClient;
     private final GeminiClient geminiClient;
+    private final QianWenClient qianWenClient;
     private final WordRepository wordRepository;
     private final UserPreferenceRepository userPreferenceRepository;
     private final Map<DictionaryModel, DictionaryStrategy> strategies = new HashMap<>();
@@ -38,20 +41,24 @@ public class WordService {
                        ChatGptClient chatGptClient,
                        GoogleTtsClient googleTtsClient,
                        GeminiClient geminiClient,
+                       QianWenClient qianWenClient,
                        WordRepository wordRepository,
                        UserPreferenceRepository userPreferenceRepository,
                        DeepSeekStrategy deepSeekStrategy,
                        ChatGptStrategy chatGptStrategy,
-                       GeminiStrategy geminiStrategy) {
+                       GeminiStrategy geminiStrategy,
+                       QianWenStrategy qianWenStrategy) {
         this.deepSeekClient = deepSeekClient;
         this.chatGptClient = chatGptClient;
         this.googleTtsClient = googleTtsClient;
         this.geminiClient = geminiClient;
+        this.qianWenClient = qianWenClient;
         this.wordRepository = wordRepository;
         this.userPreferenceRepository = userPreferenceRepository;
         strategies.put(DictionaryModel.DEEPSEEK, deepSeekStrategy);
         strategies.put(DictionaryModel.CHAT_GPT, chatGptStrategy);
         strategies.put(DictionaryModel.GEMINI, geminiStrategy);
+        strategies.put(DictionaryModel.QIANWEN, qianWenStrategy);
     }
 
     /**
@@ -101,6 +108,15 @@ public class WordService {
     public WordResponse findWordFromGemini(String term, Language language) {
         log.info("Fetching definition from Gemini for term '{}' in language {}", term, language);
         return geminiClient.fetchDefinition(term, language);
+    }
+
+    /**
+     * Retrieve word details using the QianWen provider.
+     */
+    @Transactional(readOnly = true)
+    public WordResponse findWordFromQianWen(String term, Language language) {
+        log.info("Fetching definition from QianWen for term '{}' in language {}", term, language);
+        return qianWenClient.fetchDefinition(term, language);
     }
 
     @Transactional

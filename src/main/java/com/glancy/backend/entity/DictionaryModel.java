@@ -6,5 +6,6 @@ package com.glancy.backend.entity;
 public enum DictionaryModel {
     DEEPSEEK,
     CHAT_GPT,
-    GEMINI
+    GEMINI,
+    QIANWEN
 }
