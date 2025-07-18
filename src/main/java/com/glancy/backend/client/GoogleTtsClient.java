@@ -32,12 +32,6 @@ public class GoogleTtsClient {
         return switch (language) {
             case CHINESE -> "zh-CN";
             case ENGLISH -> "en";
-            case SPANISH -> "es";
-            case JAPANESE -> "ja";
-            case KOREAN -> "ko";
-            case RUSSIAN -> "ru";
-            case GERMAN -> "de";
-            case FRENCH -> "fr";
         };
     }
 }

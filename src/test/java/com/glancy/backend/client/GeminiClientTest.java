@@ -26,12 +26,12 @@ class GeminiClientTest {
 
     @Test
     void fetchDefinition() {
-        String json = "{\"id\":null,\"term\":\"hola\",\"definitions\":[\"hi\"],\"language\":\"SPANISH\",\"example\":null,\"phonetic\":null}";
-        server.expect(requestTo("http://mock/words/definition?term=hola&language=spanish"))
+        String json = "{\"id\":null,\"term\":\"hello\",\"definitions\":[\"hi\"],\"language\":\"ENGLISH\",\"example\":null,\"phonetic\":null}";
+        server.expect(requestTo("http://mock/words/definition?term=hello&language=english"))
                 .andExpect(method(GET))
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 
-        WordResponse resp = client.fetchDefinition("hola", Language.SPANISH);
+        WordResponse resp = client.fetchDefinition("hello", Language.ENGLISH);
         assertEquals("hi", resp.getDefinitions().get(0));
         server.verify();
     }

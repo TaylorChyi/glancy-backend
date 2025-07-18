@@ -188,14 +188,14 @@ class WordServiceTest {
         wordEn.setDefinitions(List.of("greet"));
         wordRepository.save(wordEn);
 
-        Word wordEs = new Word();
-        wordEs.setTerm("hello");
-        wordEs.setLanguage(Language.SPANISH);
-        wordEs.setDefinitions(List.of("hola"));
+        Word wordZh = new Word();
+        wordZh.setTerm("hello");
+        wordZh.setLanguage(Language.CHINESE);
+        wordZh.setDefinitions(List.of("你好"));
 
-        assertDoesNotThrow(() -> wordRepository.save(wordEs));
+        assertDoesNotThrow(() -> wordRepository.save(wordZh));
 
         assertTrue(wordRepository.findByTermAndLanguageAndDeletedFalse("hello", Language.ENGLISH).isPresent());
-        assertTrue(wordRepository.findByTermAndLanguageAndDeletedFalse("hello", Language.SPANISH).isPresent());
+        assertTrue(wordRepository.findByTermAndLanguageAndDeletedFalse("hello", Language.CHINESE).isPresent());
     }
 }

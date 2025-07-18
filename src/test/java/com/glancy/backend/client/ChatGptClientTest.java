@@ -9,8 +9,6 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import com.glancy.backend.client.prompt.DefaultPromptStrategy;
-import com.glancy.backend.client.prompt.SpanishPromptStrategy;
-import com.glancy.backend.client.prompt.FrenchPromptStrategy;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,23 +27,7 @@ class ChatGptClientTest {
         client = new ChatGptClient(restTemplate,
                 "http://mock",
                 "",
-                List.of(new SpanishPromptStrategy(),
-                        new FrenchPromptStrategy(),
-                        new DefaultPromptStrategy()));
-    }
-
-    @Test
-    void spanishPromptIsUsed() {
-        server.expect(requestTo("http://mock/chat/completions"))
-                .andExpect(method(POST))
-                .andExpect(content().string(containsString("Explica 'hola' en español")))
-                .andRespond(withSuccess(
-                        "{\"choices\":[{\"message\":{\"content\":\"ok\"}}]}",
-                        MediaType.APPLICATION_JSON));
-
-        WordResponse resp = client.fetchDefinition("hola", Language.SPANISH);
-        assertEquals("ok", resp.getDefinitions().get(0));
-        server.verify();
+                List.of(new DefaultPromptStrategy()));
     }
 
     @Test
