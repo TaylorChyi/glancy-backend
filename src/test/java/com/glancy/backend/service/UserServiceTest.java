@@ -3,6 +3,7 @@ package com.glancy.backend.service;
 import com.glancy.backend.dto.UserRegistrationRequest;
 import com.glancy.backend.dto.UserResponse;
 import com.glancy.backend.dto.LoginRequest;
+import com.glancy.backend.dto.LoginIdentifier;
 import com.glancy.backend.dto.AvatarResponse;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.LoginDevice;
@@ -158,8 +159,11 @@ class UserServiceTest {
         req.setPhone("103");
         UserResponse resp = userService.register(req);
 
+        LoginIdentifier id = new LoginIdentifier();
+        id.setType(LoginIdentifier.Type.USERNAME);
+        id.setText("deviceuser");
         LoginRequest loginReq = new LoginRequest();
-        loginReq.setUsername("deviceuser");
+        loginReq.setIdentifier(id);
         loginReq.setPassword("pass123");
 
         loginReq.setDeviceInfo("d1");
@@ -186,8 +190,11 @@ class UserServiceTest {
         req.setPhone("555");
         userService.register(req);
 
+        LoginIdentifier id = new LoginIdentifier();
+        id.setType(LoginIdentifier.Type.PHONE);
+        id.setText("555");
         LoginRequest loginReq = new LoginRequest();
-        loginReq.setPhone("555");
+        loginReq.setIdentifier(id);
         loginReq.setPassword("pass123");
 
         assertNotNull(userService.login(loginReq).getToken());
