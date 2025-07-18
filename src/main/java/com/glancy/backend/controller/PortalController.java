@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.glancy.backend.dto.SystemParameterRequest;
 import com.glancy.backend.dto.SystemParameterResponse;
+import com.glancy.backend.dto.MemberStatusResponse;
+import com.glancy.backend.service.UserService;
 import com.glancy.backend.dto.UserStatisticsResponse;
 import com.glancy.backend.dto.DailyActiveUserResponse;
 import com.glancy.backend.service.UserService;
@@ -63,6 +65,16 @@ public class PortalController {
     @GetMapping("/parameters")
     public ResponseEntity<List<SystemParameterResponse>> list() {
         List<SystemParameterResponse> resp = parameterService.list();
+        return ResponseEntity.ok(resp);
+    }
+
+    /**
+     * Retrieve membership status of a user.
+     */
+    @GetMapping("/users/{id}/membership")
+    public ResponseEntity<MemberStatusResponse> getMembership(@PathVariable Long id) {
+        boolean member = userService.isMember(id);
+        MemberStatusResponse resp = new MemberStatusResponse(id, member);
         return ResponseEntity.ok(resp);
     }
   

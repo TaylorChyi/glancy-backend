@@ -1,6 +1,9 @@
 package com.glancy.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.glancy.backend.dto.MemberStatusResponse;
+import com.glancy.backend.service.SystemParameterService;
+import com.glancy.backend.service.UserService;
 import com.glancy.backend.dto.UserStatisticsResponse;
 import com.glancy.backend.dto.DailyActiveUserResponse;
 import com.glancy.backend.dto.SystemParameterRequest;
@@ -19,6 +22,10 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.context.annotation.Import;
 
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doNothing;
@@ -41,12 +48,24 @@ class PortalControllerTest {
 
     @MockBean
     private SystemParameterService parameterService;
+
     @MockBean
     private UserService userService;
 
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Test
+    void getMembershipStatus() throws Exception {
+        when(userService.isMember(1L)).thenReturn(true);
+
+        mockMvc.perform(get("/api/portal/users/1/membership")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.member").value(true))
+                .andExpect(jsonPath("$.userId").value(1L));
+    }
+  
     @Test
     void userStats() throws Exception {
         UserStatisticsResponse resp = new UserStatisticsResponse(2, 1, 0);
