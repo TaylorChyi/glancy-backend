@@ -62,6 +62,11 @@ public class UserService {
             log.warn("Email {} is already in use", req.getEmail());
             throw new IllegalArgumentException("邮箱已被使用");
         }
+        if (req.getPhone() != null && !req.getPhone().isEmpty() &&
+                userRepository.findByPhoneAndDeletedFalse(req.getPhone()).isPresent()) {
+            log.warn("Phone {} is already in use", req.getPhone());
+            throw new IllegalArgumentException("手机号已被使用");
+        }
         User user = new User();
         user.setUsername(req.getUsername());
         user.setPassword(passwordEncoder.encode(req.getPassword()));
@@ -102,8 +107,14 @@ public class UserService {
      */
     @Transactional
     public LoginResponse login(LoginRequest req) {
-        log.info("Attempting login for {}", req.getUsername() != null ? req.getUsername() : req.getEmail());
-        String identifier = req.getUsername() != null ? req.getUsername() : req.getEmail();
+        String identifier = req.getUsername();
+        if (identifier == null || identifier.isEmpty()) {
+            identifier = req.getEmail();
+        }
+        if ((identifier == null || identifier.isEmpty()) && req.getPhone() != null) {
+            identifier = req.getPhone();
+        }
+        log.info("Attempting login for {}", identifier);
         log.debug("Login attempt for {}", identifier);
         User user = null;
 
@@ -119,9 +130,15 @@ public class UserService {
                         log.warn("User with email {} not found or deleted", req.getEmail());
                         return new IllegalArgumentException("用户不存在或已注销");
                     });
+        } else if (req.getPhone() != null && !req.getPhone().isEmpty()) {
+            user = userRepository.findByPhoneAndDeletedFalse(req.getPhone())
+                    .orElseThrow(() -> {
+                        log.warn("User with phone {} not found or deleted", req.getPhone());
+                        return new IllegalArgumentException("用户不存在或已注销");
+                    });
         } else {
-            log.warn("Username or email must be provided for login");
-            throw new IllegalArgumentException("用户名或邮箱必须填写其一");
+            log.warn("Username, email or phone must be provided for login");
+            throw new IllegalArgumentException("用户名、邮箱或手机号必须填写其一");
         }
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {

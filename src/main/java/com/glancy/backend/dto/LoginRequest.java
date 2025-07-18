@@ -10,6 +10,7 @@ import lombok.Data;
 public class LoginRequest {
     private String username;  // 可选
     private String email;     // 可选
+    private String phone;     // 可选
 
     @NotBlank(message = "{validation.login.password.notblank}")
     private String password;

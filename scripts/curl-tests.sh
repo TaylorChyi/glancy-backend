@@ -16,12 +16,17 @@ curl -i "$BASE_URL/api/ping"
 
 section "Register user"
 curl -i -H "Content-Type: application/json" \
-    -d '{"username":"demo","password":"pass123","email":"demo@example.com"}' \
+    -d '{"username":"demo","password":"pass123","email":"demo@example.com","phone":"555"}' \
     "$BASE_URL/api/users/register"
 
 section "Login"
 curl -i -H "Content-Type: application/json" \
     -d '{"username":"demo","password":"pass123"}' \
+    "$BASE_URL/api/users/login"
+
+section "Login by phone"
+curl -i -H "Content-Type: application/json" \
+    -d '{"phone":"555","password":"pass123"}' \
     "$BASE_URL/api/users/login"
 
 section "Create FAQ"
