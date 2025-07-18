@@ -20,6 +20,8 @@ import com.glancy.backend.entity.ThirdPartyAccount;
 import com.glancy.backend.repository.UserRepository;
 import com.glancy.backend.repository.LoginDeviceRepository;
 import com.glancy.backend.repository.ThirdPartyAccountRepository;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,13 +40,16 @@ public class UserService {
     private final LoginDeviceRepository loginDeviceRepository;
     private final ThirdPartyAccountRepository thirdPartyAccountRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final AvatarStorageService avatarStorageService;
 
     public UserService(UserRepository userRepository,
                        LoginDeviceRepository loginDeviceRepository,
-                       ThirdPartyAccountRepository thirdPartyAccountRepository) {
+                       ThirdPartyAccountRepository thirdPartyAccountRepository,
+                       AvatarStorageService avatarStorageService) {
         this.userRepository = userRepository;
         this.loginDeviceRepository = loginDeviceRepository;
         this.thirdPartyAccountRepository = thirdPartyAccountRepository;
+        this.avatarStorageService = avatarStorageService;
     }
 
     /**
@@ -262,6 +267,20 @@ public class UserService {
         user.setAvatar(avatar);
         User saved = userRepository.save(user);
         return new AvatarResponse(saved.getAvatar());
+    }
+
+    /**
+     * Upload a new avatar image and update the user's record.
+     */
+    @Transactional
+    public AvatarResponse uploadAvatar(Long userId, MultipartFile file) {
+        try {
+            String url = avatarStorageService.upload(file);
+            return updateAvatar(userId, url);
+        } catch (IOException e) {
+            log.error("Failed to upload avatar", e);
+            throw new IllegalStateException("上传头像失败");
+        }
     }
 
     /**

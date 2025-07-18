@@ -18,3 +18,9 @@ logging:
 
 portal:
   admin-token: secret
+oss:
+  endpoint: https://oss-cn-hangzhou.aliyuncs.com
+  bucket: glancy-avatar-bucket
+  avatar-dir: avatars/
+  access-key-id:
+  access-key-secret:

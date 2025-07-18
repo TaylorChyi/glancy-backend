@@ -15,6 +15,7 @@ import com.glancy.backend.dto.AvatarRequest;
 import com.glancy.backend.dto.AvatarResponse;
 import com.glancy.backend.dto.UsernameRequest;
 import com.glancy.backend.dto.UsernameResponse;
+import org.springframework.web.multipart.MultipartFile;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.service.UserService;
 
@@ -96,6 +97,17 @@ public class UserController {
             @PathVariable Long id,
             @Valid @RequestBody AvatarRequest req) {
         AvatarResponse resp = userService.updateAvatar(id, req.getAvatar());
+        return ResponseEntity.ok(resp);
+    }
+
+    /**
+     * Upload avatar file to OSS and update user record.
+     */
+    @PostMapping("/{id}/avatar-file")
+    public ResponseEntity<AvatarResponse> uploadAvatar(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
+        AvatarResponse resp = userService.uploadAvatar(id, file);
         return ResponseEntity.ok(resp);
     }
 
