@@ -173,7 +173,7 @@ public class UserService {
         log.info("User {} logged in", user.getId());
         log.debug("User {} logged in", user.getId());
         return new LoginResponse(user.getId(), user.getUsername(), user.getEmail(),
-                user.getAvatar(), user.getPhone(), token);
+                user.getAvatar(), user.getPhone(), user.getMember(), token);
     }
 
     /**
