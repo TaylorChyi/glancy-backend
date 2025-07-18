@@ -83,11 +83,8 @@ class UserControllerTest {
         LoginResponse resp = new LoginResponse(1L, "u", "e", null, null, false, "tkn");
         when(userService.login(any(LoginRequest.class))).thenReturn(resp);
 
-        LoginIdentifier id = new LoginIdentifier();
-        id.setType(LoginIdentifier.Type.USERNAME);
-        id.setText("u");
         LoginRequest req = new LoginRequest();
-        req.setIdentifier(id);
+        req.setAccount("u");
         req.setPassword("pass");
 
         mockMvc.perform(post("/api/users/login")
@@ -102,11 +99,8 @@ class UserControllerTest {
         LoginResponse resp = new LoginResponse(1L, "u", "e", null, "555", false, "tkn");
         when(userService.login(any(LoginRequest.class))).thenReturn(resp);
 
-        LoginIdentifier id = new LoginIdentifier();
-        id.setType(LoginIdentifier.Type.PHONE);
-        id.setText("555");
         LoginRequest req = new LoginRequest();
-        req.setIdentifier(id);
+        req.setAccount("555");
         req.setPassword("pass");
 
         mockMvc.perform(post("/api/users/login")

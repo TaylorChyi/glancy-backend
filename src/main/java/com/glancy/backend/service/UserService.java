@@ -112,22 +112,19 @@ public class UserService {
      */
     @Transactional
     public LoginResponse login(LoginRequest req) {
-        LoginIdentifier id = req.getIdentifier();
-        if (id == null || id.getText() == null || id.getText().isEmpty()) {
-            log.warn("No identifier provided for login");
+        String account = req.getAccount();
+        if (account == null || account.isEmpty()) {
+            log.warn("No account provided for login");
             throw new IllegalArgumentException("用户名、邮箱或手机号必须填写其一");
         }
 
-        LoginIdentifier.Type type = id.getType();
-        if (type == null) {
-            type = LoginIdentifier.resolveType(id.getText());
-        }
+        LoginIdentifier.Type type = LoginIdentifier.resolveType(account);
 
         String identifier;
         User user;
         switch (type) {
             case EMAIL:
-                identifier = id.getText();
+                identifier = account;
                 final String email = identifier;
                 user = userRepository.findByEmailAndDeletedFalse(email)
                         .orElseThrow(() -> {
@@ -136,7 +133,7 @@ public class UserService {
                         });
                 break;
             case PHONE:
-                identifier = id.getText();
+                identifier = account;
                 String phone = identifier;
                 if (!phone.startsWith("+")) {
                     phone = "+86" + phone;
@@ -153,7 +150,7 @@ public class UserService {
                 break;
             case USERNAME:
             default:
-                identifier = id.getText();
+                identifier = account;
                 final String uname = identifier;
                 user = userRepository.findByUsernameAndDeletedFalse(uname)
                         .orElseThrow(() -> {
