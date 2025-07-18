@@ -51,6 +51,7 @@ class NotificationServiceTest {
         user.setUsername("u1");
         user.setPassword("pass");
         user.setEmail("u1@example.com");
+        user.setPhone("11");
         userRepository.save(user);
 
         NotificationRequest req = new NotificationRequest();

@@ -60,6 +60,7 @@ class UserServiceTest {
         req.setUsername("testuser");
         req.setPassword("pass123");
         req.setEmail("test@example.com");
+        req.setPhone("100");
         UserResponse resp = userService.register(req);
 
         assertNotNull(resp.getId());
@@ -82,6 +83,7 @@ class UserServiceTest {
         req1.setUsername("user1");
         req1.setPassword("pass123");
         req1.setEmail("a@example.com");
+        req1.setPhone("101");
         userService.register(req1);
 
         // 再次用相同用户名
@@ -89,6 +91,7 @@ class UserServiceTest {
         req2.setUsername("user1");
         req2.setPassword("pass456");
         req2.setEmail("b@example.com");
+        req2.setPhone("102");
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
             userService.register(req2);
@@ -103,6 +106,7 @@ class UserServiceTest {
         req1.setUsername("user1");
         req1.setPassword("pass123");
         req1.setEmail("a@example.com");
+        req1.setPhone("111");
         userService.register(req1);
 
         // 再次用相同邮箱
@@ -110,6 +114,7 @@ class UserServiceTest {
         req2.setUsername("user2");
         req2.setPassword("pass456");
         req2.setEmail("a@example.com");
+        req2.setPhone("112");
 
         Exception ex = assertThrows(IllegalArgumentException.class, () -> {
             userService.register(req2);
@@ -145,6 +150,7 @@ class UserServiceTest {
         req.setUsername("deviceuser");
         req.setPassword("pass123");
         req.setEmail("device@example.com");
+        req.setPhone("103");
         UserResponse resp = userService.register(req);
 
         LoginRequest loginReq = new LoginRequest();
@@ -188,6 +194,7 @@ class UserServiceTest {
         req.setUsername("avataruser");
         req.setPassword("pass123");
         req.setEmail("avatar@example.com");
+        req.setPhone("104");
         UserResponse resp = userService.register(req);
 
         AvatarResponse updated = userService.updateAvatar(resp.getId(), "url");
@@ -203,12 +210,14 @@ class UserServiceTest {
         u1.setUsername("a1");
         u1.setPassword("p");
         u1.setEmail("a1@example.com");
+        u1.setPhone("201");
         userRepository.save(u1);
 
         User u2 = new User();
         u2.setUsername("a2");
         u2.setPassword("p");
         u2.setEmail("a2@example.com");
+        u2.setPhone("202");
         u2.setDeleted(true);
         userRepository.save(u2);
 
@@ -222,6 +231,7 @@ class UserServiceTest {
         req.setUsername("member");
         req.setPassword("p");
         req.setEmail("m@example.com");
+        req.setPhone("203");
         UserResponse resp = userService.register(req);
 
         userService.activateMembership(resp.getId());

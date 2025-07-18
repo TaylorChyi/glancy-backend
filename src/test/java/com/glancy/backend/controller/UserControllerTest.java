@@ -37,13 +37,14 @@ class UserControllerTest {
 
     @Test
     void register() throws Exception {
-        UserResponse resp = new UserResponse(1L, "testuser", "test@example.com", null, null);
+        UserResponse resp = new UserResponse(1L, "testuser", "test@example.com", null, "555");
         when(userService.register(any(UserRegistrationRequest.class))).thenReturn(resp);
 
         UserRegistrationRequest req = new UserRegistrationRequest();
         req.setUsername("testuser");
         req.setPassword("pass123");
         req.setEmail("test@example.com");
+        req.setPhone("555");
 
         mockMvc.perform(post("/api/users/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -66,6 +67,7 @@ class UserControllerTest {
         user.setUsername("u");
         user.setPassword("p");
         user.setEmail("e");
+        user.setPhone("p1");
         when(userService.getUserRaw(1L)).thenReturn(user);
 
         mockMvc.perform(get("/api/users/1"))

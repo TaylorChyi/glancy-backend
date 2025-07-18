@@ -41,6 +41,7 @@ class UserStatisticsServiceTest {
         u1.setUsername("u1");
         u1.setPassword("p");
         u1.setEmail("u1@example.com");
+        u1.setPhone("31");
         u1.setMember(true);
         userRepository.save(u1);
 
@@ -48,12 +49,14 @@ class UserStatisticsServiceTest {
         u2.setUsername("u2");
         u2.setPassword("p");
         u2.setEmail("u2@example.com");
+        u2.setPhone("32");
         userRepository.save(u2);
 
         User u3 = new User();
         u3.setUsername("u3");
         u3.setPassword("p");
         u3.setEmail("u3@example.com");
+        u3.setPhone("33");
         u3.setDeleted(true);
         userRepository.save(u3);
 

@@ -22,6 +22,7 @@ public class UserRegistrationRequest {
 
     // Optional avatar URL
     private String avatar;
-    // Optional phone number    
+
+    @NotBlank(message = "{validation.userRegistration.phone.notblank}")
     private String phone;
 }
