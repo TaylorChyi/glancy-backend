@@ -8,6 +8,8 @@ import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.LoginDevice;
 import com.glancy.backend.repository.UserRepository;
 import com.glancy.backend.repository.LoginDeviceRepository;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeAll;
 
@@ -32,6 +35,8 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Autowired
     private LoginDeviceRepository loginDeviceRepository;
+    @MockitoBean
+    private AvatarStorageService avatarStorageService;
 
     @BeforeAll
     static void loadEnv() {
@@ -202,6 +207,22 @@ class UserServiceTest {
 
         AvatarResponse fetched = userService.getAvatar(resp.getId());
         assertEquals("url", fetched.getAvatar());
+    }
+
+    @Test
+    void testUploadAvatar() throws Exception {
+        UserRegistrationRequest req = new UserRegistrationRequest();
+        req.setUsername("uploaduser");
+        req.setPassword("pass");
+        req.setEmail("up@example.com");
+        req.setPhone("109");
+        UserResponse resp = userService.register(req);
+
+        MultipartFile file = mock(MultipartFile.class);
+        when(avatarStorageService.upload(file)).thenReturn("path/url.jpg");
+
+        AvatarResponse result = userService.uploadAvatar(resp.getId(), file);
+        assertEquals("path/url.jpg", result.getAvatar());
     }
 
     @Test

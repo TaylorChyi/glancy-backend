@@ -19,6 +19,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 @WebMvcTest(UserController.class)
 @Import(com.glancy.backend.config.SecurityConfig.class)
@@ -147,6 +149,17 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.avatar").value("url"));
+    }
+
+    @Test
+    void uploadAvatar() throws Exception {
+        MockMultipartFile file = new MockMultipartFile("file", "a.jpg", "image/jpeg", "xx".getBytes());
+        AvatarResponse resp = new AvatarResponse("path/url.jpg");
+        when(userService.uploadAvatar(eq(1L), any(MultipartFile.class))).thenReturn(resp);
+
+        mockMvc.perform(multipart("/api/users/1/avatar-file").file(file))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.avatar").value("path/url.jpg"));
     }
 
     @Test

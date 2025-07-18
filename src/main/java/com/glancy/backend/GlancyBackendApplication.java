@@ -27,6 +27,14 @@ public class GlancyBackendApplication {
         if (deepseekKey != null) {
             System.setProperty("thirdparty.deepseek.api-key", deepseekKey);
         }
+        String ossKey = dotenv.get("OSS_ACCESS_KEY_ID");
+        if (ossKey != null) {
+            System.setProperty("OSS_ACCESS_KEY_ID", ossKey);
+        }
+        String ossSecret = dotenv.get("OSS_ACCESS_KEY_SECRET");
+        if (ossSecret != null) {
+            System.setProperty("OSS_ACCESS_KEY_SECRET", ossSecret);
+        }
         SpringApplication.run(GlancyBackendApplication.class, args);
     }
 
