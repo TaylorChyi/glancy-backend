@@ -48,11 +48,7 @@ java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar
 ```
 ## Quick API Check
 Example curl commands live in `CURL_TESTS.md`. Run `scripts/curl-tests.sh` to call common endpoints.
-For prompt templates used when querying models, see `docs/PROMPT_CN.md`.
-Japanese prompt guidance can be found in `PROMPT_GUIDE_JA.md`. 
-German prompt guidance is available in `PROMPT_GUIDE_DE.md`.
-English prompt guidance can be found in `PROMPT_GUIDE_EN.md`.
-Russian prompt guidance can be found in `PROMPT_GUIDE_RU.md`.
+For prompt templates used when querying models, see `docs/PROMPT_CN.md` and `PROMPT_GUIDE_EN.md`.
 ## API Endpoints
 
 
@@ -102,20 +98,6 @@ Russian prompt guidance can be found in `PROMPT_GUIDE_RU.md`.
 - `PUT /api/portal/alert-recipients/{id}` – update an alert email address
 - `DELETE /api/portal/alert-recipients/{id}` – remove an alert email address
 - `GET /api/portal/daily-active` – daily active users and rate
-
-## ChatGPT Prompt
-
-When requesting French definitions, the backend sends the following instruction to GPT:
-
-```
-Vous \u00eates un assistant de dictionnaire.
-Fournis la d\u00e9finition de '<terme>' en fran\u00e7ais au format:
-D\u00e9finition: ...
-Synonymes: ...
-Les synonymes doivent \u00eatre s\u00e9par\u00e9s par des virgules.
-```
-
-This format ensures stable parsing of the returned text.
 
 ## 版本管理
 
