@@ -3,16 +3,11 @@ package com.glancy.backend.service;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.client.DeepSeekClient;
-import com.glancy.backend.client.ChatGptClient;
-import com.glancy.backend.client.GoogleTtsClient;
-import com.glancy.backend.client.GeminiClient;
 import com.glancy.backend.client.QianWenClient;
 import com.glancy.backend.entity.DictionaryModel;
 import com.glancy.backend.repository.UserPreferenceRepository;
-import com.glancy.backend.service.dictionary.ChatGptStrategy;
 import com.glancy.backend.service.dictionary.DeepSeekStrategy;
 import com.glancy.backend.service.dictionary.DictionaryStrategy;
-import com.glancy.backend.service.dictionary.GeminiStrategy;
 import com.glancy.backend.service.dictionary.QianWenStrategy;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,35 +24,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class WordService {
     private final DeepSeekClient deepSeekClient;
-    private final ChatGptClient chatGptClient;
-    private final GoogleTtsClient googleTtsClient;
-    private final GeminiClient geminiClient;
     private final QianWenClient qianWenClient;
     private final WordRepository wordRepository;
     private final UserPreferenceRepository userPreferenceRepository;
     private final Map<DictionaryModel, DictionaryStrategy> strategies = new HashMap<>();
 
     public WordService(DeepSeekClient deepSeekClient,
-                       ChatGptClient chatGptClient,
-                       GoogleTtsClient googleTtsClient,
-                       GeminiClient geminiClient,
                        QianWenClient qianWenClient,
                        WordRepository wordRepository,
                        UserPreferenceRepository userPreferenceRepository,
                        DeepSeekStrategy deepSeekStrategy,
-                       ChatGptStrategy chatGptStrategy,
-                       GeminiStrategy geminiStrategy,
                        QianWenStrategy qianWenStrategy) {
         this.deepSeekClient = deepSeekClient;
-        this.chatGptClient = chatGptClient;
-        this.googleTtsClient = googleTtsClient;
-        this.geminiClient = geminiClient;
         this.qianWenClient = qianWenClient;
         this.wordRepository = wordRepository;
         this.userPreferenceRepository = userPreferenceRepository;
         strategies.put(DictionaryModel.DEEPSEEK, deepSeekStrategy);
-        strategies.put(DictionaryModel.CHAT_GPT, chatGptStrategy);
-        strategies.put(DictionaryModel.GEMINI, geminiStrategy);
         strategies.put(DictionaryModel.QIANWEN, qianWenStrategy);
     }
 
@@ -77,37 +59,12 @@ public class WordService {
     }
 
     /**
-     * Retrieve word details using ChatGPT.
+     * Retrieve pronunciation audio from the DeepSeek service.
      */
-    @Transactional(readOnly = true)
-    public WordResponse findWordWithGpt(String term, Language language) {
-        log.info("Fetching definition for term '{}' using ChatGPT in language {}", term, language);
-        return chatGptClient.fetchDefinition(term, language);
-    }
-
     @Transactional(readOnly = true)
     public byte[] getAudio(String term, Language language) {
         log.info("Fetching audio for term '{}' in language {}", term, language);
         return deepSeekClient.fetchAudio(term, language);
-
-
-    }
-
-    /**
-     * Retrieve pronunciation audio bytes from Google TTS.
-     */
-    @Transactional(readOnly = true)
-    public byte[] getPronunciation(String term, Language language) {
-        log.info("Fetching pronunciation for term '{}' in language {}", term, language);
-        return googleTtsClient.fetchPronunciation(term, language);
-    }
-    /**
-     * Retrieve word details using the Gemini provider.
-     */
-    @Transactional(readOnly = true)
-    public WordResponse findWordFromGemini(String term, Language language) {
-        log.info("Fetching definition from Gemini for term '{}' in language {}", term, language);
-        return geminiClient.fetchDefinition(term, language);
     }
 
     /**

@@ -27,10 +27,6 @@ public class GlancyBackendApplication {
         if (deepseekKey != null) {
             System.setProperty("thirdparty.deepseek.api-key", deepseekKey);
         }
-        String openaiKey = dotenv.get("thirdparty.openai.api-key");
-        if (openaiKey != null) {
-            System.setProperty("thirdparty.openai.api-key", openaiKey);
-        }
         SpringApplication.run(GlancyBackendApplication.class, args);
     }
 
