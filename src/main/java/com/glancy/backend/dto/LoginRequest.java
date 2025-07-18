@@ -9,9 +9,9 @@ import lombok.Data;
 @Data
 public class LoginRequest {
     /**
-     * Identifier containing the raw text and resolved type.
+     * Account string entered by the user. May be a username, email or phone number.
      */
-    private LoginIdentifier identifier;
+    private String account;
 
     @NotBlank(message = "{validation.login.password.notblank}")
     private String password;

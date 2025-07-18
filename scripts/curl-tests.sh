@@ -21,7 +21,7 @@ curl -i -H "Content-Type: application/json" \
 
 section "Login"
 curl -i -H "Content-Type: application/json" \
-    -d '{"identifier":{"type":"USERNAME","text":"demo"},"password":"pass123"}' \
+    -d '{"account":"demo","password":"pass123"}' \
     "$BASE_URL/api/users/login"
 
 section "Create FAQ"
