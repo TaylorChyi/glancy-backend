@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.glancy.backend.dto.LoginRequest;
 import com.glancy.backend.dto.LoginResponse;
+import com.glancy.backend.dto.LoginIdentifier;
 import com.glancy.backend.dto.UserRegistrationRequest;
 import com.glancy.backend.dto.UserStatisticsResponse;
 import com.glancy.backend.dto.UserResponse;
@@ -106,39 +107,59 @@ public class UserService {
      */
     @Transactional
     public LoginResponse login(LoginRequest req) {
-        String identifier = req.getUsername();
-        if (identifier == null || identifier.isEmpty()) {
-            identifier = req.getEmail();
-        }
-        if ((identifier == null || identifier.isEmpty()) && req.getPhone() != null) {
-            identifier = req.getPhone();
-        }
-        log.info("Attempting login for {}", identifier);
-        log.debug("Login attempt for {}", identifier);
-        User user = null;
-
-        if (req.getUsername() != null && !req.getUsername().isEmpty()) {
-            user = userRepository.findByUsernameAndDeletedFalse(req.getUsername())
-                    .orElseThrow(() -> {
-                        log.warn("User {} not found or deleted", req.getUsername());
-                        return new IllegalArgumentException("用户不存在或已注销");
-                    });
-        } else if (req.getEmail() != null && !req.getEmail().isEmpty()) {
-            user = userRepository.findByEmailAndDeletedFalse(req.getEmail())
-                    .orElseThrow(() -> {
-                        log.warn("User with email {} not found or deleted", req.getEmail());
-                        return new IllegalArgumentException("用户不存在或已注销");
-                    });
-        } else if (req.getPhone() != null && !req.getPhone().isEmpty()) {
-            user = userRepository.findByPhoneAndDeletedFalse(req.getPhone())
-                    .orElseThrow(() -> {
-                        log.warn("User with phone {} not found or deleted", req.getPhone());
-                        return new IllegalArgumentException("用户不存在或已注销");
-                    });
-        } else {
-            log.warn("Username, email or phone must be provided for login");
+        LoginIdentifier id = req.getIdentifier();
+        if (id == null || id.getText() == null || id.getText().isEmpty()) {
+            log.warn("No identifier provided for login");
             throw new IllegalArgumentException("用户名、邮箱或手机号必须填写其一");
         }
+
+        LoginIdentifier.Type type = id.getType();
+        if (type == null) {
+            type = LoginIdentifier.resolveType(id.getText());
+        }
+
+        String identifier;
+        User user;
+        switch (type) {
+            case EMAIL:
+                identifier = id.getText();
+                final String email = identifier;
+                user = userRepository.findByEmailAndDeletedFalse(email)
+                        .orElseThrow(() -> {
+                            log.warn("User with email {} not found or deleted", email);
+                            return new IllegalArgumentException("用户不存在或已注销");
+                        });
+                break;
+            case PHONE:
+                identifier = id.getText();
+                String phone = identifier;
+                if (!phone.startsWith("+")) {
+                    phone = "+86" + phone;
+                }
+                final String lookupPhone = phone;
+                final String raw = identifier;
+                user = userRepository.findByPhoneAndDeletedFalse(lookupPhone)
+                        .orElseGet(() -> userRepository.findByPhoneAndDeletedFalse(raw)
+                                .orElseThrow(() -> {
+                                    log.warn("User with phone {} not found or deleted", raw);
+                                    return new IllegalArgumentException("用户不存在或已注销");
+                                }));
+                identifier = phone;
+                break;
+            case USERNAME:
+            default:
+                identifier = id.getText();
+                final String uname = identifier;
+                user = userRepository.findByUsernameAndDeletedFalse(uname)
+                        .orElseThrow(() -> {
+                            log.warn("User {} not found or deleted", uname);
+                            return new IllegalArgumentException("用户不存在或已注销");
+                        });
+                break;
+        }
+
+        log.info("Attempting login for {}", identifier);
+        log.debug("Login attempt for {}", identifier);
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             log.warn("Password mismatch for user {}", user.getUsername());
