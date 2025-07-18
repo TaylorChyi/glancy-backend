@@ -118,6 +118,27 @@ class UserServiceTest {
     }
 
     @Test
+    void testRegisterDuplicatePhone() {
+        UserRegistrationRequest req1 = new UserRegistrationRequest();
+        req1.setUsername("userp1");
+        req1.setPassword("pass123");
+        req1.setEmail("p1@example.com");
+        req1.setPhone("12345");
+        userService.register(req1);
+
+        UserRegistrationRequest req2 = new UserRegistrationRequest();
+        req2.setUsername("userp2");
+        req2.setPassword("pass456");
+        req2.setEmail("p2@example.com");
+        req2.setPhone("12345");
+
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> {
+            userService.register(req2);
+        });
+        assertEquals("手机号已被使用", ex.getMessage());
+    }
+
+    @Test
     void testLoginDeviceLimit() {
         // create user
         UserRegistrationRequest req = new UserRegistrationRequest();
@@ -142,7 +163,24 @@ class UserServiceTest {
         List<LoginDevice> devices = loginDeviceRepository
                 .findByUserIdOrderByLoginTimeAsc(resp.getId());
         assertEquals(3, devices.size());
-        assertFalse(devices.stream().anyMatch(d -> "d1".equals(d.getDeviceInfo())));    }
+        assertFalse(devices.stream().anyMatch(d -> "d1".equals(d.getDeviceInfo())));
+    }
+
+    @Test
+    void testLoginByPhone() {
+        UserRegistrationRequest req = new UserRegistrationRequest();
+        req.setUsername("phoneuser");
+        req.setPassword("pass123");
+        req.setEmail("phone@example.com");
+        req.setPhone("555");
+        userService.register(req);
+
+        LoginRequest loginReq = new LoginRequest();
+        loginReq.setPhone("555");
+        loginReq.setPassword("pass123");
+
+        assertNotNull(userService.login(loginReq).getToken());
+    }
 
     @Test
     void testUpdateAvatar() {

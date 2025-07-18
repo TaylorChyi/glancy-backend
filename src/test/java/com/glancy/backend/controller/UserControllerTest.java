@@ -91,6 +91,22 @@ class UserControllerTest {
     }
 
     @Test
+    void loginWithPhone() throws Exception {
+        LoginResponse resp = new LoginResponse(1L, "u", "e", null, "555", "tkn");
+        when(userService.login(any(LoginRequest.class))).thenReturn(resp);
+
+        LoginRequest req = new LoginRequest();
+        req.setPhone("555");
+        req.setPassword("pass");
+
+        mockMvc.perform(post("/api/users/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L));
+    }
+
+    @Test
     void bindThirdParty() throws Exception {
         ThirdPartyAccountResponse resp = new ThirdPartyAccountResponse(1L, "p", "e", 1L);
         when(userService.bindThirdPartyAccount(eq(1L), any(ThirdPartyAccountRequest.class))).thenReturn(resp);
