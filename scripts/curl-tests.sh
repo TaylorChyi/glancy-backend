@@ -63,6 +63,14 @@ curl -i -H "Content-Type: application/json" \
 section "Get user preference"
 curl -i "$BASE_URL/api/preferences/user/1"
 
+section "Save user profile"
+curl -i -H "Content-Type: application/json" \
+    -d '{"age":30,"gender":"M","job":"dev","interest":"code","goal":"learn"}' \
+    "$BASE_URL/api/profiles/user/1"
+
+section "Get user profile"
+curl -i "$BASE_URL/api/profiles/user/1"
+
 section "Add search record"
 curl -i -H "Content-Type: application/json" \
     -d '{"term":"hello","language":"ENGLISH"}' \

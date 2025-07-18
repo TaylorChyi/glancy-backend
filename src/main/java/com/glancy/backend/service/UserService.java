@@ -62,8 +62,7 @@ public class UserService {
             log.warn("Email {} is already in use", req.getEmail());
             throw new IllegalArgumentException("邮箱已被使用");
         }
-        if (req.getPhone() != null && !req.getPhone().isEmpty() &&
-                userRepository.findByPhoneAndDeletedFalse(req.getPhone()).isPresent()) {
+        if (userRepository.findByPhoneAndDeletedFalse(req.getPhone()).isPresent()) {
             log.warn("Phone {} is already in use", req.getPhone());
             throw new IllegalArgumentException("手机号已被使用");
         }

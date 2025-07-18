@@ -51,6 +51,7 @@ class SearchRecordServiceTest {
         user.setUsername("sruser");
         user.setPassword("p");
         user.setEmail("s@example.com");
+        user.setPhone("41");
         userRepository.save(user);
         user.setLastLoginAt(LocalDateTime.now());
         userRepository.save(user);
@@ -75,6 +76,7 @@ class SearchRecordServiceTest {
         user.setUsername("nologin");
         user.setPassword("p");
         user.setEmail("n@example.com");
+        user.setPhone("42");
         userRepository.save(user);
 
         SearchRecordRequest req = new SearchRecordRequest();
@@ -92,6 +94,7 @@ class SearchRecordServiceTest {
         user.setUsername("limit");
         user.setPassword("p");
         user.setEmail("l@example.com");
+        user.setPhone("43");
         userRepository.save(user);
         user.setLastLoginAt(LocalDateTime.now());
         userRepository.save(user);

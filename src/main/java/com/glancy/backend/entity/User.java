@@ -32,7 +32,8 @@ public class User {
     // Optional avatar image URL
     private String avatar;
 
-    // Optional phone number
+    // Phone number
+    @Column(nullable = false, unique = true, length = 20)
     private String phone;
 
     @Column(nullable = false)
