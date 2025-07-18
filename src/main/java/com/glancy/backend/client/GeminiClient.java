@@ -25,7 +25,7 @@ public class GeminiClient {
      * Fetch word definition from Gemini.
      */
     public WordResponse fetchDefinition(String term, Language language) {
-        String url = UriComponentsBuilder.fromHttpUrl(baseUrl)
+        String url = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/words/definition")
                 .queryParam("term", term)
                 .queryParam("language", language.name().toLowerCase())
