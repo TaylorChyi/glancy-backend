@@ -78,7 +78,7 @@ class UserControllerTest {
 
     @Test
     void login() throws Exception {
-        LoginResponse resp = new LoginResponse(1L, "u", "e", null, null, "tkn");
+        LoginResponse resp = new LoginResponse(1L, "u", "e", null, null, false, "tkn");
         when(userService.login(any(LoginRequest.class))).thenReturn(resp);
 
         LoginRequest req = new LoginRequest();
@@ -94,7 +94,7 @@ class UserControllerTest {
 
     @Test
     void loginWithPhone() throws Exception {
-        LoginResponse resp = new LoginResponse(1L, "u", "e", null, "555", "tkn");
+        LoginResponse resp = new LoginResponse(1L, "u", "e", null, "555", false, "tkn");
         when(userService.login(any(LoginRequest.class))).thenReturn(resp);
 
         LoginRequest req = new LoginRequest();
