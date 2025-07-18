@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import com.glancy.backend.service.AlertService;
 
 /**
@@ -26,6 +28,12 @@ public class GlobalExceptionHandler {
         log.error("Request resulted in error: {}", ex.getMessage(), ex);
         alertService.sendAlert("Illegal argument", ex.getMessage());
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({NoHandlerFoundException.class, NoResourceFoundException.class})
+    public ResponseEntity<ErrorResponse> handleNotFound(Exception ex) {
+        log.error("Resource not found: {}", ex.getMessage());
+        return new ResponseEntity<>(new ErrorResponse("未找到资源"), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)
