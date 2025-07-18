@@ -26,7 +26,7 @@ public class DeepSeekClient {
     }
 
     public WordResponse fetchDefinition(String term, Language language) {
-        String url = UriComponentsBuilder.fromHttpUrl(baseUrl)
+        String url = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/words/definition")
                 .queryParam("term", term)
                 .queryParam("language", language.name().toLowerCase())
@@ -46,7 +46,7 @@ public class DeepSeekClient {
     }
 
     public byte[] fetchAudio(String term, Language language) {
-        String url = UriComponentsBuilder.fromHttpUrl(baseUrl)
+        String url = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/words/audio")
                 .queryParam("term", term)
                 .queryParam("language", language.name().toLowerCase())

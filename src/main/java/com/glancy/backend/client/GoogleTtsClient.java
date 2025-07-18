@@ -18,7 +18,7 @@ public class GoogleTtsClient {
     }
 
     public byte[] fetchPronunciation(String term, Language language) {
-        String url = UriComponentsBuilder.fromHttpUrl(baseUrl)
+        String url = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/translate_tts")
                 .queryParam("ie", "UTF-8")
                 .queryParam("client", "tw-ob")
