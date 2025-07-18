@@ -26,12 +26,12 @@ class QianWenClientTest {
 
     @Test
     void fetchDefinition() {
-        String json = "{\"id\":null,\"term\":\"salut\",\"definitions\":[\"hello\"],\"language\":\"FRENCH\",\"example\":null,\"phonetic\":null}";
-        server.expect(requestTo("http://mock/words/definition?term=salut&language=french"))
+        String json = "{\"id\":null,\"term\":\"hi\",\"definitions\":[\"hello\"],\"language\":\"CHINESE\",\"example\":null,\"phonetic\":null}";
+        server.expect(requestTo("http://mock/words/definition?term=hi&language=chinese"))
                 .andExpect(method(GET))
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 
-        WordResponse resp = client.fetchDefinition("salut", Language.FRENCH);
+        WordResponse resp = client.fetchDefinition("hi", Language.CHINESE);
         assertEquals("hello", resp.getDefinitions().get(0));
         server.verify();
     }
