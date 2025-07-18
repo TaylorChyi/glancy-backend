@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -35,25 +35,25 @@ import static org.mockito.Mockito.*;
 class WordServiceTest {
     @Autowired
     private WordService wordService;
-    @MockBean
+    @MockitoBean
     private DeepSeekClient deepSeekClient;
-    @MockBean
+    @MockitoBean
     private ChatGptClient chatGptClient;
-    @MockBean
+    @MockitoBean
     private GoogleTtsClient googleTtsClient;
-    @MockBean
+    @MockitoBean
     private GeminiClient geminiClient;
-    @MockBean
+    @MockitoBean
     private QianWenClient qianWenClient;
-    @MockBean
+    @MockitoBean
     private UserPreferenceRepository userPreferenceRepository;
-    @MockBean
+    @MockitoBean
     private DeepSeekStrategy deepSeekStrategy;
-    @MockBean
+    @MockitoBean
     private ChatGptStrategy chatGptStrategy;
-    @MockBean
+    @MockitoBean
     private GeminiStrategy geminiStrategy;
-    @MockBean
+    @MockitoBean
     private QianWenStrategy qianWenStrategy;
     @Autowired
     private WordRepository wordRepository;

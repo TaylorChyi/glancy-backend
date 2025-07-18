@@ -3,7 +3,7 @@ package com.glancy.backend.controller;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.context.annotation.Import;
 import com.glancy.backend.service.AlertService;
@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PingController.class)
 @Import(com.glancy.backend.config.SecurityConfig.class)
 class PingControllerTest {
-    @MockBean
+    @MockitoBean
     private AlertService alertService;
 
     @Autowired
