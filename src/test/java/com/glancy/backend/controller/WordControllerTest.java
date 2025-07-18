@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest(WordController.class)
 @Import(com.glancy.backend.config.SecurityConfig.class)
@@ -49,6 +50,7 @@ class WordControllerTest {
                         .param("term", "hello")
                         .param("language", "ENGLISH")
                         .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.term").value("hello"));
@@ -62,6 +64,7 @@ class WordControllerTest {
         mockMvc.perform(get("/api/words/pronunciation")
                         .param("term", "hi")
                         .param("language", "ENGLISH"))
+                .andDo(print())
                 .andExpect(status().isOk());
     }
 
@@ -73,6 +76,7 @@ class WordControllerTest {
         mockMvc.perform(get("/api/words/audio")
                         .param("term", "hello")
                         .param("language", "ENGLISH"))
+                .andDo(print())
                 .andExpect(status().isOk());
     }
 }
