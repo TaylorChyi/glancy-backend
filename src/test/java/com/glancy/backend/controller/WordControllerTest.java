@@ -56,17 +56,6 @@ class WordControllerTest {
                 .andExpect(jsonPath("$.term").value("hello"));
     }
 
-    @Test
-    void testGetPronunciation() throws Exception {
-        byte[] data = new byte[] {1};
-        when(wordService.getPronunciation(eq("hi"), eq(Language.ENGLISH))).thenReturn(data);
-
-        mockMvc.perform(get("/api/words/pronunciation")
-                        .param("term", "hi")
-                        .param("language", "ENGLISH"))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
 
     @Test
     void testGetAudio() throws Exception {

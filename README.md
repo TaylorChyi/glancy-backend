@@ -103,20 +103,6 @@ Russian prompt guidance can be found in `PROMPT_GUIDE_RU.md`.
 - `DELETE /api/portal/alert-recipients/{id}` – remove an alert email address
 - `GET /api/portal/daily-active` – daily active users and rate
 
-## ChatGPT Prompt
-
-When requesting French definitions, the backend sends the following instruction to GPT:
-
-```
-Vous \u00eates un assistant de dictionnaire.
-Fournis la d\u00e9finition de '<terme>' en fran\u00e7ais au format:
-D\u00e9finition: ...
-Synonymes: ...
-Les synonymes doivent \u00eatre s\u00e9par\u00e9s par des virgules.
-```
-
-This format ensures stable parsing of the returned text.
-
 ## 版本管理
 
 项目版本号定义在 `pom.xml` 中。默认合并时只递增补丁版本号。若提升中版本号，请在 PR 中说明，GitHub Actions 会在检测到中版本号变更时自动部署。

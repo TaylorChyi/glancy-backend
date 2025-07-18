@@ -61,13 +61,4 @@ public class WordController {
     }
 
 
-    /**
-     * Retrieve pronunciation audio using Google TTS.
-     */
-    @GetMapping(value = "/pronunciation", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<byte[]> getPronunciation(@RequestParam String term,
-                                                   @RequestParam Language language) {
-        byte[] audio = wordService.getPronunciation(term, language);
-        return ResponseEntity.ok().body(audio);
-    }
 }
