@@ -45,6 +45,34 @@ class DeepSeekClientTest {
     }
 
     @Test
+    void fetchDefinitionWithCodeFence() {
+        String content = "```json\n{\\\"id\\\":null,\\\"term\\\":\\\"hi\\\",\\\"definitions\\\":[\\\"hey\\\"],\\\"language\\\":\\\"ENGLISH\\\"}\n```";
+        String json = "{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"" + content + "\"}}]}";
+        server.expect(requestTo("http://mock/v1/chat/completions"))
+                .andExpect(method(POST))
+                .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
+
+        WordResponse resp = client.fetchDefinition("hi", Language.ENGLISH);
+        assertEquals("hi", resp.getTerm());
+        assertEquals("ENGLISH", resp.getLanguage().name());
+        server.verify();
+    }
+
+    @Test
+    void fetchDefinitionWithNonStandardLanguage() {
+        String content = "{\\\"id\\\":null,\\\"term\\\":\\\"\u770B\u770B\\\",\\\"definitions\\\":[\\\"look\\\"],\\\"language\\\":\\\"Chinese (Mandarin)\\\"}";
+        String json = "{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"" + content + "\"}}]}";
+        server.expect(requestTo("http://mock/v1/chat/completions"))
+                .andExpect(method(POST))
+                .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
+
+        WordResponse resp = client.fetchDefinition("看看", Language.CHINESE);
+        assertEquals(Language.CHINESE, resp.getLanguage());
+        assertEquals("看看", resp.getTerm());
+        server.verify();
+    }
+
+    @Test
     void fetchAudioWithAuth() {
         byte[] audio = new byte[] {1};
         server.expect(requestTo("http://mock/words/audio?term=hello&language=english"))
