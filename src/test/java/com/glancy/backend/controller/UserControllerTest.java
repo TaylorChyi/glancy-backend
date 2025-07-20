@@ -163,6 +163,15 @@ class UserControllerTest {
     }
 
     @Test
+    void logout() throws Exception {
+        doNothing().when(userService).logout(1L, "tkn");
+
+        mockMvc.perform(post("/api/users/1/logout")
+                        .header("X-USER-TOKEN", "tkn"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
     void countUsers() throws Exception {
         when(userService.countActiveUsers()).thenReturn(5L);
         mockMvc.perform(get("/api/users/count"))

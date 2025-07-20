@@ -70,6 +70,16 @@ public class UserController {
     }
 
     /**
+     * Log out a user by clearing their login token.
+     */
+    @PostMapping("/{id}/logout")
+    public ResponseEntity<Void> logout(@PathVariable Long id,
+                                       @RequestHeader("X-USER-TOKEN") String token) {
+        userService.logout(id, token);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
      * Bind a third-party account to the specified user.
      */
     @PostMapping("/{id}/third-party-accounts")

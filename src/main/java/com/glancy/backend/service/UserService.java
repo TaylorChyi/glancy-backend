@@ -264,6 +264,20 @@ public class UserService {
     }
 
     /**
+     * Invalidate the login token for a user, effectively logging them out.
+     */
+    @Transactional
+    public void logout(Long userId, String token) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        if (token == null || !token.equals(user.getLoginToken())) {
+            throw new IllegalArgumentException("无效的用户令牌");
+        }
+        user.setLoginToken(null);
+        userRepository.save(user);
+    }
+
+    /**
      * Retrieve only the avatar URL of a user.
      */
     @Transactional(readOnly = true)

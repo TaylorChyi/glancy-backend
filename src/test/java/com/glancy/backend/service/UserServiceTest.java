@@ -194,6 +194,26 @@ class UserServiceTest {
     }
 
     @Test
+    void testLogout() {
+        UserRegistrationRequest req = new UserRegistrationRequest();
+        req.setUsername("logoutuser");
+        req.setPassword("pass123");
+        req.setEmail("logout@example.com");
+        req.setPhone("888");
+        UserResponse resp = userService.register(req);
+
+        LoginRequest loginReq = new LoginRequest();
+        loginReq.setAccount("logoutuser");
+        loginReq.setPassword("pass123");
+        String token = userService.login(loginReq).getToken();
+
+        userService.logout(resp.getId(), token);
+
+        User user = userRepository.findById(resp.getId()).orElseThrow();
+        assertNull(user.getLoginToken());
+    }
+
+    @Test
     void testUpdateAvatar() {
         UserRegistrationRequest req = new UserRegistrationRequest();
         req.setUsername("avataruser");
