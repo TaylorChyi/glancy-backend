@@ -68,4 +68,19 @@ class UserPreferenceServiceTest {
         assertEquals("zh", fetched.getSearchLanguage());
         assertEquals(DictionaryModel.DEEPSEEK, fetched.getDictionaryModel());
     }
+
+    @Test
+    void testDefaultPreferenceWhenMissing() {
+        User user = new User();
+        user.setUsername("prefuser2");
+        user.setPassword("pass");
+        user.setEmail("pref2@example.com");
+        user.setPhone("33");
+        userRepository.save(user);
+
+        UserPreferenceResponse fetched = userPreferenceService.getPreference(user.getId());
+        assertEquals("light", fetched.getTheme());
+        assertEquals("en", fetched.getSystemLanguage());
+        assertEquals(DictionaryModel.DEEPSEEK, fetched.getDictionaryModel());
+    }
 }

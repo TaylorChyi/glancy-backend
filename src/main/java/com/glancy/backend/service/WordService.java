@@ -6,6 +6,7 @@ import com.glancy.backend.client.DeepSeekClient;
 import com.glancy.backend.client.QianWenClient;
 import com.glancy.backend.entity.DictionaryModel;
 import com.glancy.backend.repository.UserPreferenceRepository;
+import com.glancy.backend.entity.UserPreference;
 import com.glancy.backend.service.dictionary.DeepSeekStrategy;
 import com.glancy.backend.service.dictionary.DictionaryStrategy;
 import com.glancy.backend.service.dictionary.QianWenStrategy;
@@ -79,7 +80,11 @@ public class WordService {
     @Transactional
     public WordResponse findWordForUser(Long userId, String term, Language language) {
         var pref = userPreferenceRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("未找到用户设置"));
+                .orElseGet(() -> {
+                    UserPreference p = new UserPreference();
+                    p.setDictionaryModel(DictionaryModel.DEEPSEEK);
+                    return p;
+                });
         DictionaryModel model = pref.getDictionaryModel();
         DictionaryStrategy strategy = strategies.get(model);
         if (model == DictionaryModel.DEEPSEEK) {

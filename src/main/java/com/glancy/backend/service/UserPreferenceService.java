@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
+import com.glancy.backend.entity.DictionaryModel;
+
 import com.glancy.backend.dto.UserPreferenceRequest;
 import com.glancy.backend.dto.UserPreferenceResponse;
 import com.glancy.backend.entity.User;
@@ -21,10 +23,27 @@ public class UserPreferenceService {
     private final UserPreferenceRepository userPreferenceRepository;
     private final UserRepository userRepository;
 
+    private static final String DEFAULT_THEME = "light";
+    private static final String DEFAULT_SYSTEM_LANGUAGE = "en";
+    private static final String DEFAULT_SEARCH_LANGUAGE = "en";
+    private static final DictionaryModel DEFAULT_DICTIONARY_MODEL = DictionaryModel.DEEPSEEK;
+
     public UserPreferenceService(UserPreferenceRepository userPreferenceRepository,
                                  UserRepository userRepository) {
         this.userPreferenceRepository = userPreferenceRepository;
         this.userRepository = userRepository;
+    }
+
+    private UserPreference createDefaultPreference(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        UserPreference pref = new UserPreference();
+        pref.setUser(user);
+        pref.setTheme(DEFAULT_THEME);
+        pref.setSystemLanguage(DEFAULT_SYSTEM_LANGUAGE);
+        pref.setSearchLanguage(DEFAULT_SEARCH_LANGUAGE);
+        pref.setDictionaryModel(DEFAULT_DICTIONARY_MODEL);
+        return pref;
     }
 
     /**
@@ -53,7 +72,7 @@ public class UserPreferenceService {
     public UserPreferenceResponse getPreference(Long userId) {
         log.info("Fetching preferences for user {}", userId);
         UserPreference pref = userPreferenceRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("未找到用户设置"));
+                .orElseGet(() -> createDefaultPreference(userId));
         return toResponse(pref);
     }
 
