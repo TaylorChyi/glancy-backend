@@ -1,5 +1,7 @@
 package com.glancy.backend.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.glancy.backend.dto.ChatCompletionResponse;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,19 +48,30 @@ public class DeepSeekClient {
         body.put("temperature", 0.7);
         body.put("stream", false);
 
+        String systemPrompt =
+                "You are a dictionary assistant. Respond in JSON with keys term, " +
+                "definitions, language, example and phonetic.";
         List<Map<String, String>> messages = new ArrayList<>();
-        messages.add(Map.of("role", "system", "content", "You are a helpful assistant."));
+        messages.add(Map.of("role", "system", "content", systemPrompt));
         messages.add(Map.of("role", "user", "content", term));
         body.put("messages", messages);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<WordResponse> response = restTemplate.exchange(
+        ResponseEntity<String> response = restTemplate.exchange(
                 url,
                 HttpMethod.POST,
                 entity,
-                WordResponse.class
+                String.class
         );
-        return response.getBody();
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ChatCompletionResponse chat = mapper.readValue(response.getBody(), ChatCompletionResponse.class);
+            String content = chat.getChoices().get(0).getMessage().getContent();
+            return mapper.readValue(content, WordResponse.class);
+        } catch (Exception e) {
+            return new WordResponse(null, term, new ArrayList<>(), language, null, null);
+        }
     }
 
     public byte[] fetchAudio(String term, Language language) {
