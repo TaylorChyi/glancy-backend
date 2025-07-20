@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -30,9 +31,11 @@ class DeepSeekClientTest {
     @Test
     void fetchDefinitionWithAuth() {
         String json = "{\"id\":null,\"term\":\"hello\",\"definitions\":[\"hi\"],\"language\":\"ENGLISH\",\"example\":null,\"phonetic\":null}";
-        server.expect(requestTo("http://mock/words/definition?term=hello&language=english"))
-                .andExpect(method(GET))
+        server.expect(requestTo("http://mock/v1/chat/completions"))
+                .andExpect(method(POST))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer key"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.messages[1].content").value("hello"))
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 
         WordResponse resp = client.fetchDefinition("hello", Language.ENGLISH);
