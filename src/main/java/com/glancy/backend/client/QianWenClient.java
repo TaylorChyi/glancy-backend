@@ -2,6 +2,7 @@ package com.glancy.backend.client;
 
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -10,6 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 /**
  * Client for interacting with the Qianwen API.
  */
+@Slf4j
 @Component
 public class QianWenClient {
     private final RestTemplate restTemplate;
@@ -22,6 +24,7 @@ public class QianWenClient {
     }
 
     public WordResponse fetchDefinition(String term, Language language) {
+        log.info("Entering fetchDefinition with term '{}' and language {}", term, language);
         String url = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/words/definition")
                 .queryParam("term", term)

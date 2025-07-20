@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.ChatCompletionResponse;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class DeepSeekClient {
     private final RestTemplate restTemplate;
@@ -34,6 +36,7 @@ public class DeepSeekClient {
     }
 
     public WordResponse fetchDefinition(String term, Language language) {
+        log.info("Entering fetchDefinition with term '{}' and language {}", term, language);
         String url = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/v1/chat/completions")
                 .toUriString();
@@ -68,6 +71,7 @@ public class DeepSeekClient {
             ObjectMapper mapper = new ObjectMapper();
             ChatCompletionResponse chat = mapper.readValue(response.getBody(), ChatCompletionResponse.class);
             String content = chat.getChoices().get(0).getMessage().getContent();
+            log.info("DeepSeek response content: {}", content);
             return mapper.readValue(content, WordResponse.class);
         } catch (Exception e) {
             return new WordResponse(null, term, new ArrayList<>(), language, null, null);
