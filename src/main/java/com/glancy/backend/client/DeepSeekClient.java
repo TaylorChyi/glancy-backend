@@ -10,6 +10,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class DeepSeekClient {
@@ -27,18 +33,28 @@ public class DeepSeekClient {
 
     public WordResponse fetchDefinition(String term, Language language) {
         String url = UriComponentsBuilder.fromUriString(baseUrl)
-                .path("/words/definition")
-                .queryParam("term", term)
-                .queryParam("language", language.name().toLowerCase())
+                .path("/v1/chat/completions")
                 .toUriString();
         HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
         if (apiKey != null && !apiKey.isEmpty()) {
             headers.setBearerAuth(apiKey);
         }
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("model", "deepseek-chat");
+        body.put("temperature", 0.7);
+        body.put("stream", false);
+
+        List<Map<String, String>> messages = new ArrayList<>();
+        messages.add(Map.of("role", "system", "content", "You are a helpful assistant."));
+        messages.add(Map.of("role", "user", "content", term));
+        body.put("messages", messages);
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
         ResponseEntity<WordResponse> response = restTemplate.exchange(
                 url,
-                HttpMethod.GET,
+                HttpMethod.POST,
                 entity,
                 WordResponse.class
         );
