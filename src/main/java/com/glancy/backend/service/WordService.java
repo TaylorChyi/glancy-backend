@@ -54,7 +54,7 @@ public class WordService {
                 .map(this::toResponse)
                 .orElseGet(() -> {
                     WordResponse resp = deepSeekClient.fetchDefinition(term, language);
-                    saveWord(resp);
+                    saveWord(resp, language);
                     return resp;
                 });
     }
@@ -92,22 +92,24 @@ public class WordService {
                     .map(this::toResponse)
                     .orElseGet(() -> {
                         WordResponse resp = strategy.fetch(term, language);
-                        saveWord(resp);
+                        saveWord(resp, language);
                         return resp;
                     });
         }
         return strategy.fetch(term, language);
     }
 
-    private void saveWord(WordResponse resp) {
+    private void saveWord(WordResponse resp, Language language) {
         Word word = new Word();
         word.setTerm(resp.getTerm());
-        word.setLanguage(resp.getLanguage());
+        Language lang = resp.getLanguage() != null ? resp.getLanguage() : language;
+        word.setLanguage(lang);
         word.setDefinitions(resp.getDefinitions());
         word.setExample(resp.getExample());
         word.setPhonetic(resp.getPhonetic());
         Word saved = wordRepository.save(word);
         resp.setId(String.valueOf(saved.getId()));
+        resp.setLanguage(lang);
     }
 
     private WordResponse toResponse(Word word) {
