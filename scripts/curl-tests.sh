@@ -24,6 +24,10 @@ curl -i -H "Content-Type: application/json" \
     -d '{"account":"demo","password":"pass123"}' \
     "$BASE_URL/api/users/login"
 
+section "Logout"
+curl -i -H "X-USER-TOKEN: TOKEN" \
+    -X POST "$BASE_URL/api/users/1/logout"
+
 section "Create FAQ"
 curl -i -H "Content-Type: application/json" \
     -d '{"question":"What?","answer":"It works"}' \

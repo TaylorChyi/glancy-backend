@@ -62,6 +62,7 @@ English prompt guidance can be found in `PROMPT_GUIDE_EN.md`.
 - `GET /api/users/{id}` – fetch user details
 - `POST /api/users/login` – user login (send `account` and `password`)
 - 登录成功后将返回 `token`，后续需要在 `X-USER-TOKEN` 请求头中携带此值
+- `POST /api/users/{id}/logout` – invalidate the login token
 - `POST /api/users/{id}/third-party-accounts` – bind a third‑party account (returns the bound account)
 - `GET /api/users/count` – total number of active users
 
