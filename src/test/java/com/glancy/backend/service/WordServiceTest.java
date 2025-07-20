@@ -70,7 +70,7 @@ class WordServiceTest {
         assertNotNull(result.getId());
         assertEquals("greeting", result.getDefinitions().get(0));
         verify(deepSeekClient, times(1)).fetchDefinition("hello", Language.ENGLISH);
-        assertTrue(wordRepository.findById(result.getId()).isPresent());
+        assertTrue(wordRepository.findById(Long.parseLong(result.getId())).isPresent());
     }
 
     @Test
@@ -83,13 +83,13 @@ class WordServiceTest {
 
         WordResponse result = wordService.findWordFromDeepSeek("cached", Language.ENGLISH);
 
-        assertEquals(word.getId(), result.getId());
+        assertEquals(String.valueOf(word.getId()), result.getId());
         verify(deepSeekClient, never()).fetchDefinition(anyString(), any());
     }
 
     @Test
     void testFindWordFromQianWen() {
-        WordResponse resp = new WordResponse(1L, "hello",
+        WordResponse resp = new WordResponse("1", "hello",
                 List.of("salutation"), Language.ENGLISH, "Hello world", "həˈloʊ");
         when(qianWenClient.fetchDefinition("hello", Language.ENGLISH))
                 .thenReturn(resp);

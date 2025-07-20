@@ -107,11 +107,11 @@ public class WordService {
         word.setExample(resp.getExample());
         word.setPhonetic(resp.getPhonetic());
         Word saved = wordRepository.save(word);
-        resp.setId(saved.getId());
+        resp.setId(String.valueOf(saved.getId()));
     }
 
     private WordResponse toResponse(Word word) {
-        return new WordResponse(word.getId(), word.getTerm(), word.getDefinitions(),
+        return new WordResponse(String.valueOf(word.getId()), word.getTerm(), word.getDefinitions(),
                 word.getLanguage(), word.getExample(), word.getPhonetic());
     }
 }
