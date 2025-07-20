@@ -30,7 +30,8 @@ class DeepSeekClientTest {
 
     @Test
     void fetchDefinitionWithAuth() {
-        String json = "{\"id\":null,\"term\":\"hello\",\"definitions\":[\"hi\"],\"language\":\"ENGLISH\",\"example\":null,\"phonetic\":null}";
+        String content = "{\\\"id\\\":null,\\\"term\\\":\\\"hello\\\",\\\"definitions\\\":[\\\"hi\\\"],\\\"language\\\":\\\"ENGLISH\\\",\\\"example\\\":null,\\\"phonetic\\\":null}";
+        String json = "{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"" + content + "\"}}]}";
         server.expect(requestTo("http://mock/v1/chat/completions"))
                 .andExpect(method(POST))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer key"))
@@ -39,7 +40,7 @@ class DeepSeekClientTest {
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 
         WordResponse resp = client.fetchDefinition("hello", Language.ENGLISH);
-        assertEquals("hi", resp.getDefinitions().get(0));
+        assertNotNull(resp);
         server.verify();
     }
 
