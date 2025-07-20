@@ -122,6 +122,17 @@ class WordServiceTest {
     }
 
     @Test
+    void testCacheWordWhenLanguageMissing() {
+        WordResponse resp = new WordResponse(null, "bye", List.of("farewell"), null, null, null);
+        when(deepSeekClient.fetchDefinition("bye", Language.ENGLISH)).thenReturn(resp);
+
+        WordResponse result = wordService.findWordFromDeepSeek("bye", Language.ENGLISH);
+
+        assertEquals(Language.ENGLISH, result.getLanguage());
+        assertTrue(wordRepository.findByTermAndLanguageAndDeletedFalse("bye", Language.ENGLISH).isPresent());
+    }
+
+    @Test
     void testSaveSameTermDifferentLanguage() {
         Word wordEn = new Word();
         wordEn.setTerm("hello");
