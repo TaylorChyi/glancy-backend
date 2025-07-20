@@ -38,7 +38,7 @@ Or build a jar:
 
 ```bash
 ./mvnw clean package
-java -jar target/glancy-backend-0.0.1-SNAPSHOT.jar
+java -jar target/glancy-backend.jar
 ```
 
 ## Running Tests
@@ -99,11 +99,4 @@ English prompt guidance can be found in `PROMPT_GUIDE_EN.md`.
 - `PUT /api/portal/alert-recipients/{id}` – update an alert email address
 - `DELETE /api/portal/alert-recipients/{id}` – remove an alert email address
 - `GET /api/portal/daily-active` – daily active users and rate
-
-## 版本管理
-
-项目版本号定义在 `pom.xml` 中。默认合并时只递增补丁版本号。若提升中版本号，请在 PR 中说明，GitHub Actions 会在检测到中版本号变更时自动部署。
-
-部署工作流包含变量 `VERSION_CHECK_ENABLED`，默认值为 `false`。当设置为 `true` 时，
-只有中版本号变化才会触发部署；否则始终部署。
 
