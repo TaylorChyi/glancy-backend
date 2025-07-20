@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class WordResponse {
-    private Long id;
+    private String id;
     private String term;
     private List<String> definitions;
     private Language language;

@@ -39,7 +39,7 @@ class WordControllerTest {
 
     @Test
     void testGetWord() throws Exception {
-        WordResponse resp = new WordResponse(1L, "hello", List.of("g"), Language.ENGLISH, "ex", "həˈloʊ");
+        WordResponse resp = new WordResponse("1", "hello", List.of("g"), Language.ENGLISH, "ex", "həˈloʊ");
         when(wordService.findWordForUser(eq(1L), eq("hello"), eq(Language.ENGLISH))).thenReturn(resp);
 
         doNothing().when(userService).validateToken(1L, "tkn");
@@ -52,7 +52,7 @@ class WordControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.term").value("hello"));
     }
 
