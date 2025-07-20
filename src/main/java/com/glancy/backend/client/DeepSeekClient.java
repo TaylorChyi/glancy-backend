@@ -72,8 +72,10 @@ public class DeepSeekClient {
             ChatCompletionResponse chat = mapper.readValue(response.getBody(), ChatCompletionResponse.class);
             String content = chat.getChoices().get(0).getMessage().getContent();
             log.info("DeepSeek response content: {}", content);
-            return mapper.readValue(content, WordResponse.class);
+            String json = extractJson(content);
+            return parseWordResponse(json, term, language);
         } catch (Exception e) {
+            log.warn("Failed to parse DeepSeek response", e);
             return new WordResponse(null, term, new ArrayList<>(), language, null, null);
         }
     }
@@ -96,5 +98,59 @@ public class DeepSeekClient {
                 byte[].class
         );
         return response.getBody();
+    }
+
+    private String extractJson(String text) {
+        String trimmed = text.trim();
+        if (trimmed.startsWith("```")) {
+            int firstNewline = trimmed.indexOf('\n');
+            if (firstNewline != -1) {
+                trimmed = trimmed.substring(firstNewline + 1);
+            }
+            int lastFence = trimmed.lastIndexOf("```");
+            if (lastFence != -1) {
+                trimmed = trimmed.substring(0, lastFence);
+            }
+        }
+        int start = trimmed.indexOf('{');
+        int end = trimmed.lastIndexOf('}');
+        if (start != -1 && end != -1 && start < end) {
+            trimmed = trimmed.substring(start, end + 1);
+        }
+        return trimmed.trim();
+    }
+
+    private WordResponse parseWordResponse(String json, String term, Language language) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        var node = mapper.readTree(json);
+        String id = node.path("id").isNull() ? null : node.path("id").asText();
+        String parsedTerm = node.path("term").asText(term);
+
+        List<String> definitions = new ArrayList<>();
+        var defsNode = node.path("definitions");
+        if (defsNode.isArray()) {
+            defsNode.forEach(n -> definitions.add(n.asText()));
+        }
+
+        String langStr = node.path("language").asText();
+        Language lang = language;
+        if (!langStr.isEmpty()) {
+            String upper = langStr.toUpperCase();
+            if (upper.contains("CHINESE")) {
+                lang = Language.CHINESE;
+            } else if (upper.contains("ENGLISH")) {
+                lang = Language.ENGLISH;
+            } else {
+                try {
+                    lang = Language.valueOf(upper);
+                } catch (Exception ignored) {
+                }
+            }
+        }
+
+        String example = node.path("example").isNull() ? null : node.path("example").asText();
+        String phonetic = node.path("phonetic").isNull() ? null : node.path("phonetic").asText();
+
+        return new WordResponse(id, parsedTerm, definitions, lang, example, phonetic);
     }
 }
