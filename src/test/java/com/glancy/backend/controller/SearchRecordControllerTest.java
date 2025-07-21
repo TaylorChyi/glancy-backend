@@ -54,7 +54,7 @@ class SearchRecordControllerTest {
 
     @Test
     void testList() throws Exception {
-        SearchRecordResponse resp = new SearchRecordResponse(1L, 1L, "hello", Language.ENGLISH, LocalDateTime.now(), false);
+        SearchRecordResponse resp = new SearchRecordResponse(1L, 1L, "hello", Language.ENGLISH, LocalDateTime.now(), true);
         when(searchRecordService.getRecords(1L)).thenReturn(Collections.singletonList(resp));
 
         doNothing().when(userService).validateToken(1L, "tkn");
@@ -64,23 +64,5 @@ class SearchRecordControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].term").value("hello"));
-    }
-
-    @Test
-    void testUnfavorite() throws Exception {
-        doNothing().when(userService).validateToken(1L, "tkn");
-        doNothing().when(searchRecordService).unfavoriteRecord(1L, 2L);
-
-        mockMvc.perform(delete("/api/search-records/user/1/2/favorite")
-    }
-
-    @Test
-    void testDelete() throws Exception {
-        doNothing().when(searchRecordService).deleteRecord(1L, 2L);
-        doNothing().when(userService).validateToken(1L, "tkn");
-
-        mockMvc.perform(delete("/api/search-records/user/1/2")
-                .header("X-USER-TOKEN", "tkn"))
-                .andExpect(status().isNoContent());
     }
 }

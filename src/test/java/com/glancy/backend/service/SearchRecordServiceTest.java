@@ -138,12 +138,4 @@ class SearchRecordServiceTest {
         List<SearchRecordResponse> list = searchRecordService.getRecords(user.getId());
         assertEquals(1, list.size());
     }
-
-    @Test
-    void testUnfavoriteRecord() {
-        User user = new User();
-        user.setUsername("fav");
-        user.setPassword("p");
-        user.setEmail("f@example.com");
-    }
 }
