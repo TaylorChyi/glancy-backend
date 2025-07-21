@@ -61,4 +61,16 @@ public class SearchRecordController {
         searchRecordService.clearRecords(userId);
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * Delete a specific search record of a user.
+     */
+    @DeleteMapping("/user/{userId}/{recordId}")
+    public ResponseEntity<Void> delete(@PathVariable Long userId,
+                                       @PathVariable Long recordId,
+                                       @RequestHeader("X-USER-TOKEN") String token) {
+        userService.validateToken(userId, token);
+        searchRecordService.deleteRecord(userId, recordId);
+        return ResponseEntity.noContent().build();
+    }
 }

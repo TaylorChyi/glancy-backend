@@ -65,4 +65,14 @@ class SearchRecordControllerTest {
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].term").value("hello"));
     }
+
+    @Test
+    void testDelete() throws Exception {
+        doNothing().when(searchRecordService).deleteRecord(1L, 2L);
+        doNothing().when(userService).validateToken(1L, "tkn");
+
+        mockMvc.perform(delete("/api/search-records/user/1/2")
+                .header("X-USER-TOKEN", "tkn"))
+                .andExpect(status().isNoContent());
+    }
 }
