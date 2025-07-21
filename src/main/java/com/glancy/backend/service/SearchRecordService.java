@@ -95,6 +95,20 @@ public class SearchRecordService {
         searchRecordRepository.deleteByUserId(userId);
     }
 
+    /**
+     * Delete a single search record belonging to the given user.
+     */
+    @Transactional
+    public void deleteRecord(Long userId, Long recordId) {
+        log.info("Deleting search record {} for user {}", recordId, userId);
+        SearchRecord record = searchRecordRepository.findById(recordId)
+                .orElseThrow(() -> new IllegalArgumentException("搜索记录不存在"));
+        if (!record.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("搜索记录不存在");
+        }
+        searchRecordRepository.delete(record);
+    }
+
     private SearchRecordResponse toResponse(SearchRecord record) {
         return new SearchRecordResponse(record.getId(), record.getUser().getId(),
                 record.getTerm(), record.getLanguage(), record.getCreatedAt());
