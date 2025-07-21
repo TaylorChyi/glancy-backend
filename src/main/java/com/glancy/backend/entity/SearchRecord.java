@@ -30,5 +30,8 @@ public class SearchRecord {
     private Language language;
 
     @Column(nullable = false)
+    private Boolean favorite = false;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

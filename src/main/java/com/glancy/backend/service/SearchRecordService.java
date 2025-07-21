@@ -95,8 +95,20 @@ public class SearchRecordService {
         searchRecordRepository.deleteByUserId(userId);
     }
 
+    /**
+     * Cancel favorite status for a user's search record.
+     */
+    @Transactional
+    public void unfavoriteRecord(Long userId, Long recordId) {
+        log.info("Unfavoriting search record {} for user {}", recordId, userId);
+        SearchRecord record = searchRecordRepository.findByIdAndUserId(recordId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("记录不存在"));
+        record.setFavorite(false);
+        searchRecordRepository.save(record);
+    }
+
     private SearchRecordResponse toResponse(SearchRecord record) {
         return new SearchRecordResponse(record.getId(), record.getUser().getId(),
-                record.getTerm(), record.getLanguage(), record.getCreatedAt());
+                record.getTerm(), record.getLanguage(), record.getCreatedAt(), record.getFavorite());
     }
 }
