@@ -81,6 +81,9 @@ curl -i "$BASE_URL/api/search-records/user/1"
 section "Unfavorite search record"
 curl -i -X DELETE "$BASE_URL/api/search-records/user/1/1/favorite"
 
+section "Delete one search record"
+curl -i -X DELETE "$BASE_URL/api/search-records/user/1/1"
+
 section "Lookup word"
 curl -i "$BASE_URL/api/words?userId=1&term=hello&language=ENGLISH"
 

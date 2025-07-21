@@ -86,6 +86,7 @@ English prompt guidance can be found in `PROMPT_GUIDE_EN.md`.
 
 - `POST /api/search-records/user/{userId}` – add a new search record for the user
 - `GET /api/search-records/user/{userId}` – list search records of the user
+- `DELETE /api/search-records/user/{userId}/{recordId}` – delete a specific search record of the user
 - `DELETE /api/search-records/user/{userId}` – clear all search records of the user
 - `DELETE /api/search-records/user/{userId}/{recordId}/favorite` – unfavorite a search record
   以上接口均需在 `X-USER-TOKEN` 请求头中提供登录令牌

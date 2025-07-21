@@ -72,6 +72,14 @@ class SearchRecordControllerTest {
         doNothing().when(searchRecordService).unfavoriteRecord(1L, 2L);
 
         mockMvc.perform(delete("/api/search-records/user/1/2/favorite")
+    }
+
+    @Test
+    void testDelete() throws Exception {
+        doNothing().when(searchRecordService).deleteRecord(1L, 2L);
+        doNothing().when(userService).validateToken(1L, "tkn");
+
+        mockMvc.perform(delete("/api/search-records/user/1/2")
                 .header("X-USER-TOKEN", "tkn"))
                 .andExpect(status().isNoContent());
     }
