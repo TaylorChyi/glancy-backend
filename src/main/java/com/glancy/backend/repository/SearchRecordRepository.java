@@ -18,4 +18,5 @@ public interface SearchRecordRepository extends JpaRepository<SearchRecord, Long
     long countByUserIdAndCreatedAtBetween(Long userId, LocalDateTime start, LocalDateTime end);
     boolean existsByUserIdAndTermAndLanguage(Long userId, String term, Language language);
     SearchRecord findTopByUserIdAndTermAndLanguageOrderByCreatedAtDesc(Long userId, String term, Language language);
+    java.util.Optional<SearchRecord> findByIdAndUserId(Long id, Long userId);
 }

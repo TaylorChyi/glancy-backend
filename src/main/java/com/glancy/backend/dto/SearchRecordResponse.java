@@ -17,4 +17,5 @@ public class SearchRecordResponse {
     private String term;
     private Language language;
     private LocalDateTime createdAt;
+    private Boolean favorite;
 }

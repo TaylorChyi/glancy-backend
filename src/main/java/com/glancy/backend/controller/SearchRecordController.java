@@ -63,6 +63,17 @@ public class SearchRecordController {
     }
 
     /**
+     * Cancel favorite for a specific search record of the user.
+     */
+    @DeleteMapping("/user/{userId}/{recordId}/favorite")
+    public ResponseEntity<Void> unfavorite(@PathVariable Long userId,
+                                           @PathVariable Long recordId,
+                                           @RequestHeader("X-USER-TOKEN") String token) {
+        userService.validateToken(userId, token);
+        searchRecordService.unfavoriteRecord(userId, recordId);
+    }
+    
+     /**
      * Delete a specific search record of a user.
      */
     @DeleteMapping("/user/{userId}/{recordId}")

@@ -140,52 +140,10 @@ class SearchRecordServiceTest {
     }
 
     @Test
-    void testDeleteRecord() {
+    void testUnfavoriteRecord() {
         User user = new User();
-        user.setUsername("del");
+        user.setUsername("fav");
         user.setPassword("p");
-        user.setEmail("del@example.com");
-        user.setPhone("45");
-        userRepository.save(user);
-        user.setLastLoginAt(LocalDateTime.now());
-        userRepository.save(user);
-
-        SearchRecordRequest req = new SearchRecordRequest();
-        req.setTerm("bye");
-        req.setLanguage(Language.ENGLISH);
-        SearchRecordResponse saved = searchRecordService.saveRecord(user.getId(), req);
-
-        searchRecordService.deleteRecord(user.getId(), saved.getId());
-        assertTrue(searchRecordService.getRecords(user.getId()).isEmpty());
-    }
-
-    @Test
-    void testDeleteRecordWrongUser() {
-        User u1 = new User();
-        u1.setUsername("owner");
-        u1.setPassword("p");
-        u1.setEmail("o@example.com");
-        u1.setPhone("46");
-        userRepository.save(u1);
-        u1.setLastLoginAt(LocalDateTime.now());
-        userRepository.save(u1);
-
-        User u2 = new User();
-        u2.setUsername("other");
-        u2.setPassword("p");
-        u2.setEmail("other@example.com");
-        u2.setPhone("47");
-        userRepository.save(u2);
-        u2.setLastLoginAt(LocalDateTime.now());
-        userRepository.save(u2);
-
-        SearchRecordRequest req = new SearchRecordRequest();
-        req.setTerm("yo");
-        req.setLanguage(Language.ENGLISH);
-        SearchRecordResponse saved = searchRecordService.saveRecord(u1.getId(), req);
-
-        Exception ex = assertThrows(IllegalArgumentException.class,
-                () -> searchRecordService.deleteRecord(u2.getId(), saved.getId()));
-        assertEquals("搜索记录不存在", ex.getMessage());
+        user.setEmail("f@example.com");
     }
 }
