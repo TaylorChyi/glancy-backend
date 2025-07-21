@@ -61,4 +61,16 @@ public class SearchRecordController {
         searchRecordService.clearRecords(userId);
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * Mark a search record as favorite for the user.
+     */
+    @PostMapping("/user/{userId}/{recordId}/favorite")
+    public ResponseEntity<SearchRecordResponse> favorite(@PathVariable Long userId,
+                                                         @PathVariable Long recordId,
+                                                         @RequestHeader("X-USER-TOKEN") String token) {
+        userService.validateToken(userId, token);
+        SearchRecordResponse resp = searchRecordService.favoriteRecord(userId, recordId);
+        return ResponseEntity.ok(resp);
+    }
 }

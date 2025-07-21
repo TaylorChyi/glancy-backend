@@ -77,6 +77,19 @@ public class SearchRecordService {
     }
 
     /**
+     * Mark a search record as favorite for the user.
+     */
+    @Transactional
+    public SearchRecordResponse favoriteRecord(Long userId, Long recordId) {
+        log.info("Favoriting search record {} for user {}", recordId, userId);
+        SearchRecord record = searchRecordRepository.findByIdAndUserId(recordId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("搜索记录不存在"));
+        record.setFavorite(true);
+        SearchRecord saved = searchRecordRepository.save(record);
+        return toResponse(saved);
+    }
+
+    /**
      * Retrieve a user's search history ordered by creation time.
      */
     @Transactional(readOnly = true)
@@ -97,6 +110,6 @@ public class SearchRecordService {
 
     private SearchRecordResponse toResponse(SearchRecord record) {
         return new SearchRecordResponse(record.getId(), record.getUser().getId(),
-                record.getTerm(), record.getLanguage(), record.getCreatedAt());
+                record.getTerm(), record.getLanguage(), record.getCreatedAt(), record.isFavorite());
     }
 }

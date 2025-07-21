@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS search_records (
     term VARCHAR(100) NOT NULL,
     language VARCHAR(10) NOT NULL,
     createdAt DATETIME NOT NULL,
+    favorite BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT fk_search_record_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
 

@@ -78,6 +78,9 @@ curl -i -H "Content-Type: application/json" \
 section "List search records"
 curl -i "$BASE_URL/api/search-records/user/1"
 
+section "Favorite search record"
+curl -i -X POST "$BASE_URL/api/search-records/user/1/1/favorite"
+
 section "Lookup word"
 curl -i "$BASE_URL/api/words?userId=1&term=hello&language=ENGLISH"
 

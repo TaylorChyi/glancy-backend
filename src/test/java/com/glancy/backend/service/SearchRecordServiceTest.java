@@ -138,4 +138,27 @@ class SearchRecordServiceTest {
         List<SearchRecordResponse> list = searchRecordService.getRecords(user.getId());
         assertEquals(1, list.size());
     }
+
+    @Test
+    void testFavoriteRecord() {
+        User user = new User();
+        user.setUsername("fav");
+        user.setPassword("p");
+        user.setEmail("f@example.com");
+        user.setPhone("45");
+        userRepository.save(user);
+        user.setLastLoginAt(LocalDateTime.now());
+        userRepository.save(user);
+
+        SearchRecordRequest req = new SearchRecordRequest();
+        req.setTerm("word");
+        req.setLanguage(Language.ENGLISH);
+        SearchRecordResponse resp = searchRecordService.saveRecord(user.getId(), req);
+
+        SearchRecordResponse fav = searchRecordService.favoriteRecord(user.getId(), resp.getId());
+        assertTrue(fav.isFavorite());
+
+        SearchRecordResponse fetched = searchRecordService.getRecords(user.getId()).get(0);
+        assertTrue(fetched.isFavorite());
+    }
 }
