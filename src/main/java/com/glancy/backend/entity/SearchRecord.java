@@ -34,7 +34,4 @@ public class SearchRecord {
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = false)
-    private boolean favorite = false;
 }

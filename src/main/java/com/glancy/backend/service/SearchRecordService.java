@@ -136,6 +136,6 @@ public class SearchRecordService {
 
     private SearchRecordResponse toResponse(SearchRecord record) {
         return new SearchRecordResponse(record.getId(), record.getUser().getId(),
-                record.getTerm(), record.getLanguage(), record.getCreatedAt(), record.isFavorite());
+                record.getTerm(), record.getLanguage(), record.getCreatedAt(), record.getFavorite());
     }
 }

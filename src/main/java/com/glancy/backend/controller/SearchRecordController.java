@@ -83,6 +83,7 @@ public class SearchRecordController {
                                            @RequestHeader("X-USER-TOKEN") String token) {
         userService.validateToken(userId, token);
         searchRecordService.unfavoriteRecord(userId, recordId);
+        return ResponseEntity.noContent().build();
     }
     
      /**
