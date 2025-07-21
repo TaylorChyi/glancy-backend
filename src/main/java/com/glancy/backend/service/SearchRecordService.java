@@ -51,6 +51,13 @@ public class SearchRecordService {
             log.warn("User {} is not logged in", userId);
             throw new IllegalStateException("用户未登录");
         }
+        SearchRecord existing = searchRecordRepository
+                .findTopByUserIdAndTermAndLanguageOrderByCreatedAtDesc(userId,
+                        request.getTerm(), request.getLanguage());
+        if (existing != null) {
+            return toResponse(existing);
+        }
+
         if (Boolean.FALSE.equals(user.getMember())) {
             LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
             LocalDateTime endOfDay = startOfDay.plusDays(1);

@@ -99,14 +99,43 @@ class SearchRecordServiceTest {
         user.setLastLoginAt(LocalDateTime.now());
         userRepository.save(user);
 
+        SearchRecordRequest req1 = new SearchRecordRequest();
+        req1.setTerm("hi1");
+        req1.setLanguage(Language.ENGLISH);
+        SearchRecordRequest req2 = new SearchRecordRequest();
+        req2.setTerm("hi2");
+        req2.setLanguage(Language.ENGLISH);
+        SearchRecordRequest req3 = new SearchRecordRequest();
+        req3.setTerm("hi3");
+        req3.setLanguage(Language.ENGLISH);
+
+        searchRecordService.saveRecord(user.getId(), req1);
+        searchRecordService.saveRecord(user.getId(), req2);
+        Exception ex = assertThrows(IllegalStateException.class,
+                () -> searchRecordService.saveRecord(user.getId(), req3));
+        assertEquals("非会员每天只能搜索2次", ex.getMessage());
+    }
+
+    @Test
+    void testDuplicateRecordNotSaved() {
+        User user = new User();
+        user.setUsername("dupe");
+        user.setPassword("p");
+        user.setEmail("d@example.com");
+        user.setPhone("44");
+        userRepository.save(user);
+        user.setLastLoginAt(LocalDateTime.now());
+        userRepository.save(user);
+
         SearchRecordRequest req = new SearchRecordRequest();
-        req.setTerm("hi");
+        req.setTerm("hello");
         req.setLanguage(Language.ENGLISH);
 
-        searchRecordService.saveRecord(user.getId(), req);
-        searchRecordService.saveRecord(user.getId(), req);
-        Exception ex = assertThrows(IllegalStateException.class,
-                () -> searchRecordService.saveRecord(user.getId(), req));
-        assertEquals("非会员每天只能搜索2次", ex.getMessage());
+        SearchRecordResponse first = searchRecordService.saveRecord(user.getId(), req);
+        SearchRecordResponse second = searchRecordService.saveRecord(user.getId(), req);
+
+        assertEquals(first.getId(), second.getId());
+        List<SearchRecordResponse> list = searchRecordService.getRecords(user.getId());
+        assertEquals(1, list.size());
     }
 }
