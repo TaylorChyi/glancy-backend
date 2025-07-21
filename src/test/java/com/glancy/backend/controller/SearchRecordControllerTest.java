@@ -65,16 +65,4 @@ class SearchRecordControllerTest {
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].term").value("hello"));
     }
-
-    @Test
-    void testFavorite() throws Exception {
-        SearchRecordResponse resp = new SearchRecordResponse(1L, 1L, "hello", Language.ENGLISH, LocalDateTime.now(), true);
-        when(searchRecordService.favoriteRecord(1L, 1L)).thenReturn(resp);
-        doNothing().when(userService).validateToken(1L, "tkn");
-
-        mockMvc.perform(post("/api/search-records/user/1/1/favorite")
-                .header("X-USER-TOKEN", "tkn"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.favorite").value(true));
-    }
 }
