@@ -6,7 +6,9 @@ import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +28,8 @@ public class DeepSeekClient {
     private final RestTemplate restTemplate;
     private final String baseUrl;
     private final String apiKey;
+    private final String enToZhPrompt;
+    private final String zhToEnPrompt;
 
     public DeepSeekClient(RestTemplate restTemplate,
                           @Value("${thirdparty.deepseek.base-url:https://api.deepseek.com}") String baseUrl,
@@ -33,6 +37,18 @@ public class DeepSeekClient {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
         this.apiKey = apiKey;
+        this.enToZhPrompt = loadPrompt("prompts/english_to_chinese.txt");
+        this.zhToEnPrompt = loadPrompt("prompts/chinese_to_english.txt");
+    }
+
+    private String loadPrompt(String path) {
+        try {
+            ClassPathResource resource = new ClassPathResource(path);
+            return StreamUtils.copyToString(resource.getInputStream(), java.nio.charset.StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            log.warn("Failed to load prompt {}", path, e);
+            return "";
+        }
     }
 
     public WordResponse fetchDefinition(String term, Language language) {
@@ -51,9 +67,7 @@ public class DeepSeekClient {
         body.put("temperature", 0.7);
         body.put("stream", false);
 
-        String systemPrompt =
-                "You are a dictionary assistant. Respond in JSON with keys term, " +
-                "definitions, language, example and phonetic.";
+        String systemPrompt = language == Language.ENGLISH ? enToZhPrompt : zhToEnPrompt;
         List<Map<String, String>> messages = new ArrayList<>();
         messages.add(Map.of("role", "system", "content", systemPrompt));
         messages.add(Map.of("role", "user", "content", term));
