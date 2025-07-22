@@ -30,7 +30,7 @@ class DeepSeekClientTest {
 
     @Test
     void fetchDefinitionWithAuth() {
-        String content = "{\\\"id\\\":null,\\\"term\\\":\\\"hello\\\",\\\"definitions\\\":[\\\"hi\\\"],\\\"language\\\":\\\"ENGLISH\\\",\\\"example\\\":null,\\\"phonetic\\\":null}";
+        String content = "{\\\"entry\\\":\\\"hello\\\",\\\"pronunciations\\\":{\\\"英音\\\":\\\"/həˈloʊ/\\\"},\\\"definitions\\\":[{\\\"partOfSpeech\\\":\\\"noun\\\",\\\"meanings\\\":[\\\"hi\\\"]}]}";
         String json = "{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"" + content + "\"}}]}";
         server.expect(requestTo("http://mock/v1/chat/completions"))
                 .andExpect(method(POST))
@@ -40,13 +40,14 @@ class DeepSeekClientTest {
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 
         WordResponse resp = client.fetchDefinition("hello", Language.ENGLISH);
-        assertNotNull(resp);
+        assertEquals("hello", resp.getTerm());
+        assertEquals("noun: hi", resp.getDefinitions().get(0));
         server.verify();
     }
 
     @Test
     void fetchDefinitionWithCodeFence() {
-        String content = "```json\n{\\\"id\\\":null,\\\"term\\\":\\\"hi\\\",\\\"definitions\\\":[\\\"hey\\\"],\\\"language\\\":\\\"ENGLISH\\\"}\n```";
+        String content = "```json{\\\"entry\\\":\\\"hi\\\",\\\"definitions\\\":[{\\\"partOfSpeech\\\":\\\"interj.\\\",\\\"meanings\\\":[\\\"hey\\\"]}]}```";
         String json = "{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"" + content + "\"}}]}";
         server.expect(requestTo("http://mock/v1/chat/completions"))
                 .andExpect(method(POST))
@@ -54,13 +55,14 @@ class DeepSeekClientTest {
 
         WordResponse resp = client.fetchDefinition("hi", Language.ENGLISH);
         assertEquals("hi", resp.getTerm());
+        assertEquals("interj.: hey", resp.getDefinitions().get(0));
         assertEquals("ENGLISH", resp.getLanguage().name());
         server.verify();
     }
 
     @Test
     void fetchDefinitionWithNonStandardLanguage() {
-        String content = "{\\\"id\\\":null,\\\"term\\\":\\\"\u770B\u770B\\\",\\\"definitions\\\":[\\\"look\\\"],\\\"language\\\":\\\"Chinese (Mandarin)\\\"}";
+        String content = "{\\\"entry\\\":\\\"\u770B\u770B\\\",\\\"language\\\":\\\"Chinese (Mandarin)\\\",\\\"definitions\\\":[{\\\"partOfSpeech\\\":\\\"verb\\\",\\\"meanings\\\":[\\\"look\\\"]}]}";
         String json = "{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"" + content + "\"}}]}";
         server.expect(requestTo("http://mock/v1/chat/completions"))
                 .andExpect(method(POST))
@@ -69,6 +71,7 @@ class DeepSeekClientTest {
         WordResponse resp = client.fetchDefinition("看看", Language.CHINESE);
         assertEquals(Language.CHINESE, resp.getLanguage());
         assertEquals("看看", resp.getTerm());
+        assertEquals("verb: look", resp.getDefinitions().get(0));
         server.verify();
     }
 
