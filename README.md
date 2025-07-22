@@ -50,6 +50,7 @@ java -jar target/glancy-backend.jar
 Example curl commands live in `CURL_TESTS.md`. Run `scripts/curl-tests.sh` to call common endpoints.
 For prompt templates used when querying models, see `docs/PROMPT_CN.md`.
 English prompt guidance can be found in `PROMPT_GUIDE_EN.md`.
+Bilingual prompt instructions are available in `docs/PROMPT_BILINGUAL.md`.
 ## API Endpoints
 
 
