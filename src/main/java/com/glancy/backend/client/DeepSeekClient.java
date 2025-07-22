@@ -138,12 +138,30 @@ public class DeepSeekClient {
         ObjectMapper mapper = new ObjectMapper();
         var node = mapper.readTree(json);
         String id = node.path("id").isNull() ? null : node.path("id").asText();
-        String parsedTerm = node.path("term").asText(term);
+        String parsedTerm = node.path("term").asText(null);
+        if (parsedTerm == null || parsedTerm.isEmpty()) {
+            parsedTerm = node.path("entry").asText(term);
+        }
 
         List<String> definitions = new ArrayList<>();
         var defsNode = node.path("definitions");
         if (defsNode.isArray()) {
-            defsNode.forEach(n -> definitions.add(n.asText()));
+            defsNode.forEach(n -> {
+                String part = n.path("partOfSpeech").asText();
+                var meaningsNode = n.path("meanings");
+                List<String> meanings = new ArrayList<>();
+                if (meaningsNode.isArray()) {
+                    meaningsNode.forEach(m -> meanings.add(m.asText()));
+                } else if (n.has("definition")) {
+                    meanings.add(n.path("definition").asText());
+                }
+                String combined = String.join("; ", meanings);
+                if (!combined.isEmpty()) {
+                    definitions.add(part.isEmpty() ? combined : part + ": " + combined);
+                }
+            });
+        } else if (defsNode.isTextual()) {
+            definitions.add(defsNode.asText());
         }
 
         String langStr = node.path("language").asText();
@@ -163,7 +181,26 @@ public class DeepSeekClient {
         }
 
         String example = node.path("example").isNull() ? null : node.path("example").asText();
+        if ((example == null || example.isEmpty()) && defsNode.isArray()) {
+            for (var def : defsNode) {
+                var exNode = def.path("examples");
+                if (exNode.isArray() && exNode.size() > 0) {
+                    example = exNode.get(0).asText();
+                    break;
+                }
+            }
+        }
+
         String phonetic = node.path("phonetic").isNull() ? null : node.path("phonetic").asText();
+        if ((phonetic == null || phonetic.isEmpty())) {
+            var pronNode = node.path("pronunciations");
+            if (pronNode.isObject()) {
+                var it = pronNode.fields();
+                if (it.hasNext()) {
+                    phonetic = it.next().getValue().asText();
+                }
+            }
+        }
 
         return new WordResponse(id, parsedTerm, definitions, lang, example, phonetic);
     }
