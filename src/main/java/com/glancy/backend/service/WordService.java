@@ -3,7 +3,6 @@ package com.glancy.backend.service;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.client.DeepSeekClient;
-import com.glancy.backend.client.QianWenClient;
 import com.glancy.backend.entity.DictionaryModel;
 import com.glancy.backend.repository.UserPreferenceRepository;
 import com.glancy.backend.entity.UserPreference;
@@ -25,38 +24,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class WordService {
     private final DeepSeekClient deepSeekClient;
-    private final QianWenClient qianWenClient;
     private final WordRepository wordRepository;
     private final UserPreferenceRepository userPreferenceRepository;
     private final Map<DictionaryModel, DictionaryStrategy> strategies = new HashMap<>();
 
     public WordService(DeepSeekClient deepSeekClient,
-                       QianWenClient qianWenClient,
                        WordRepository wordRepository,
                        UserPreferenceRepository userPreferenceRepository,
                        DeepSeekStrategy deepSeekStrategy,
                        QianWenStrategy qianWenStrategy) {
         this.deepSeekClient = deepSeekClient;
-        this.qianWenClient = qianWenClient;
         this.wordRepository = wordRepository;
         this.userPreferenceRepository = userPreferenceRepository;
         strategies.put(DictionaryModel.DEEPSEEK, deepSeekStrategy);
         strategies.put(DictionaryModel.QIANWEN, qianWenStrategy);
-    }
-
-    /**
-     * Retrieve word details from the external API.
-     */
-    @Transactional
-    public WordResponse findWordFromDeepSeek(String term, Language language) {
-        log.info("Fetching definition for term '{}' in language {}", term, language);
-        return wordRepository.findByTermAndLanguageAndDeletedFalse(term, language)
-                .map(this::toResponse)
-                .orElseGet(() -> {
-                    WordResponse resp = deepSeekClient.fetchDefinition(term, language);
-                    saveWord(term, resp, language);
-                    return resp;
-                });
     }
 
     /**
@@ -66,15 +47,6 @@ public class WordService {
     public byte[] getAudio(String term, Language language) {
         log.info("Fetching audio for term '{}' in language {}", term, language);
         return deepSeekClient.fetchAudio(term, language);
-    }
-
-    /**
-     * Retrieve word details using the QianWen provider.
-     */
-    @Transactional(readOnly = true)
-    public WordResponse findWordFromQianWen(String term, Language language) {
-        log.info("Fetching definition from QianWen for term '{}' in language {}", term, language);
-        return qianWenClient.fetchDefinition(term, language);
     }
 
     @Transactional

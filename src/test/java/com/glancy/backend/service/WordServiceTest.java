@@ -3,7 +3,6 @@ package com.glancy.backend.service;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.client.DeepSeekClient;
-import com.glancy.backend.client.QianWenClient;
 import com.glancy.backend.entity.Word;
 import com.glancy.backend.repository.WordRepository;
 import com.glancy.backend.repository.UserPreferenceRepository;
@@ -33,8 +32,6 @@ class WordServiceTest {
     @MockitoBean
     private DeepSeekClient deepSeekClient;
     @MockitoBean
-    private QianWenClient qianWenClient;
-    @MockitoBean
     private UserPreferenceRepository userPreferenceRepository;
     @MockitoBean
     private DeepSeekStrategy deepSeekStrategy;
@@ -55,6 +52,7 @@ class WordServiceTest {
     @BeforeEach
     void setUp() {
         wordRepository.deleteAll();
+        when(userPreferenceRepository.findByUserId(anyLong())).thenReturn(java.util.Optional.empty());
     }
 
 
@@ -62,14 +60,14 @@ class WordServiceTest {
     void testFetchAndCacheWord() {
         WordResponse resp = new WordResponse(null, "hello",
                 List.of("greeting"), Language.ENGLISH, "Hello world", "həˈloʊ");
-        when(deepSeekClient.fetchDefinition("hello", Language.ENGLISH))
+        when(deepSeekStrategy.fetch("hello", Language.ENGLISH))
                 .thenReturn(resp);
 
-        WordResponse result = wordService.findWordFromDeepSeek("hello", Language.ENGLISH);
+        WordResponse result = wordService.findWordForUser(1L, "hello", Language.ENGLISH);
 
         assertNotNull(result.getId());
         assertEquals("greeting", result.getDefinitions().get(0));
-        verify(deepSeekClient, times(1)).fetchDefinition("hello", Language.ENGLISH);
+        verify(deepSeekStrategy, times(1)).fetch("hello", Language.ENGLISH);
         assertTrue(wordRepository.findById(Long.parseLong(result.getId())).isPresent());
     }
 
@@ -81,21 +79,10 @@ class WordServiceTest {
         word.setDefinitions(List.of("store"));
         wordRepository.save(word);
 
-        WordResponse result = wordService.findWordFromDeepSeek("cached", Language.ENGLISH);
+        WordResponse result = wordService.findWordForUser(1L, "cached", Language.ENGLISH);
 
         assertEquals(String.valueOf(word.getId()), result.getId());
-        verify(deepSeekClient, never()).fetchDefinition(anyString(), any());
-    }
-
-    @Test
-    void testFindWordFromQianWen() {
-        WordResponse resp = new WordResponse("1", "hello",
-                List.of("salutation"), Language.ENGLISH, "Hello world", "həˈloʊ");
-        when(qianWenClient.fetchDefinition("hello", Language.ENGLISH))
-                .thenReturn(resp);
-
-        WordResponse result = wordService.findWordFromQianWen("hello", Language.ENGLISH);
-        assertEquals(resp, result);
+        verify(deepSeekStrategy, never()).fetch(anyString(), any());
     }
 
     @Test
@@ -124,9 +111,9 @@ class WordServiceTest {
     @Test
     void testCacheWordWhenLanguageMissing() {
         WordResponse resp = new WordResponse(null, "bye", List.of("farewell"), null, null, null);
-        when(deepSeekClient.fetchDefinition("bye", Language.ENGLISH)).thenReturn(resp);
+        when(deepSeekStrategy.fetch("bye", Language.ENGLISH)).thenReturn(resp);
 
-        WordResponse result = wordService.findWordFromDeepSeek("bye", Language.ENGLISH);
+        WordResponse result = wordService.findWordForUser(1L, "bye", Language.ENGLISH);
 
         assertEquals(Language.ENGLISH, result.getLanguage());
         assertTrue(wordRepository.findByTermAndLanguageAndDeletedFalse("bye", Language.ENGLISH).isPresent());
