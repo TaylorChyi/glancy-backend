@@ -59,7 +59,6 @@ public class UserService {
     @Transactional
     public UserResponse register(UserRegistrationRequest req) {
         log.info("Registering user {}", req.getUsername());
-        log.debug("Registering user {}", req.getUsername());
         if (userRepository.findByUsernameAndDeletedFalse(req.getUsername()).isPresent()) {
             log.warn("Username {} already exists", req.getUsername());
             throw new IllegalArgumentException("用户名已存在");
@@ -89,7 +88,6 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         log.info("Deleting user {}", id);
-        log.debug("Deleting user {}", id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
         user.setDeleted(true);
@@ -102,7 +100,6 @@ public class UserService {
     @Transactional(readOnly = true)
     public User getUserRaw(Long id) {
         log.info("Fetching user {}", id);
-        log.debug("Fetching user {}", id);
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
     }
@@ -161,7 +158,6 @@ public class UserService {
         }
 
         log.info("Attempting login for {}", identifier);
-        log.debug("Login attempt for {}", identifier);
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             log.warn("Password mismatch for user {}", user.getUsername());
@@ -189,7 +185,6 @@ public class UserService {
         userRepository.save(user);
 
         log.info("User {} logged in", user.getId());
-        log.debug("User {} logged in", user.getId());
         return new LoginResponse(user.getId(), user.getUsername(), user.getEmail(),
                 user.getAvatar(), user.getPhone(), user.getMember(), token);
     }
@@ -200,8 +195,6 @@ public class UserService {
     @Transactional
     public ThirdPartyAccountResponse bindThirdPartyAccount(Long userId, ThirdPartyAccountRequest req) {
         log.info("Binding {} account for user {}", req.getProvider(), userId);
-        log.debug("Binding third-party account {}:{} to user {}", req.getProvider(),
-                req.getExternalId(), userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.warn("User with id {} not found", userId);
@@ -220,7 +213,6 @@ public class UserService {
         account.setProvider(req.getProvider());
         account.setExternalId(req.getExternalId());
         ThirdPartyAccount saved = thirdPartyAccountRepository.save(account);
-        log.debug("Bound account {}:{} to user {}", saved.getProvider(), saved.getExternalId(), userId);
         return new ThirdPartyAccountResponse(saved.getId(), saved.getProvider(),
                 saved.getExternalId(), saved.getUser().getId());
     }
