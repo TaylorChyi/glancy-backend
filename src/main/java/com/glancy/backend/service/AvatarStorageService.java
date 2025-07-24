@@ -67,7 +67,11 @@ public class AvatarStorageService {
             ext = original.substring(original.lastIndexOf('.'));
         }
         String objectName = avatarDir + UUID.randomUUID() + ext;
-        ossClient.putObject(bucket, objectName, file.getInputStream());
+        com.aliyun.oss.model.ObjectMetadata metadata = new com.aliyun.oss.model.ObjectMetadata();
+        if (file.getContentType() != null && !file.getContentType().isEmpty()) {
+            metadata.setContentType(file.getContentType());
+        }
+        ossClient.putObject(bucket, objectName, file.getInputStream(), metadata);
         return urlPrefix + objectName;
     }
 }
