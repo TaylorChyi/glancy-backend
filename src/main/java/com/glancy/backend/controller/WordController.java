@@ -6,7 +6,6 @@ import com.glancy.backend.entity.Language;
 import org.springframework.http.MediaType;
 import com.glancy.backend.service.WordService;
 import com.glancy.backend.service.SearchRecordService;
-import com.glancy.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -23,14 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class WordController {
     private final WordService wordService;
     private final SearchRecordService searchRecordService;
-    private final UserService userService;
 
     public WordController(WordService wordService,
-                          SearchRecordService searchRecordService,
-                          UserService userService) {
+                          SearchRecordService searchRecordService) {
         this.wordService = wordService;
         this.searchRecordService = searchRecordService;
-        this.userService = userService;
     }
 
     /**
@@ -41,7 +37,6 @@ public class WordController {
                                                 @RequestHeader("X-USER-TOKEN") String token,
                                                 @RequestParam String term,
                                                 @RequestParam Language language) {
-        userService.validateToken(userId, token);
         SearchRecordRequest req = new SearchRecordRequest();
         req.setTerm(term);
         req.setLanguage(language);

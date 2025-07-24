@@ -24,7 +24,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SearchRecordController.class)
-@Import(com.glancy.backend.config.SecurityConfig.class)
+@Import({com.glancy.backend.config.SecurityConfig.class,
+        com.glancy.backend.config.WebConfig.class,
+        com.glancy.backend.config.TokenAuthenticationInterceptor.class})
 class SearchRecordControllerTest {
     @MockitoBean
     private AlertService alertService;

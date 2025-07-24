@@ -24,7 +24,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest(WordController.class)
-@Import(com.glancy.backend.config.SecurityConfig.class)
+@Import({com.glancy.backend.config.SecurityConfig.class,
+        com.glancy.backend.config.WebConfig.class,
+        com.glancy.backend.config.TokenAuthenticationInterceptor.class})
 class WordControllerTest {
     @Autowired
     private MockMvc mockMvc;
