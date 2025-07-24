@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeAll;
+import com.glancy.backend.exception.DuplicateResourceException;
 
 @SpringBootTest
 @Transactional
@@ -98,7 +99,7 @@ class UserServiceTest {
         req2.setEmail("b@example.com");
         req2.setPhone("102");
 
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> {
+        Exception ex = assertThrows(DuplicateResourceException.class, () -> {
             userService.register(req2);
         });
         assertEquals("用户名已存在", ex.getMessage());
@@ -121,7 +122,7 @@ class UserServiceTest {
         req2.setEmail("a@example.com");
         req2.setPhone("112");
 
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> {
+        Exception ex = assertThrows(DuplicateResourceException.class, () -> {
             userService.register(req2);
         });
         assertEquals("邮箱已被使用", ex.getMessage());
@@ -142,7 +143,7 @@ class UserServiceTest {
         req2.setEmail("p2@example.com");
         req2.setPhone("12345");
 
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> {
+        Exception ex = assertThrows(DuplicateResourceException.class, () -> {
             userService.register(req2);
         });
         assertEquals("手机号已被使用", ex.getMessage());

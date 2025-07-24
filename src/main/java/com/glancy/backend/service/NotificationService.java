@@ -14,6 +14,7 @@ import com.glancy.backend.entity.Notification;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.repository.NotificationRepository;
 import com.glancy.backend.repository.UserRepository;
+import com.glancy.backend.exception.ResourceNotFoundException;
 
 /**
  * Business logic around creating and listing notifications that may
@@ -51,7 +52,7 @@ public class NotificationService {
     public NotificationResponse createUserNotification(Long userId, NotificationRequest request) {
         log.info("Creating notification for user {}: {}", userId, request.getMessage());
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         Notification notification = new Notification();
         notification.setMessage(request.getMessage());
         notification.setSystemLevel(false);

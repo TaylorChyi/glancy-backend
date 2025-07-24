@@ -10,6 +10,8 @@ import com.glancy.backend.dto.AlertRecipientRequest;
 import com.glancy.backend.dto.AlertRecipientResponse;
 import com.glancy.backend.entity.AlertRecipient;
 import com.glancy.backend.repository.AlertRecipientRepository;
+import com.glancy.backend.exception.ResourceNotFoundException;
+import com.glancy.backend.exception.DuplicateResourceException;
 
 /**
  * Business logic for managing alert recipient email addresses.
@@ -46,9 +48,9 @@ public class AlertRecipientService {
     @Transactional
     public AlertRecipientResponse updateRecipient(Long id, AlertRecipientRequest request) {
         AlertRecipient recipient = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("收件人不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("收件人不存在"));
         if (!recipient.getEmail().equals(request.getEmail()) && repository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("邮箱已存在");
+            throw new DuplicateResourceException("邮箱已存在");
         }
         recipient.setEmail(request.getEmail());
         AlertRecipient saved = repository.save(recipient);

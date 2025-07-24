@@ -10,6 +10,7 @@ import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.UserProfile;
 import com.glancy.backend.repository.UserProfileRepository;
 import com.glancy.backend.repository.UserRepository;
+import com.glancy.backend.exception.ResourceNotFoundException;
 
 /**
  * Manage optional personal details for users.
@@ -33,7 +34,7 @@ public class UserProfileService {
     public UserProfileResponse saveProfile(Long userId, UserProfileRequest req) {
         log.info("Saving profile for user {}", userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         UserProfile profile = userProfileRepository.findByUserId(userId)
                 .orElse(new UserProfile());
         profile.setUser(user);
@@ -53,7 +54,7 @@ public class UserProfileService {
     public UserProfileResponse getProfile(Long userId) {
         log.info("Fetching profile for user {}", userId);
         UserProfile profile = userProfileRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("未找到用户配置"));
+                .orElseThrow(() -> new ResourceNotFoundException("未找到用户配置"));
         return toResponse(profile);
     }
 

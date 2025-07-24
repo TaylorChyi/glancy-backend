@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.stereotype.Service;
+import com.glancy.backend.exception.InvalidRequestException;
 
 /**
  * Allows changing the application's log level at runtime.
@@ -35,7 +36,7 @@ public class LoggingService {
         try {
             target = LogLevel.valueOf(level.toUpperCase());
         } catch (IllegalArgumentException ex) {
-            throw new IllegalArgumentException("Invalid log level: " + level);
+            throw new InvalidRequestException("Invalid log level: " + level);
         }
         loggingSystem.setLogLevel(loggerName, target);
     }

@@ -10,6 +10,7 @@ import com.glancy.backend.dto.SystemParameterRequest;
 import com.glancy.backend.dto.SystemParameterResponse;
 import com.glancy.backend.entity.SystemParameter;
 import com.glancy.backend.repository.SystemParameterRepository;
+import com.glancy.backend.exception.ResourceNotFoundException;
 
 /**
  * Handles creation and retrieval of system parameters that can be
@@ -43,7 +44,7 @@ public class SystemParameterService {
     @Transactional(readOnly = true)
     public SystemParameterResponse getByName(String name) {
         SystemParameter param = parameterRepository.findByName(name)
-                .orElseThrow(() -> new IllegalArgumentException("参数不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("参数不存在"));
         return toResponse(param);
     }
 
