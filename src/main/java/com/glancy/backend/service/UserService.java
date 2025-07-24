@@ -61,15 +61,15 @@ public class UserService {
         log.info("Registering user {}", req.getUsername());
         if (userRepository.findByUsernameAndDeletedFalse(req.getUsername()).isPresent()) {
             log.warn("Username {} already exists", req.getUsername());
-            throw new IllegalArgumentException("用户名已存在");
+            throw new DuplicateResourceException("用户名已存在");
         }
         if (userRepository.findByEmailAndDeletedFalse(req.getEmail()).isPresent()) {
             log.warn("Email {} is already in use", req.getEmail());
-            throw new IllegalArgumentException("邮箱已被使用");
+            throw new DuplicateResourceException("邮箱已被使用");
         }
         if (userRepository.findByPhoneAndDeletedFalse(req.getPhone()).isPresent()) {
             log.warn("Phone {} is already in use", req.getPhone());
-            throw new IllegalArgumentException("手机号已被使用");
+            throw new DuplicateResourceException("手机号已被使用");
         }
         User user = new User();
         user.setUsername(req.getUsername());
@@ -89,7 +89,7 @@ public class UserService {
     public void deleteUser(Long id) {
         log.info("Deleting user {}", id);
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         user.setDeleted(true);
         userRepository.save(user);
     }
@@ -101,7 +101,7 @@ public class UserService {
     public User getUserRaw(Long id) {
         log.info("Fetching user {}", id);
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
     }
 
     /**
@@ -112,7 +112,7 @@ public class UserService {
         String account = req.getAccount();
         if (account == null || account.isEmpty()) {
             log.warn("No account provided for login");
-            throw new IllegalArgumentException("用户名、邮箱或手机号必须填写其一");
+            throw new InvalidRequestException("用户名、邮箱或手机号必须填写其一");
         }
 
         LoginIdentifier.Type type = LoginIdentifier.resolveType(account);
@@ -126,7 +126,7 @@ public class UserService {
                 user = userRepository.findByEmailAndDeletedFalse(email)
                         .orElseThrow(() -> {
                             log.warn("User with email {} not found or deleted", email);
-                            return new IllegalArgumentException("用户不存在或已注销");
+                            return new ResourceNotFoundException("用户不存在或已注销");
                         });
                 break;
             case PHONE:
@@ -141,7 +141,7 @@ public class UserService {
                         .orElseGet(() -> userRepository.findByPhoneAndDeletedFalse(raw)
                                 .orElseThrow(() -> {
                                     log.warn("User with phone {} not found or deleted", raw);
-                                    return new IllegalArgumentException("用户不存在或已注销");
+                                    return new ResourceNotFoundException("用户不存在或已注销");
                                 }));
                 identifier = phone;
                 break;
@@ -152,7 +152,7 @@ public class UserService {
                 user = userRepository.findByUsernameAndDeletedFalse(uname)
                         .orElseThrow(() -> {
                             log.warn("User {} not found or deleted", uname);
-                            return new IllegalArgumentException("用户不存在或已注销");
+                            return new ResourceNotFoundException("用户不存在或已注销");
                         });
                 break;
         }
@@ -161,7 +161,7 @@ public class UserService {
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             log.warn("Password mismatch for user {}", user.getUsername());
-            throw new IllegalArgumentException("密码错误");
+            throw new InvalidRequestException("密码错误");
         }
 
         if (req.getDeviceInfo() != null && !req.getDeviceInfo().isEmpty()) {
@@ -198,14 +198,14 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.warn("User with id {} not found", userId);
-                    return new IllegalArgumentException("用户不存在");
+                    return new ResourceNotFoundException("用户不存在");
                 });
 
         thirdPartyAccountRepository
                 .findByProviderAndExternalId(req.getProvider(), req.getExternalId())
                 .ifPresent(a -> {
                     log.warn("Third-party account {}:{} already bound", req.getProvider(), req.getExternalId());
-                    throw new IllegalArgumentException("该第三方账号已绑定");
+                    throw new DuplicateResourceException("该第三方账号已绑定");
                 });
 
         ThirdPartyAccount account = new ThirdPartyAccount();
@@ -252,7 +252,7 @@ public class UserService {
     public void validateToken(Long userId, String token) {
         userRepository.findById(userId)
                 .filter(u -> token != null && token.equals(u.getLoginToken()))
-                .orElseThrow(() -> new IllegalArgumentException("无效的用户令牌"));
+                .orElseThrow(() -> new InvalidRequestException("无效的用户令牌"));
     }
 
     /**
@@ -261,9 +261,9 @@ public class UserService {
     @Transactional
     public void logout(Long userId, String token) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         if (token == null || !token.equals(user.getLoginToken())) {
-            throw new IllegalArgumentException("无效的用户令牌");
+            throw new InvalidRequestException("无效的用户令牌");
         }
         user.setLoginToken(null);
         userRepository.save(user);
@@ -276,7 +276,7 @@ public class UserService {
     public AvatarResponse getAvatar(Long userId) {
         log.info("Fetching avatar for user {}", userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         return new AvatarResponse(user.getAvatar());
     }
 
@@ -287,7 +287,7 @@ public class UserService {
     public AvatarResponse updateAvatar(Long userId, String avatar) {
         log.info("Updating avatar for user {}", userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         user.setAvatar(avatar);
         User saved = userRepository.save(user);
         return new AvatarResponse(saved.getAvatar());
@@ -303,7 +303,7 @@ public class UserService {
             return updateAvatar(userId, url);
         } catch (IOException e) {
             log.error("Failed to upload avatar", e);
-            throw new IllegalStateException("上传头像失败");
+            throw new InvalidRequestException("上传头像失败");
         }
     }
 
@@ -314,10 +314,10 @@ public class UserService {
     public UsernameResponse updateUsername(Long userId, String username) {
         log.info("Updating username for user {}", userId);
         userRepository.findByUsernameAndDeletedFalse(username).ifPresent(u -> {
-            throw new IllegalArgumentException("用户名已存在");
+            throw new DuplicateResourceException("用户名已存在");
         });
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         user.setUsername(username);
         User saved = userRepository.save(user);
         return new UsernameResponse(saved.getUsername());
@@ -330,7 +330,7 @@ public class UserService {
     public void activateMembership(Long userId) {
         log.info("Activating membership for user {}", userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         user.setMember(true);
         userRepository.save(user);
     }
@@ -342,7 +342,7 @@ public class UserService {
     public void removeMembership(Long userId) {
         log.info("Removing membership for user {}", userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         user.setMember(false);
         userRepository.save(user);
     }

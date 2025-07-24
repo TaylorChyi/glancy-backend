@@ -112,11 +112,7 @@ public class PortalController {
         if (!loggingService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        try {
-            loggingService.setLogLevel(req.getLogger(), req.getLevel());
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().build();
-        }
+        loggingService.setLogLevel(req.getLogger(), req.getLevel());
         return ResponseEntity.ok().build();
     }
 
@@ -137,11 +133,7 @@ public class PortalController {
      */
     @GetMapping("/email-enabled")
     public ResponseEntity<Boolean> isEmailEnabled() {
-        try {
-            SystemParameterResponse resp = parameterService.getByName(EMAIL_PARAM);
-            return ResponseEntity.ok(Boolean.parseBoolean(resp.getValue()));
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.ok(false);
-        }
+        SystemParameterResponse resp = parameterService.getByName(EMAIL_PARAM);
+        return ResponseEntity.ok(Boolean.parseBoolean(resp.getValue()));
     }
 }

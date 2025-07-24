@@ -45,11 +45,11 @@ public class SearchRecordService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.warn("User with id {} not found", userId);
-                    return new IllegalArgumentException("用户不存在");
+                    return new ResourceNotFoundException("用户不存在");
                 });
         if (user.getLastLoginAt() == null) {
             log.warn("User {} is not logged in", userId);
-            throw new IllegalStateException("用户未登录");
+            throw new InvalidRequestException("用户未登录");
         }
         SearchRecord existing = searchRecordRepository
                 .findTopByUserIdAndTermAndLanguageOrderByCreatedAtDesc(userId,
@@ -65,7 +65,7 @@ public class SearchRecordService {
                     .countByUserIdAndCreatedAtBetween(userId, startOfDay, endOfDay);
             if (count >= nonMemberSearchLimit) {
                 log.warn("User {} exceeded daily search limit", userId);
-                throw new IllegalStateException("非会员每天只能搜索" + nonMemberSearchLimit + "次");
+                throw new InvalidRequestException("非会员每天只能搜索" + nonMemberSearchLimit + "次");
             }
         }
         SearchRecord record = new SearchRecord();
@@ -83,7 +83,7 @@ public class SearchRecordService {
     public SearchRecordResponse favoriteRecord(Long userId, Long recordId) {
         log.info("Favoriting search record {} for user {}", recordId, userId);
         SearchRecord record = searchRecordRepository.findByIdAndUserId(recordId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("搜索记录不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("搜索记录不存在"));
         record.setFavorite(true);
         SearchRecord saved = searchRecordRepository.save(record);
         return toResponse(saved);
@@ -115,7 +115,7 @@ public class SearchRecordService {
     public void unfavoriteRecord(Long userId, Long recordId) {
         log.info("Unfavoriting search record {} for user {}", recordId, userId);
         SearchRecord record = searchRecordRepository.findByIdAndUserId(recordId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("记录不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("记录不存在"));
         record.setFavorite(false);
         searchRecordRepository.save(record);
     }
@@ -127,9 +127,9 @@ public class SearchRecordService {
     public void deleteRecord(Long userId, Long recordId) {
         log.info("Deleting search record {} for user {}", recordId, userId);
         SearchRecord record = searchRecordRepository.findById(recordId)
-                .orElseThrow(() -> new IllegalArgumentException("搜索记录不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("搜索记录不存在"));
         if (!record.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("搜索记录不存在");
+            throw new ResourceNotFoundException("搜索记录不存在");
         }
         searchRecordRepository.delete(record);
     }

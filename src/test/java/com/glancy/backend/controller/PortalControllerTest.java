@@ -26,6 +26,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import com.glancy.backend.exception.InvalidRequestException;
 
 @WebMvcTest(PortalController.class)
 @Import(com.glancy.backend.config.SecurityConfig.class)
@@ -153,7 +154,7 @@ class PortalControllerTest {
         req.setLogger("com.test");
         req.setLevel("NOPE");
         when(loggingService.isTokenValid("secret")).thenReturn(true);
-        doThrow(new IllegalArgumentException("Invalid log level"))
+        doThrow(new InvalidRequestException("Invalid log level"))
                 .when(loggingService).setLogLevel("com.test", "NOPE");
 
         mockMvc.perform(post("/api/portal/log-level")

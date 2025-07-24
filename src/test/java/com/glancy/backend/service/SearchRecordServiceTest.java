@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.time.LocalDateTime;
 
+import com.glancy.backend.exception.InvalidRequestException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(properties = "search.limit.nonMember=2")
@@ -83,7 +85,7 @@ class SearchRecordServiceTest {
         req.setTerm("hi");
         req.setLanguage(Language.ENGLISH);
 
-        Exception ex = assertThrows(IllegalStateException.class,
+        Exception ex = assertThrows(InvalidRequestException.class,
                 () -> searchRecordService.saveRecord(user.getId(), req));
         assertEquals("用户未登录", ex.getMessage());
     }
@@ -111,7 +113,7 @@ class SearchRecordServiceTest {
 
         searchRecordService.saveRecord(user.getId(), req1);
         searchRecordService.saveRecord(user.getId(), req2);
-        Exception ex = assertThrows(IllegalStateException.class,
+        Exception ex = assertThrows(InvalidRequestException.class,
                 () -> searchRecordService.saveRecord(user.getId(), req3));
         assertEquals("非会员每天只能搜索2次", ex.getMessage());
     }

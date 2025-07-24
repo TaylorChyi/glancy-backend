@@ -36,7 +36,7 @@ public class UserPreferenceService {
 
     private UserPreference createDefaultPreference(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         UserPreference pref = new UserPreference();
         pref.setUser(user);
         pref.setTheme(DEFAULT_THEME);
@@ -53,7 +53,7 @@ public class UserPreferenceService {
     public UserPreferenceResponse savePreference(Long userId, UserPreferenceRequest req) {
         log.info("Saving preferences for user {}", userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         UserPreference pref = userPreferenceRepository.findByUserId(userId)
                 .orElse(new UserPreference());
         pref.setUser(user);
