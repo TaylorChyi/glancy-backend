@@ -18,6 +18,7 @@ import com.glancy.backend.dto.DailyActiveUserResponse;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.LoginDevice;
 import com.glancy.backend.entity.ThirdPartyAccount;
+import com.glancy.backend.service.AvatarStorage;
 import com.glancy.backend.repository.UserRepository;
 import com.glancy.backend.repository.LoginDeviceRepository;
 import com.glancy.backend.repository.ThirdPartyAccountRepository;
@@ -41,16 +42,16 @@ public class UserService {
     private final LoginDeviceRepository loginDeviceRepository;
     private final ThirdPartyAccountRepository thirdPartyAccountRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final AvatarStorageService avatarStorageService;
+    private final AvatarStorage avatarStorage;
 
     public UserService(UserRepository userRepository,
                        LoginDeviceRepository loginDeviceRepository,
                        ThirdPartyAccountRepository thirdPartyAccountRepository,
-                       AvatarStorageService avatarStorageService) {
+                       AvatarStorage avatarStorage) {
         this.userRepository = userRepository;
         this.loginDeviceRepository = loginDeviceRepository;
         this.thirdPartyAccountRepository = thirdPartyAccountRepository;
-        this.avatarStorageService = avatarStorageService;
+        this.avatarStorage = avatarStorage;
     }
 
     /**
@@ -299,7 +300,7 @@ public class UserService {
     @Transactional
     public AvatarResponse uploadAvatar(Long userId, MultipartFile file) {
         try {
-            String url = avatarStorageService.upload(file);
+            String url = avatarStorage.upload(file);
             return updateAvatar(userId, url);
         } catch (IOException e) {
             log.error("Failed to upload avatar", e);

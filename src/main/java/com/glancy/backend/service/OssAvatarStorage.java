@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import java.io.IOException;
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ import java.util.UUID;
  * Handles uploading avatar images to Alibaba Cloud OSS.
  */
 @Service
-public class AvatarStorageService {
+public class OssAvatarStorage implements AvatarStorage {
     private final String endpoint;
     private final String bucket;
     private final String accessKeyId;
@@ -25,7 +26,7 @@ public class AvatarStorageService {
 
     private OSS ossClient;
 
-    public AvatarStorageService(
+    public OssAvatarStorage(
             @Value("${oss.endpoint}") String endpoint,
             @Value("${oss.bucket}") String bucket,
             @Value("${oss.access-key-id:}") String accessKeyId,
