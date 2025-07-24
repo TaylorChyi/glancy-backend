@@ -3,7 +3,6 @@ package com.glancy.backend.controller;
 import com.glancy.backend.dto.SearchRecordRequest;
 import com.glancy.backend.dto.SearchRecordResponse;
 import com.glancy.backend.service.SearchRecordService;
-import com.glancy.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +18,9 @@ import java.util.List;
 @RequestMapping("/api/search-records")
 public class SearchRecordController {
     private final SearchRecordService searchRecordService;
-    private final UserService userService;
 
-    public SearchRecordController(SearchRecordService searchRecordService,
-                                  UserService userService) {
+    public SearchRecordController(SearchRecordService searchRecordService) {
         this.searchRecordService = searchRecordService;
-        this.userService = userService;
     }
 
     /**
@@ -35,7 +31,6 @@ public class SearchRecordController {
     public ResponseEntity<SearchRecordResponse> create(@PathVariable Long userId,
                                                        @RequestHeader("X-USER-TOKEN") String token,
                                                        @Valid @RequestBody SearchRecordRequest req) {
-        userService.validateToken(userId, token);
         SearchRecordResponse resp = searchRecordService.saveRecord(userId, req);
         return new ResponseEntity<>(resp, HttpStatus.CREATED);
     }
@@ -46,7 +41,6 @@ public class SearchRecordController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<SearchRecordResponse>> list(@PathVariable Long userId,
                                                            @RequestHeader("X-USER-TOKEN") String token) {
-        userService.validateToken(userId, token);
         List<SearchRecordResponse> resp = searchRecordService.getRecords(userId);
         return ResponseEntity.ok(resp);
     }
@@ -57,7 +51,6 @@ public class SearchRecordController {
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<Void> clear(@PathVariable Long userId,
                                       @RequestHeader("X-USER-TOKEN") String token) {
-        userService.validateToken(userId, token);
         searchRecordService.clearRecords(userId);
         return ResponseEntity.noContent().build();
     }
@@ -69,7 +62,6 @@ public class SearchRecordController {
     public ResponseEntity<SearchRecordResponse> favorite(@PathVariable Long userId,
                                                          @PathVariable Long recordId,
                                                          @RequestHeader("X-USER-TOKEN") String token) {
-        userService.validateToken(userId, token);
         SearchRecordResponse resp = searchRecordService.favoriteRecord(userId, recordId);
         return ResponseEntity.ok(resp);
     }
@@ -81,7 +73,6 @@ public class SearchRecordController {
     public ResponseEntity<Void> unfavorite(@PathVariable Long userId,
                                            @PathVariable Long recordId,
                                            @RequestHeader("X-USER-TOKEN") String token) {
-        userService.validateToken(userId, token);
         searchRecordService.unfavoriteRecord(userId, recordId);
         return ResponseEntity.noContent().build();
     }
@@ -93,7 +84,6 @@ public class SearchRecordController {
     public ResponseEntity<Void> delete(@PathVariable Long userId,
                                        @PathVariable Long recordId,
                                        @RequestHeader("X-USER-TOKEN") String token) {
-        userService.validateToken(userId, token);
         searchRecordService.deleteRecord(userId, recordId);
         return ResponseEntity.noContent().build();
     }
