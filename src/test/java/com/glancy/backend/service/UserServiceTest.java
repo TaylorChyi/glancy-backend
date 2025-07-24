@@ -8,6 +8,7 @@ import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.LoginDevice;
 import com.glancy.backend.repository.UserRepository;
 import com.glancy.backend.repository.LoginDeviceRepository;
+import com.glancy.backend.service.AvatarStorage;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,7 +37,7 @@ class UserServiceTest {
     @Autowired
     private LoginDeviceRepository loginDeviceRepository;
     @MockitoBean
-    private AvatarStorageService avatarStorageService;
+    private AvatarStorage avatarStorage;
 
     @BeforeAll
     static void loadEnv() {
@@ -239,7 +240,7 @@ class UserServiceTest {
         UserResponse resp = userService.register(req);
 
         MultipartFile file = mock(MultipartFile.class);
-        when(avatarStorageService.upload(file)).thenReturn("path/url.jpg");
+        when(avatarStorage.upload(file)).thenReturn("path/url.jpg");
 
         AvatarResponse result = userService.uploadAvatar(resp.getId(), file);
         assertEquals("path/url.jpg", result.getAvatar());

@@ -70,6 +70,9 @@ curl -i -H "Content-Type: application/json" \
 section "Get user profile"
 curl -i "$BASE_URL/api/profiles/user/1"
 
+section "Upload avatar"
+curl -i -F "file=@avatar.jpg" "$BASE_URL/api/users/1/avatar-file"
+
 section "Add search record"
 curl -i -H "Content-Type: application/json" \
     -d '{"term":"hello","language":"ENGLISH"}' \
