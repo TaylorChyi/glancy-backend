@@ -8,6 +8,7 @@ import com.glancy.backend.repository.SearchRecordRepository;
 import com.glancy.backend.repository.UserRepository;
 import com.glancy.backend.exception.ResourceNotFoundException;
 import com.glancy.backend.exception.InvalidRequestException;
+import com.glancy.backend.mapper.SearchRecordMapper;
 import lombok.extern.slf4j.Slf4j;
 import com.glancy.backend.config.SearchProperties;
 import org.springframework.stereotype.Service;
@@ -27,14 +28,19 @@ import java.time.LocalDateTime;
 public class SearchRecordService {
     private final SearchRecordRepository searchRecordRepository;
     private final UserRepository userRepository;
+    private final SearchRecordMapper searchRecordMapper;
     private final int nonMemberSearchLimit;
 
     public SearchRecordService(SearchRecordRepository searchRecordRepository,
                                UserRepository userRepository,
-                               SearchProperties properties) {
+                               SearchProperties properties,
+                               SearchRecordMapper searchRecordMapper,
+                               @Value("${search.limit.nonMember:10}") int nonMemberSearchLimit) {
+                           
         this.searchRecordRepository = searchRecordRepository;
         this.userRepository = userRepository;
-        this.nonMemberSearchLimit = properties.getLimit().getNonMember();
+        this.searchRecordMapper = searchRecordMapper;
+        this.nonMemberSearchLimit = nonMemberSearchLimit;
     }
 
     /**
@@ -57,7 +63,7 @@ public class SearchRecordService {
                 .findTopByUserIdAndTermAndLanguageOrderByCreatedAtDesc(userId,
                         request.getTerm(), request.getLanguage());
         if (existing != null) {
-            return toResponse(existing);
+            return searchRecordMapper.toResponse(existing);
         }
 
         if (Boolean.FALSE.equals(user.getMember())) {
@@ -75,7 +81,7 @@ public class SearchRecordService {
         record.setTerm(request.getTerm());
         record.setLanguage(request.getLanguage());
         SearchRecord saved = searchRecordRepository.save(record);
-        return toResponse(saved);
+        return searchRecordMapper.toResponse(saved);
     }
 
     /**
@@ -88,7 +94,7 @@ public class SearchRecordService {
                 .orElseThrow(() -> new ResourceNotFoundException("搜索记录不存在"));
         record.setFavorite(true);
         SearchRecord saved = searchRecordRepository.save(record);
-        return toResponse(saved);
+        return searchRecordMapper.toResponse(saved);
     }
 
     /**
@@ -98,7 +104,7 @@ public class SearchRecordService {
     public List<SearchRecordResponse> getRecords(Long userId) {
         log.info("Fetching search records for user {}", userId);
         return searchRecordRepository.findByUserIdOrderByCreatedAtDesc(userId)
-                .stream().map(this::toResponse).collect(Collectors.toList());
+                .stream().map(searchRecordMapper::toResponse).collect(Collectors.toList());
     }
 
     /**
@@ -136,8 +142,5 @@ public class SearchRecordService {
         searchRecordRepository.delete(record);
     }
 
-    private SearchRecordResponse toResponse(SearchRecord record) {
-        return new SearchRecordResponse(record.getId(), record.getUser().getId(),
-                record.getTerm(), record.getLanguage(), record.getCreatedAt(), record.getFavorite());
-    }
+    
 }

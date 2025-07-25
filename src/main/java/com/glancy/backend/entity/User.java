@@ -14,10 +14,7 @@ import java.time.LocalDateTime;
 @Table(name = "users")
 @Data
 @NoArgsConstructor
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class User extends BaseEntity {
 
     @Column(nullable = false, unique = true, length = 50)
     private String username;
@@ -37,13 +34,7 @@ public class User {
     private String phone;
 
     @Column(nullable = false)
-    private Boolean deleted = false;
-
-    @Column(nullable = false)
     private Boolean member = false;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime lastLoginAt;
 
