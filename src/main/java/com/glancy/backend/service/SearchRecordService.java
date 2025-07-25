@@ -34,13 +34,12 @@ public class SearchRecordService {
     public SearchRecordService(SearchRecordRepository searchRecordRepository,
                                UserRepository userRepository,
                                SearchProperties properties,
-                               SearchRecordMapper searchRecordMapper,
-                               @Value("${search.limit.nonMember:10}") int nonMemberSearchLimit) {
-                           
+                               SearchRecordMapper searchRecordMapper) {
+
         this.searchRecordRepository = searchRecordRepository;
         this.userRepository = userRepository;
         this.searchRecordMapper = searchRecordMapper;
-        this.nonMemberSearchLimit = nonMemberSearchLimit;
+        this.nonMemberSearchLimit = properties.getLimit().getNonMember();
     }
 
     /**
