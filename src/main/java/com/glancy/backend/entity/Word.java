@@ -2,7 +2,6 @@ package com.glancy.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,10 +13,7 @@ import java.util.List;
        uniqueConstraints = @UniqueConstraint(columnNames = {"term", "language"}))
 @Data
 @NoArgsConstructor
-public class Word {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Word extends BaseEntity {
 
     @Column(nullable = false, length = 100)
     private String term;
@@ -36,10 +32,4 @@ public class Word {
 
     @Column
     private String example;
-
-    @Column(nullable = false)
-    private Boolean deleted = false;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
 }
