@@ -12,6 +12,7 @@ import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.UserPreference;
 import com.glancy.backend.repository.UserPreferenceRepository;
 import com.glancy.backend.repository.UserRepository;
+import com.glancy.backend.exception.ResourceNotFoundException;
 
 /**
  * Stores and retrieves per-user settings such as theme and preferred
