@@ -1,8 +1,9 @@
 package com.glancy.backend.service.dictionary;
 
-import com.glancy.backend.client.DeepSeekClient;
+import com.glancy.backend.client.DictionaryClient;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,14 +11,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DeepSeekStrategy implements DictionaryStrategy {
-    private final DeepSeekClient deepSeekClient;
+    private final DictionaryClient dictionaryClient;
 
-    public DeepSeekStrategy(DeepSeekClient deepSeekClient) {
-        this.deepSeekClient = deepSeekClient;
+    public DeepSeekStrategy(@Qualifier("deepSeekClient") DictionaryClient dictionaryClient) {
+        this.dictionaryClient = dictionaryClient;
     }
 
     @Override
     public WordResponse fetch(String term, Language language) {
-        return deepSeekClient.fetchDefinition(term, language);
+        return dictionaryClient.fetchDefinition(term, language);
     }
 }

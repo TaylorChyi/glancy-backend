@@ -2,7 +2,7 @@ package com.glancy.backend.service;
 
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
-import com.glancy.backend.client.DeepSeekClient;
+import com.glancy.backend.client.DictionaryClient;
 import com.glancy.backend.entity.DictionaryModel;
 import com.glancy.backend.repository.UserPreferenceRepository;
 import com.glancy.backend.entity.UserPreference;
@@ -11,6 +11,7 @@ import com.glancy.backend.service.dictionary.DictionaryStrategy;
 import com.glancy.backend.service.dictionary.QianWenStrategy;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Qualifier;
 import com.glancy.backend.entity.Word;
 import com.glancy.backend.repository.WordRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -23,17 +24,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 public class WordService {
-    private final DeepSeekClient deepSeekClient;
+    private final DictionaryClient dictionaryClient;
     private final WordRepository wordRepository;
     private final UserPreferenceRepository userPreferenceRepository;
     private final Map<DictionaryModel, DictionaryStrategy> strategies = new HashMap<>();
 
-    public WordService(DeepSeekClient deepSeekClient,
+    public WordService(@Qualifier("deepSeekClient") DictionaryClient dictionaryClient,
                        WordRepository wordRepository,
                        UserPreferenceRepository userPreferenceRepository,
                        DeepSeekStrategy deepSeekStrategy,
                        QianWenStrategy qianWenStrategy) {
-        this.deepSeekClient = deepSeekClient;
+        this.dictionaryClient = dictionaryClient;
         this.wordRepository = wordRepository;
         this.userPreferenceRepository = userPreferenceRepository;
         strategies.put(DictionaryModel.DEEPSEEK, deepSeekStrategy);
@@ -46,7 +47,7 @@ public class WordService {
     @Transactional(readOnly = true)
     public byte[] getAudio(String term, Language language) {
         log.info("Fetching audio for term '{}' in language {}", term, language);
-        return deepSeekClient.fetchAudio(term, language);
+        return dictionaryClient.fetchAudio(term, language);
     }
 
     @Transactional
