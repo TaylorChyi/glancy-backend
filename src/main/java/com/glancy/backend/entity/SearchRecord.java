@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 /**
  * Record of a single dictionary search performed by a user.
@@ -13,10 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "search_records")
 @Data
 @NoArgsConstructor
-public class SearchRecord {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class SearchRecord extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -31,7 +27,4 @@ public class SearchRecord {
 
     @Column(nullable = false)
     private Boolean favorite = false;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
 }
