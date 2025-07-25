@@ -17,7 +17,8 @@ Glancy Backend is a Spring Boot service that powers the Glancy dictionary applic
 4. Use the `local` Spring profile if SSL is unavailable: `./mvnw spring-boot:run -Dspring.profiles.active=local`.
 5. Configure optional API base URLs in `application.yml` under the `thirdparty` section.
 Ensure the MySQL server provides SSL certificates trusted by the JVM. Configure the truststore if necessary when running with `useSSL=true`.
-6. `search.limit.nonMember` sets the daily search limit for non-members (default `10`).
+6. Properties under `search.limit` and `oss` are bound to `SearchProperties` and `OssProperties`.
+   `search.limit.nonMember` controls the daily search limit for non-members (default `10`).
 
 ## Database Initialization
 

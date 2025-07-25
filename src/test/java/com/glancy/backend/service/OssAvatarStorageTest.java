@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import com.glancy.backend.config.OssProperties;
 
 /**
  * Simple tests for OssAvatarStorage.
@@ -12,9 +13,13 @@ class OssAvatarStorageTest {
 
     @Test
     void uploadWithoutClientThrows() {
-        OssAvatarStorage storage = new OssAvatarStorage(
-                "https://oss-cn-hangzhou.aliyuncs.com",
-                "bucket", "", "", "avatars/");
+        OssProperties props = new OssProperties();
+        props.setEndpoint("https://oss-cn-hangzhou.aliyuncs.com");
+        props.setBucket("bucket");
+        props.setAccessKeyId("");
+        props.setAccessKeySecret("");
+        props.setAvatarDir("avatars/");
+        OssAvatarStorage storage = new OssAvatarStorage(props);
         MockMultipartFile file = new MockMultipartFile(
                 "file", "avatar.jpg", "image/jpeg", "data".getBytes());
         assertThrows(IllegalStateException.class, () -> storage.upload(file));

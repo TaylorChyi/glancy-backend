@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import com.glancy.backend.config.SearchProperties;
 
 import java.util.List;
 import java.time.LocalDateTime;
@@ -31,6 +32,8 @@ class SearchRecordServiceTest {
     private SearchRecordRepository searchRecordRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SearchProperties searchProperties;
 
     @BeforeAll
     static void loadEnv() {
@@ -45,6 +48,11 @@ class SearchRecordServiceTest {
     void setUp() {
         searchRecordRepository.deleteAll();
         userRepository.deleteAll();
+    }
+
+    @Test
+    void searchPropertiesBinding() {
+        assertEquals(2, searchProperties.getLimit().getNonMember());
     }
 
     @Test

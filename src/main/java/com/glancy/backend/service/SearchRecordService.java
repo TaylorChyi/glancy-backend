@@ -9,7 +9,7 @@ import com.glancy.backend.repository.UserRepository;
 import com.glancy.backend.exception.ResourceNotFoundException;
 import com.glancy.backend.exception.InvalidRequestException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import com.glancy.backend.config.SearchProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,10 +31,10 @@ public class SearchRecordService {
 
     public SearchRecordService(SearchRecordRepository searchRecordRepository,
                                UserRepository userRepository,
-                               @Value("${search.limit.nonMember:10}") int nonMemberSearchLimit) {
+                               SearchProperties properties) {
         this.searchRecordRepository = searchRecordRepository;
         this.userRepository = userRepository;
-        this.nonMemberSearchLimit = nonMemberSearchLimit;
+        this.nonMemberSearchLimit = properties.getLimit().getNonMember();
     }
 
     /**

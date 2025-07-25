@@ -4,7 +4,7 @@ import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import org.springframework.beans.factory.annotation.Value;
+import com.glancy.backend.config.OssProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,17 +26,12 @@ public class OssAvatarStorage implements AvatarStorage {
 
     private OSS ossClient;
 
-    public OssAvatarStorage(
-            @Value("${oss.endpoint}") String endpoint,
-            @Value("${oss.bucket}") String bucket,
-            @Value("${oss.access-key-id:}") String accessKeyId,
-            @Value("${oss.access-key-secret:}") String accessKeySecret,
-            @Value("${oss.avatar-dir:avatars/}") String avatarDir) {
-        this.endpoint = endpoint;
-        this.bucket = bucket;
-        this.accessKeyId = accessKeyId;
-        this.accessKeySecret = accessKeySecret;
-        this.avatarDir = avatarDir;
+    public OssAvatarStorage(OssProperties properties) {
+        this.endpoint = properties.getEndpoint();
+        this.bucket = properties.getBucket();
+        this.accessKeyId = properties.getAccessKeyId();
+        this.accessKeySecret = properties.getAccessKeySecret();
+        this.avatarDir = properties.getAvatarDir();
         this.urlPrefix = String.format("https://%s.%s/", bucket, endpoint.replaceFirst("https?://", ""));
     }
 
