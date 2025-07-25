@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.glancy.backend.config.auth.AuthenticatedUser;
 
 import com.glancy.backend.dto.LoginRequest;
 import com.glancy.backend.dto.LoginResponse;
@@ -73,9 +74,8 @@ public class UserController {
      * Log out a user by clearing their login token.
      */
     @PostMapping("/{id}/logout")
-    public ResponseEntity<Void> logout(@PathVariable Long id,
-                                       @RequestHeader("X-USER-TOKEN") String token) {
-        userService.logout(id, token);
+    public ResponseEntity<Void> logout(@AuthenticatedUser User user) {
+        userService.logout(user.getId(), user.getLoginToken());
         return ResponseEntity.noContent().build();
     }
 

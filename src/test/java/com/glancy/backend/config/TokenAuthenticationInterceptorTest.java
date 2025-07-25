@@ -16,7 +16,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(com.glancy.backend.controller.SearchRecordController.class)
-@Import({SecurityConfig.class, WebConfig.class, TokenAuthenticationInterceptor.class})
+@Import({SecurityConfig.class, WebConfig.class, TokenAuthenticationInterceptor.class,
+        com.glancy.backend.config.auth.AuthenticatedUserArgumentResolver.class})
 class TokenAuthenticationInterceptorTest {
 
     @Autowired
