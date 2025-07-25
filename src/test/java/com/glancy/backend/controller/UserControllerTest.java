@@ -23,7 +23,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 @WebMvcTest(UserController.class)
-@Import(com.glancy.backend.config.SecurityConfig.class)
+@Import({com.glancy.backend.config.SecurityConfig.class,
+        com.glancy.backend.config.WebConfig.class,
+        com.glancy.backend.config.TokenAuthenticationInterceptor.class,
+        com.glancy.backend.config.auth.AuthenticatedUserArgumentResolver.class})
 class UserControllerTest {
     @MockitoBean
     private AlertService alertService;

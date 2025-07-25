@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.glancy.backend.config.auth.AuthenticatedUser;
 
 import java.util.List;
 
@@ -28,8 +29,7 @@ public class SearchRecordController {
      * 10 searches per day as enforced in the service layer.
      */
     @PostMapping("/user/{userId}")
-    public ResponseEntity<SearchRecordResponse> create(@PathVariable Long userId,
-                                                       @RequestHeader("X-USER-TOKEN") String token,
+    public ResponseEntity<SearchRecordResponse> create(@AuthenticatedUser Long userId,
                                                        @Valid @RequestBody SearchRecordRequest req) {
         SearchRecordResponse resp = searchRecordService.saveRecord(userId, req);
         return new ResponseEntity<>(resp, HttpStatus.CREATED);
@@ -39,8 +39,7 @@ public class SearchRecordController {
      * Get a user's search history ordered by latest first.
      */
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<SearchRecordResponse>> list(@PathVariable Long userId,
-                                                           @RequestHeader("X-USER-TOKEN") String token) {
+    public ResponseEntity<List<SearchRecordResponse>> list(@AuthenticatedUser Long userId) {
         List<SearchRecordResponse> resp = searchRecordService.getRecords(userId);
         return ResponseEntity.ok(resp);
     }
@@ -49,8 +48,7 @@ public class SearchRecordController {
      * Clear all search records for a user.
      */
     @DeleteMapping("/user/{userId}")
-    public ResponseEntity<Void> clear(@PathVariable Long userId,
-                                      @RequestHeader("X-USER-TOKEN") String token) {
+    public ResponseEntity<Void> clear(@AuthenticatedUser Long userId) {
         searchRecordService.clearRecords(userId);
         return ResponseEntity.noContent().build();
     }
@@ -59,9 +57,8 @@ public class SearchRecordController {
      * Mark a search record as favorite for the user.
      */
     @PostMapping("/user/{userId}/{recordId}/favorite")
-    public ResponseEntity<SearchRecordResponse> favorite(@PathVariable Long userId,
-                                                         @PathVariable Long recordId,
-                                                         @RequestHeader("X-USER-TOKEN") String token) {
+    public ResponseEntity<SearchRecordResponse> favorite(@AuthenticatedUser Long userId,
+                                                         @PathVariable Long recordId) {
         SearchRecordResponse resp = searchRecordService.favoriteRecord(userId, recordId);
         return ResponseEntity.ok(resp);
     }
@@ -70,9 +67,8 @@ public class SearchRecordController {
      * Cancel favorite for a specific search record of the user.
      */
     @DeleteMapping("/user/{userId}/{recordId}/favorite")
-    public ResponseEntity<Void> unfavorite(@PathVariable Long userId,
-                                           @PathVariable Long recordId,
-                                           @RequestHeader("X-USER-TOKEN") String token) {
+    public ResponseEntity<Void> unfavorite(@AuthenticatedUser Long userId,
+                                           @PathVariable Long recordId) {
         searchRecordService.unfavoriteRecord(userId, recordId);
         return ResponseEntity.noContent().build();
     }
@@ -81,9 +77,8 @@ public class SearchRecordController {
      * Delete a specific search record of a user.
      */
     @DeleteMapping("/user/{userId}/{recordId}")
-    public ResponseEntity<Void> delete(@PathVariable Long userId,
-                                       @PathVariable Long recordId,
-                                       @RequestHeader("X-USER-TOKEN") String token) {
+    public ResponseEntity<Void> delete(@AuthenticatedUser Long userId,
+                                       @PathVariable Long recordId) {
         searchRecordService.deleteRecord(userId, recordId);
         return ResponseEntity.noContent().build();
     }
