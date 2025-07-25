@@ -1,0 +1,60 @@
+package com.glancy.backend.controller;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.context.annotation.Import;
+
+import com.glancy.backend.service.AlertService;
+
+import java.util.Locale;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(LocaleController.class)
+@Import(com.glancy.backend.config.SecurityConfig.class)
+class LocaleControllerTest {
+
+    @MockitoBean
+    private AlertService alertService;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    /**
+     * 测试带有 Accept-Language 头部时返回的语言信息
+     */
+    @Test
+    void getLocaleFromHeader() throws Exception {
+        mockMvc.perform(get("/api/locale").header("Accept-Language", "de-DE,de;q=0.9"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.country").value("DE"))
+                .andExpect(jsonPath("$.language").value("de"));
+    }
+
+    /**
+     * 测试当没有头部时根据请求 Locale 推断语言
+     */
+    @Test
+    void getLocaleFromRequestLocale() throws Exception {
+        mockMvc.perform(get("/api/locale").locale(Locale.FRANCE))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.country").value("FR"))
+                .andExpect(jsonPath("$.language").value("fr"));
+    }
+
+    /**
+     * 测试国家映射到预设语言的情况
+     */
+    @Test
+    void getLocaleMapping() throws Exception {
+        mockMvc.perform(get("/api/locale").header("Accept-Language", "US"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.country").value("US"))
+                .andExpect(jsonPath("$.language").value("en"));
+    }
+}
