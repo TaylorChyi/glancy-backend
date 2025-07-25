@@ -2,7 +2,7 @@ package com.glancy.backend.service;
 
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
-import com.glancy.backend.client.DeepSeekClient;
+import com.glancy.backend.client.DictionaryClient;
 import com.glancy.backend.entity.Word;
 import com.glancy.backend.repository.WordRepository;
 import com.glancy.backend.repository.UserPreferenceRepository;
@@ -29,8 +29,8 @@ import static org.mockito.Mockito.*;
 class WordServiceTest {
     @Autowired
     private WordService wordService;
-    @MockitoBean
-    private DeepSeekClient deepSeekClient;
+    @MockitoBean(name = "deepSeekClient")
+    private DictionaryClient deepSeekClient;
     @MockitoBean
     private UserPreferenceRepository userPreferenceRepository;
     @MockitoBean

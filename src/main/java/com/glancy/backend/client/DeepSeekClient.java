@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.ChatCompletionResponse;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
+import com.glancy.backend.client.DictionaryClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -23,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component
-public class DeepSeekClient {
+@Component("deepSeekClient")
+public class DeepSeekClient implements DictionaryClient {
     private final RestTemplate restTemplate;
     private final String baseUrl;
     private final String apiKey;
@@ -51,6 +52,7 @@ public class DeepSeekClient {
         }
     }
 
+    @Override
     public WordResponse fetchDefinition(String term, Language language) {
         log.info("Entering fetchDefinition with term '{}' and language {}", term, language);
         String url = UriComponentsBuilder.fromUriString(baseUrl)
@@ -94,6 +96,7 @@ public class DeepSeekClient {
         }
     }
 
+    @Override
     public byte[] fetchAudio(String term, Language language) {
         String url = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/words/audio")

@@ -1,8 +1,9 @@
 package com.glancy.backend.service.dictionary;
 
-import com.glancy.backend.client.QianWenClient;
+import com.glancy.backend.client.DictionaryClient;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,14 +11,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class QianWenStrategy implements DictionaryStrategy {
-    private final QianWenClient qianWenClient;
+    private final DictionaryClient dictionaryClient;
 
-    public QianWenStrategy(QianWenClient qianWenClient) {
-        this.qianWenClient = qianWenClient;
+    public QianWenStrategy(@Qualifier("qianWenClient") DictionaryClient dictionaryClient) {
+        this.dictionaryClient = dictionaryClient;
     }
 
     @Override
     public WordResponse fetch(String term, Language language) {
-        return qianWenClient.fetchDefinition(term, language);
+        return dictionaryClient.fetchDefinition(term, language);
     }
 }
