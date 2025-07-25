@@ -6,6 +6,8 @@ import com.glancy.backend.entity.SearchRecord;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.repository.SearchRecordRepository;
 import com.glancy.backend.repository.UserRepository;
+import com.glancy.backend.exception.ResourceNotFoundException;
+import com.glancy.backend.exception.InvalidRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
