@@ -14,7 +14,6 @@ import com.glancy.backend.dto.ThirdPartyAccountRequest;
 import com.glancy.backend.dto.ThirdPartyAccountResponse;
 import com.glancy.backend.dto.AvatarResponse;
 import com.glancy.backend.dto.UsernameResponse;
-import com.glancy.backend.dto.DailyActiveUserResponse;
 import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.LoginDevice;
 import com.glancy.backend.entity.ThirdPartyAccount;
@@ -231,17 +230,6 @@ public class UserService {
         return new UserStatisticsResponse(total, members, deleted);
     }
 
-    /**
-     * Calculate today's active users and their rate among all users.
-     */
-    @Transactional(readOnly = true)
-    public DailyActiveUserResponse getDailyActiveStats() {
-        LocalDateTime start = LocalDate.now().atStartOfDay();
-        long active = userRepository.countByDeletedFalseAndLastLoginAtAfter(start);
-        long total = userRepository.countByDeletedFalse();
-        double rate = total == 0 ? 0d : (double) active / total;
-        return new DailyActiveUserResponse(active, rate);
-    }
 
     /**
      * Count all active (non-deleted) users.

@@ -45,11 +45,6 @@ thirdparty:
         base-url: https://api.deepseek.com
         api-key: ''
 
-portal:
-    admin-token: secret
-    qianwen:
-        base-url: https://api.qianwen.com
-
 oss:
     endpoint: https://oss-cn-hangzhou.aliyuncs.com
     bucket: glancy-avatar-bucket

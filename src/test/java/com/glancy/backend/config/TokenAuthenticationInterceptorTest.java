@@ -1,6 +1,5 @@
 package com.glancy.backend.config;
 
-import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.SearchRecordService;
 import com.glancy.backend.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -24,8 +23,6 @@ class TokenAuthenticationInterceptorTest {
     private MockMvc mockMvc;
     @MockitoBean
     private SearchRecordService searchRecordService;
-    @MockitoBean
-    private AlertService alertService;
     @MockitoBean
     private UserService userService;
 

@@ -16,8 +16,6 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.orm.schema: debug
 
-portal:
-  admin-token: secret
 oss:
   endpoint: https://oss-cn-hangzhou.aliyuncs.com
   bucket: glancy-avatar-bucket

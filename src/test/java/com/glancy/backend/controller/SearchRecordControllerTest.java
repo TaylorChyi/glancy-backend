@@ -3,7 +3,6 @@ package com.glancy.backend.controller;
 import com.glancy.backend.dto.SearchRecordRequest;
 import com.glancy.backend.dto.SearchRecordResponse;
 import com.glancy.backend.entity.Language;
-import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.SearchRecordService;
 import com.glancy.backend.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -29,13 +28,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         com.glancy.backend.config.TokenAuthenticationInterceptor.class,
         com.glancy.backend.config.auth.AuthenticatedUserArgumentResolver.class})
 class SearchRecordControllerTest {
-    @MockitoBean
-    private AlertService alertService;
-    
+
     @Autowired
     private MockMvc mockMvc;
+
     @MockitoBean
     private SearchRecordService searchRecordService;
+
     @MockitoBean
     private UserService userService;
 

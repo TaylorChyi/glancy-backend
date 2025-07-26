@@ -3,7 +3,6 @@ package com.glancy.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.UserPreferenceRequest;
 import com.glancy.backend.dto.UserPreferenceResponse;
-import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.UserPreferenceService;
 import com.glancy.backend.entity.DictionaryModel;
 import org.junit.jupiter.api.Test;
@@ -23,8 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(UserPreferenceController.class)
 @Import(com.glancy.backend.config.SecurityConfig.class)
 class UserPreferenceControllerTest {
-    @MockitoBean
-    private AlertService alertService;
     
     @Autowired
     private MockMvc mockMvc;
