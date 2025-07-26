@@ -57,6 +57,9 @@ class UserServiceTest {
         userRepository.deleteAll();
     }
 
+    /**
+     * 测试 testRegisterAndDeleteUser 接口
+     */
     @Test
     void testRegisterAndDeleteUser() {
         System.out.println("========================DB_PASSWORD is null. Please check your .env file.");
@@ -82,6 +85,9 @@ class UserServiceTest {
         assertTrue(deletedUser.getDeleted());
     }
 
+    /**
+     * 测试 testRegisterDuplicateUsername 接口
+     */
     @Test
     void testRegisterDuplicateUsername() {
         // 准备一条用户
@@ -105,6 +111,9 @@ class UserServiceTest {
         assertEquals("用户名已存在", ex.getMessage());
     }
 
+    /**
+     * 测试 testRegisterDuplicateEmail 接口
+     */
     @Test
     void testRegisterDuplicateEmail() {
         // 准备一条用户
@@ -128,6 +137,9 @@ class UserServiceTest {
         assertEquals("邮箱已被使用", ex.getMessage());
     }
 
+    /**
+     * 测试 testRegisterDuplicatePhone 接口
+     */
     @Test
     void testRegisterDuplicatePhone() {
         UserRegistrationRequest req1 = new UserRegistrationRequest();
@@ -149,6 +161,9 @@ class UserServiceTest {
         assertEquals("手机号已被使用", ex.getMessage());
     }
 
+    /**
+     * 测试 testLoginDeviceLimit 接口
+     */
     @Test
     void testLoginDeviceLimit() {
         // create user
@@ -178,6 +193,9 @@ class UserServiceTest {
         assertFalse(devices.stream().anyMatch(d -> "d1".equals(d.getDeviceInfo())));
     }
 
+    /**
+     * 测试 testLoginByPhone 接口
+     */
     @Test
     void testLoginByPhone() {
         UserRegistrationRequest req = new UserRegistrationRequest();
@@ -194,6 +212,9 @@ class UserServiceTest {
         assertNotNull(userService.login(loginReq).getToken());
     }
 
+    /**
+     * 测试 testLogout 接口
+     */
     @Test
     void testLogout() {
         UserRegistrationRequest req = new UserRegistrationRequest();
@@ -214,6 +235,9 @@ class UserServiceTest {
         assertNull(user.getLoginToken());
     }
 
+    /**
+     * 测试 testUpdateAvatar 接口
+     */
     @Test
     void testUpdateAvatar() {
         UserRegistrationRequest req = new UserRegistrationRequest();
@@ -230,6 +254,9 @@ class UserServiceTest {
         assertEquals("url", fetched.getAvatar());
     }
 
+    /**
+     * 测试 testUploadAvatar 接口
+     */
     @Test
     void testUploadAvatar() throws Exception {
         UserRegistrationRequest req = new UserRegistrationRequest();
@@ -246,6 +273,9 @@ class UserServiceTest {
         assertEquals("path/url.jpg", result.getAvatar());
     }
 
+    /**
+     * 测试 testCountActiveUsers 接口
+     */
     @Test
     void testCountActiveUsers() {
         User u1 = new User();
@@ -267,6 +297,9 @@ class UserServiceTest {
         assertEquals(1, count);
     }
 
+    /**
+     * 测试 testMembershipOps 接口
+     */
     @Test
     void testMembershipOps() {
         UserRegistrationRequest req = new UserRegistrationRequest();

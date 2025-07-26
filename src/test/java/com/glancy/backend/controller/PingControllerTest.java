@@ -21,6 +21,9 @@ class PingControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * 测试 ping 接口
+     */
     @Test
     void ping() throws Exception {
         mockMvc.perform(get("/api/ping"))

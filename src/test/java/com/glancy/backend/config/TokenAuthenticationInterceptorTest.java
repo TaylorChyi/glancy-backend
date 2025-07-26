@@ -29,6 +29,9 @@ class TokenAuthenticationInterceptorTest {
     @MockitoBean
     private UserService userService;
 
+    /**
+     * 测试 missingTokenReturnsUnauthorized 接口
+     */
     @Test
     void missingTokenReturnsUnauthorized() throws Exception {
         mockMvc.perform(post("/api/search-records/user/1")
@@ -37,6 +40,9 @@ class TokenAuthenticationInterceptorTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    /**
+     * 测试 invalidTokenReturnsUnauthorized 接口
+     */
     @Test
     void invalidTokenReturnsUnauthorized() throws Exception {
         doThrow(new IllegalArgumentException("invalid")).when(userService).validateToken(1L, "bad");

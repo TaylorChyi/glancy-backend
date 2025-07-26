@@ -34,6 +34,9 @@ class UserProfileControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * 测试 saveProfile 接口
+     */
     @Test
     void saveProfile() throws Exception {
         UserProfileResponse resp = new UserProfileResponse(1L, 2L, 20, "M", "dev", "code", "learn");
@@ -53,6 +56,9 @@ class UserProfileControllerTest {
                 .andExpect(jsonPath("$.userId").value(2L));
     }
 
+    /**
+     * 测试 getProfile 接口
+     */
     @Test
     void getProfile() throws Exception {
         UserProfileResponse resp = new UserProfileResponse(1L, 2L, 20, "M", "dev", "code", "learn");

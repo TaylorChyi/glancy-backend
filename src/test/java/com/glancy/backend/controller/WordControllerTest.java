@@ -40,6 +40,9 @@ class WordControllerTest {
     @MockitoBean
     private UserService userService;
 
+    /**
+     * 测试 testGetWord 接口
+     */
     @Test
     void testGetWord() throws Exception {
         WordResponse resp = new WordResponse("1", "hello", List.of("g"), Language.ENGLISH, "ex", "həˈloʊ");
@@ -60,6 +63,9 @@ class WordControllerTest {
     }
 
 
+    /**
+     * 测试 testGetAudio 接口
+     */
     @Test
     void testGetAudio() throws Exception {
         byte[] data = new byte[] {1, 2, 3};

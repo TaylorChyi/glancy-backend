@@ -40,6 +40,9 @@ class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * 测试 register 接口
+     */
     @Test
     void register() throws Exception {
         UserResponse resp = new UserResponse(1L, "testuser", "test@example.com", null, "555");
@@ -58,6 +61,9 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(1L));
     }
 
+    /**
+     * 测试 deleteUser 接口
+     */
     @Test
     void deleteUser() throws Exception {
         doNothing().when(userService).deleteUser(1L);
@@ -65,6 +71,9 @@ class UserControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+    /**
+     * 测试 getUser 接口
+     */
     @Test
     void getUser() throws Exception {
         User user = new User();
@@ -81,6 +90,9 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.password").doesNotExist());
     }
 
+    /**
+     * 测试 login 接口
+     */
     @Test
     void login() throws Exception {
         LoginResponse resp = new LoginResponse(1L, "u", "e", null, null, false, "tkn");
@@ -97,6 +109,9 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(1L));
     }
 
+    /**
+     * 测试 loginWithPhone 接口
+     */
     @Test
     void loginWithPhone() throws Exception {
         LoginResponse resp = new LoginResponse(1L, "u", "e", null, "555", false, "tkn");
@@ -113,6 +128,9 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(1L));
     }
 
+    /**
+     * 测试 bindThirdParty 接口
+     */
     @Test
     void bindThirdParty() throws Exception {
         ThirdPartyAccountResponse resp = new ThirdPartyAccountResponse(1L, "p", "e", 1L);
@@ -129,6 +147,9 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(1L));
     }
 
+    /**
+     * 测试 getAvatar 接口
+     */
     @Test
     void getAvatar() throws Exception {
         AvatarResponse resp = new AvatarResponse("url");
@@ -139,6 +160,9 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.avatar").value("url"));
     }
 
+    /**
+     * 测试 updateAvatar 接口
+     */
     @Test
     void updateAvatar() throws Exception {
         AvatarResponse resp = new AvatarResponse("url");
@@ -154,6 +178,9 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.avatar").value("url"));
     }
 
+    /**
+     * 测试 uploadAvatar 接口
+     */
     @Test
     void uploadAvatar() throws Exception {
         MockMultipartFile file = new MockMultipartFile("file", "a.jpg", "image/jpeg", "xx".getBytes());
@@ -165,6 +192,9 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.avatar").value("path/url.jpg"));
     }
 
+    /**
+     * 测试 logout 接口
+     */
     @Test
     void logout() throws Exception {
         doNothing().when(userService).logout(1L, "tkn");
@@ -174,6 +204,9 @@ class UserControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+    /**
+     * 测试 countUsers 接口
+     */
     @Test
     void countUsers() throws Exception {
         when(userService.countActiveUsers()).thenReturn(5L);

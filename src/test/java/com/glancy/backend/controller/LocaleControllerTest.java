@@ -28,6 +28,9 @@ class LocaleControllerTest {
     /**
      * 测试带有 Accept-Language 头部时返回的语言信息
      */
+    /**
+     * 测试 getLocaleFromHeader 接口
+     */
     @Test
     void getLocaleFromHeader() throws Exception {
         mockMvc.perform(get("/api/locale").header("Accept-Language", "de-DE,de;q=0.9"))
@@ -39,6 +42,9 @@ class LocaleControllerTest {
     /**
      * 测试当没有头部时根据请求 Locale 推断语言
      */
+    /**
+     * 测试 getLocaleFromRequestLocale 接口
+     */
     @Test
     void getLocaleFromRequestLocale() throws Exception {
         mockMvc.perform(get("/api/locale").locale(Locale.FRANCE))
@@ -49,6 +55,9 @@ class LocaleControllerTest {
 
     /**
      * 测试国家映射到预设语言的情况
+     */
+    /**
+     * 测试 getLocaleMapping 接口
      */
     @Test
     void getLocaleMapping() throws Exception {

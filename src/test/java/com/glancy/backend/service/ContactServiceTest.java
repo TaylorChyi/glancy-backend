@@ -38,6 +38,9 @@ class ContactServiceTest {
         contactMessageRepository.deleteAll();
     }
 
+    /**
+     * 测试 testSubmit 接口
+     */
     @Test
     void testSubmit() {
         ContactRequest req = new ContactRequest();

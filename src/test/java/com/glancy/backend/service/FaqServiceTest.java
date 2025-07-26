@@ -40,6 +40,9 @@ class FaqServiceTest {
         faqRepository.deleteAll();
     }
 
+    /**
+     * 测试 testCreateAndListFaqs 接口
+     */
     @Test
     void testCreateAndListFaqs() {
         FaqRequest req = new FaqRequest();

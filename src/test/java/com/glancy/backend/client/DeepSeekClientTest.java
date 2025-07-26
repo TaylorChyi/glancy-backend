@@ -28,6 +28,9 @@ class DeepSeekClientTest {
         client = new DeepSeekClient(restTemplate, "http://mock", "key");
     }
 
+    /**
+     * 测试 fetchDefinitionWithAuth 接口
+     */
     @Test
     void fetchDefinitionWithAuth() {
         String content = "{\\\"entry\\\":\\\"hello\\\",\\\"pronunciations\\\":{\\\"英音\\\":\\\"/həˈloʊ/\\\"},\\\"definitions\\\":[{\\\"partOfSpeech\\\":\\\"noun\\\",\\\"meanings\\\":[\\\"hi\\\"]}]}";
@@ -45,6 +48,9 @@ class DeepSeekClientTest {
         server.verify();
     }
 
+    /**
+     * 测试 fetchDefinitionWithCodeFence 接口
+     */
     @Test
     void fetchDefinitionWithCodeFence() {
         String content = "```json{\\\"entry\\\":\\\"hi\\\",\\\"definitions\\\":[{\\\"partOfSpeech\\\":\\\"interj.\\\",\\\"meanings\\\":[\\\"hey\\\"]}]}```";
@@ -60,6 +66,9 @@ class DeepSeekClientTest {
         server.verify();
     }
 
+    /**
+     * 测试 fetchDefinitionWithNonStandardLanguage 接口
+     */
     @Test
     void fetchDefinitionWithNonStandardLanguage() {
         String content = "{\\\"entry\\\":\\\"\u770B\u770B\\\",\\\"language\\\":\\\"Chinese (Mandarin)\\\",\\\"definitions\\\":[{\\\"partOfSpeech\\\":\\\"verb\\\",\\\"meanings\\\":[\\\"look\\\"]}]}";
@@ -75,6 +84,9 @@ class DeepSeekClientTest {
         server.verify();
     }
 
+    /**
+     * 测试 fetchAudioWithAuth 接口
+     */
     @Test
     void fetchAudioWithAuth() {
         byte[] audio = new byte[] {1};
@@ -89,6 +101,9 @@ class DeepSeekClientTest {
     }
 
     @Disabled("Requires network access to DeepSeek API")
+    /**
+     * 测试 callDeepSeekApiExample 接口
+     */
     @Test
     void callDeepSeekApiExample() {
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();

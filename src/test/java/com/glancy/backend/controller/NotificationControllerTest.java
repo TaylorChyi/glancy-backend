@@ -37,6 +37,9 @@ class NotificationControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * 测试 createSystemNotification 接口
+     */
     @Test
     void createSystemNotification() throws Exception {
         NotificationResponse resp = new NotificationResponse(1L, "msg", true, null);
@@ -53,6 +56,9 @@ class NotificationControllerTest {
                 .andExpect(jsonPath("$.systemLevel").value(true));
     }
 
+    /**
+     * 测试 createUserNotification 接口
+     */
     @Test
     void createUserNotification() throws Exception {
         NotificationResponse resp = new NotificationResponse(1L, "msg", false, 2L);
@@ -68,6 +74,9 @@ class NotificationControllerTest {
                 .andExpect(jsonPath("$.userId").value(2L));
     }
 
+    /**
+     * 测试 getNotificationsForUser 接口
+     */
     @Test
     void getNotificationsForUser() throws Exception {
         NotificationResponse uresp = new NotificationResponse(1L, "user", false, 2L);

@@ -29,6 +29,9 @@ class LoggingServiceTest {
         }
     }
 
+    /**
+     * 测试 setLogLevelCallsLoggingSystem 接口
+     */
     @Test
     void setLogLevelCallsLoggingSystem() {
         loggingService.setLogLevel("com.test", "debug");

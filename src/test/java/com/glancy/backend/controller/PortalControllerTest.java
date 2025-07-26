@@ -48,6 +48,9 @@ class PortalControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * 测试 userStats 接口
+     */
     @Test
     void userStats() throws Exception {
         UserStatisticsResponse resp = new UserStatisticsResponse(2, 1, 0);
@@ -57,6 +60,9 @@ class PortalControllerTest {
                 .andExpect(jsonPath("$.totalUsers").value(2));
     }
 
+    /**
+     * 测试 dailyActive 接口
+     */
     @Test
     void dailyActive() throws Exception {
         DailyActiveUserResponse resp = new DailyActiveUserResponse(1, 0.5);
@@ -66,6 +72,9 @@ class PortalControllerTest {
                 .andExpect(jsonPath("$.activeUsers").value(1));
     }
 
+    /**
+     * 测试 upsertParameter 接口
+     */
     @Test
     void upsertParameter() throws Exception {
         SystemParameterResponse resp = new SystemParameterResponse(1L, "n", "v");
@@ -81,6 +90,9 @@ class PortalControllerTest {
                 .andExpect(jsonPath("$.id").value(1L));
     }
 
+    /**
+     * 测试 activateMember 接口
+     */
     @Test
     void activateMember() throws Exception {
         doNothing().when(userService).activateMembership(1L);
@@ -88,6 +100,9 @@ class PortalControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * 测试 removeMember 接口
+     */
     @Test
     void removeMember() throws Exception {
         doNothing().when(userService).removeMembership(1L);
@@ -95,6 +110,9 @@ class PortalControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * 测试 setEmailEnabled 接口
+     */
     @Test
     void setEmailEnabled() throws Exception {
         SystemParameterResponse resp = new SystemParameterResponse(1L,
@@ -105,6 +123,9 @@ class PortalControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * 测试 getEmailEnabled 接口
+     */
     @Test
     void getEmailEnabled() throws Exception {
         SystemParameterResponse resp = new SystemParameterResponse(1L,
@@ -117,6 +138,9 @@ class PortalControllerTest {
     }
 
     @WithMockUser(roles = "ADMIN")
+    /**
+     * 测试 setLogLevelAuthorized 接口
+     */
     @Test
     void setLogLevelAuthorized() throws Exception {
         LogLevelRequest req = new LogLevelRequest();
@@ -133,6 +157,9 @@ class PortalControllerTest {
     }
 
     @WithMockUser(roles = "ADMIN")
+    /**
+     * 测试 setLogLevelUnauthorized 接口
+     */
     @Test
     void setLogLevelUnauthorized() throws Exception {
         LogLevelRequest req = new LogLevelRequest();
@@ -148,6 +175,9 @@ class PortalControllerTest {
     }
 
     @WithMockUser(roles = "ADMIN")
+    /**
+     * 测试 setLogLevelInvalid 接口
+     */
     @Test
     void setLogLevelInvalid() throws Exception {
         LogLevelRequest req = new LogLevelRequest();

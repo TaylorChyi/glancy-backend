@@ -15,8 +15,11 @@ class GlancyBackendApplicationTests {
 		dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
 	}
 
-	@Test
-	void contextLoads() {
-	}
+        /**
+         * 测试 Spring 应用能启动无错
+         */
+        @Test
+        void contextLoads() {
+        }
 
 }

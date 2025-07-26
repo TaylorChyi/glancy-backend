@@ -44,6 +44,9 @@ class UserPreferenceServiceTest {
         userRepository.deleteAll();
     }
 
+    /**
+     * 测试 testSaveAndGetPreference 接口
+     */
     @Test
     void testSaveAndGetPreference() {
         User user = new User();
@@ -69,6 +72,9 @@ class UserPreferenceServiceTest {
         assertEquals(DictionaryModel.DEEPSEEK, fetched.getDictionaryModel());
     }
 
+    /**
+     * 测试 testDefaultPreferenceWhenMissing 接口
+     */
     @Test
     void testDefaultPreferenceWhenMissing() {
         User user = new User();

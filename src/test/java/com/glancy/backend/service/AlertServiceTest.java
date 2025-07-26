@@ -46,6 +46,9 @@ class AlertServiceTest {
         parameterRepository.deleteAll();
     }
 
+    /**
+     * 测试 sendAlertDisabled 接口
+     */
     @Test
     void sendAlertDisabled() {
         AlertRecipient r = new AlertRecipient();
@@ -57,6 +60,9 @@ class AlertServiceTest {
         verify(mailSender, never()).send(any(SimpleMailMessage.class));
     }
 
+    /**
+     * 测试 sendAlertEnabled 接口
+     */
     @Test
     void sendAlertEnabled() {
         AlertRecipient r = new AlertRecipient();
