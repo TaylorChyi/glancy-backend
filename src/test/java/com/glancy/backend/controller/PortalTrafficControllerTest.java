@@ -38,6 +38,9 @@ class PortalTrafficControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * 测试 recordTraffic 接口
+     */
     @Test
     void recordTraffic() throws Exception {
         TrafficRecordResponse resp = new TrafficRecordResponse(1L, "/", "ip",
@@ -58,6 +61,9 @@ class PortalTrafficControllerTest {
                 .andExpect(jsonPath("$.id").value(1L));
     }
 
+    /**
+     * 测试 dailyCounts 接口
+     */
     @Test
     void dailyCounts() throws Exception {
         when(trafficRecordService.countDaily(LocalDate.parse("2024-01-01"),

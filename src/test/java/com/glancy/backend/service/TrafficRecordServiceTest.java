@@ -39,6 +39,9 @@ class TrafficRecordServiceTest {
         trafficRecordRepository.deleteAll();
     }
 
+    /**
+     * 测试 recordAndCount 接口
+     */
     @Test
     void recordAndCount() {
         TrafficRecordRequest req = new TrafficRecordRequest();

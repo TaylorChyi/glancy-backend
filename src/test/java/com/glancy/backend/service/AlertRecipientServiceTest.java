@@ -37,6 +37,9 @@ class AlertRecipientServiceTest {
         alertRecipientRepository.deleteAll();
     }
 
+    /**
+     * 测试 testAddAndUpdateRecipient 接口
+     */
     @Test
     void testAddAndUpdateRecipient() {
         AlertRecipientRequest req = new AlertRecipientRequest();

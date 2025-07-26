@@ -34,6 +34,9 @@ class ContactControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * 测试 submitContact 接口
+     */
     @Test
     void submitContact() throws Exception {
         ContactResponse resp = new ContactResponse(1L, "n", "e", "m");

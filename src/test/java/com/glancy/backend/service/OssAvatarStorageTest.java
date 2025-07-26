@@ -11,6 +11,9 @@ import com.glancy.backend.config.OssProperties;
  */
 class OssAvatarStorageTest {
 
+    /**
+     * 测试 uploadWithoutClientThrows 接口
+     */
     @Test
     void uploadWithoutClientThrows() {
         OssProperties props = new OssProperties();

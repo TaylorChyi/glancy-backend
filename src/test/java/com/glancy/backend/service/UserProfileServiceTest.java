@@ -41,6 +41,9 @@ class UserProfileServiceTest {
         userRepository.deleteAll();
     }
 
+    /**
+     * 测试 testSaveAndGetProfile 接口
+     */
     @Test
     void testSaveAndGetProfile() {
         User user = new User();

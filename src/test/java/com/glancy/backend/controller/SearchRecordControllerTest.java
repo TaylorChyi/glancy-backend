@@ -39,6 +39,9 @@ class SearchRecordControllerTest {
     @MockitoBean
     private UserService userService;
 
+    /**
+     * 测试 testCreate 接口
+     */
     @Test
     void testCreate() throws Exception {
         SearchRecordResponse resp = new SearchRecordResponse(1L, 1L, "hello", Language.ENGLISH, LocalDateTime.now(), false);
@@ -55,6 +58,9 @@ class SearchRecordControllerTest {
                 .andExpect(jsonPath("$.term").value("hello"));
     }
 
+    /**
+     * 测试 testList 接口
+     */
     @Test
     void testList() throws Exception {
         SearchRecordResponse resp = new SearchRecordResponse(1L, 1L, "hello", Language.ENGLISH, LocalDateTime.now(), true);

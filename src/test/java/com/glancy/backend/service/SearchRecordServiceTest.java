@@ -50,11 +50,17 @@ class SearchRecordServiceTest {
         userRepository.deleteAll();
     }
 
+    /**
+     * 测试 searchPropertiesBinding 接口
+     */
     @Test
     void searchPropertiesBinding() {
         assertEquals(2, searchProperties.getLimit().getNonMember());
     }
 
+    /**
+     * 测试 testSaveListAndClear 接口
+     */
     @Test
     void testSaveListAndClear() {
         User user = new User();
@@ -80,6 +86,9 @@ class SearchRecordServiceTest {
         assertTrue(searchRecordService.getRecords(user.getId()).isEmpty());
     }
 
+    /**
+     * 测试 testSaveRecordWithoutLogin 接口
+     */
     @Test
     void testSaveRecordWithoutLogin() {
         User user = new User();
@@ -98,6 +107,9 @@ class SearchRecordServiceTest {
         assertEquals("用户未登录", ex.getMessage());
     }
 
+    /**
+     * 测试 testNonMemberLimitExceeded 接口
+     */
     @Test
     void testNonMemberLimitExceeded() {
         User user = new User();
@@ -126,6 +138,9 @@ class SearchRecordServiceTest {
         assertEquals("非会员每天只能搜索2次", ex.getMessage());
     }
 
+    /**
+     * 测试 testDuplicateRecordNotSaved 接口
+     */
     @Test
     void testDuplicateRecordNotSaved() {
         User user = new User();

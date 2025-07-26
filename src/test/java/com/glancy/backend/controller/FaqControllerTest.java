@@ -36,6 +36,9 @@ class FaqControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * 测试 createFaq 接口
+     */
     @Test
     void createFaq() throws Exception {
         FaqResponse resp = new FaqResponse(1L, "Q", "A");
@@ -54,6 +57,9 @@ class FaqControllerTest {
                 .andExpect(jsonPath("$.answer").value("A"));
     }
 
+    /**
+     * 测试 listFaqs 接口
+     */
     @Test
     void listFaqs() throws Exception {
         FaqResponse resp = new FaqResponse(1L, "Q", "A");

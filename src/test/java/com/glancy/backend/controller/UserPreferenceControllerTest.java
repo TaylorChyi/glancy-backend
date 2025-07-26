@@ -35,6 +35,9 @@ class UserPreferenceControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * 测试 savePreference 接口
+     */
     @Test
     void savePreference() throws Exception {
         UserPreferenceResponse resp = new UserPreferenceResponse(1L, 2L, "dark", "en", "en", DictionaryModel.DEEPSEEK);
@@ -53,6 +56,9 @@ class UserPreferenceControllerTest {
                 .andExpect(jsonPath("$.userId").value(2L));
     }
 
+    /**
+     * 测试 getPreference 接口
+     */
     @Test
     void getPreference() throws Exception {
         UserPreferenceResponse resp = new UserPreferenceResponse(1L, 2L, "dark", "en", "en", DictionaryModel.DEEPSEEK);

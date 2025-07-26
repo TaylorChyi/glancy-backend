@@ -38,6 +38,9 @@ class AlertRecipientControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * 测试 createRecipient 接口
+     */
     @Test
     void createRecipient() throws Exception {
         AlertRecipientResponse resp = new AlertRecipientResponse(1L, "a@example.com");
@@ -54,6 +57,9 @@ class AlertRecipientControllerTest {
                 .andExpect(jsonPath("$.id").value(1L));
     }
 
+    /**
+     * 测试 listRecipients 接口
+     */
     @Test
     void listRecipients() throws Exception {
         when(alertRecipientService.listRecipients()).thenReturn(List.of(new AlertRecipientResponse(1L, "a@example.com")));
@@ -63,6 +69,9 @@ class AlertRecipientControllerTest {
                 .andExpect(jsonPath("$[0].id").value(1L));
     }
 
+    /**
+     * 测试 updateRecipient 接口
+     */
     @Test
     void updateRecipient() throws Exception {
         AlertRecipientResponse resp = new AlertRecipientResponse(1L, "b@example.com");
@@ -79,6 +88,9 @@ class AlertRecipientControllerTest {
                 .andExpect(jsonPath("$.email").value("b@example.com"));
     }
 
+    /**
+     * 测试 deleteRecipient 接口
+     */
     @Test
     void deleteRecipient() throws Exception {
         doNothing().when(alertRecipientService).deleteRecipient(1L);

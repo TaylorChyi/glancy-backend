@@ -56,6 +56,9 @@ class WordServiceTest {
     }
 
 
+    /**
+     * 测试 testFetchAndCacheWord 接口
+     */
     @Test
     void testFetchAndCacheWord() {
         WordResponse resp = new WordResponse(null, "hello",
@@ -71,6 +74,9 @@ class WordServiceTest {
         assertTrue(wordRepository.findById(Long.parseLong(result.getId())).isPresent());
     }
 
+    /**
+     * 测试 testUseCachedWord 接口
+     */
     @Test
     void testUseCachedWord() {
         Word word = new Word();
@@ -85,6 +91,9 @@ class WordServiceTest {
         verify(deepSeekStrategy, never()).fetch(anyString(), any());
     }
 
+    /**
+     * 测试 testGetAudio 接口
+     */
     @Test
     void testGetAudio() {
         byte[] data = new byte[] {1, 2, 3};
@@ -95,6 +104,9 @@ class WordServiceTest {
     }
 
 
+    /**
+     * 测试 testFindWordForUserQianWen 接口
+     */
     @Test
     void testFindWordForUserQianWen() {
         UserPreference pref = new UserPreference();
@@ -108,6 +120,9 @@ class WordServiceTest {
         assertEquals(resp, result);
     }
 
+    /**
+     * 测试 testCacheWordWhenLanguageMissing 接口
+     */
     @Test
     void testCacheWordWhenLanguageMissing() {
         WordResponse resp = new WordResponse(null, "bye", List.of("farewell"), null, null, null);
@@ -119,6 +134,9 @@ class WordServiceTest {
         assertTrue(wordRepository.findByTermAndLanguageAndDeletedFalse("bye", Language.ENGLISH).isPresent());
     }
 
+    /**
+     * 测试 testSaveSameTermDifferentLanguage 接口
+     */
     @Test
     void testSaveSameTermDifferentLanguage() {
         Word wordEn = new Word();

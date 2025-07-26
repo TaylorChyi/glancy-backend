@@ -35,6 +35,9 @@ class UserStatisticsServiceTest {
         userRepository.deleteAll();
     }
 
+    /**
+     * 测试 testStatistics 接口
+     */
     @Test
     void testStatistics() {
         User u1 = new User();

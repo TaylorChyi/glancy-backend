@@ -45,6 +45,9 @@ class NotificationServiceTest {
         userRepository.deleteAll();
     }
 
+    /**
+     * 测试 testCreateAndQueryNotifications 接口
+     */
     @Test
     void testCreateAndQueryNotifications() {
         User user = new User();

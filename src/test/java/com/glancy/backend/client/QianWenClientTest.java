@@ -24,6 +24,9 @@ class QianWenClientTest {
         client = new QianWenClient(restTemplate, "http://mock");
     }
 
+    /**
+     * 测试 fetchDefinition 接口
+     */
     @Test
     void fetchDefinition() {
         String json = "{\"id\":null,\"term\":\"hi\",\"definitions\":[\"hello\"],\"language\":\"CHINESE\",\"example\":null,\"phonetic\":null}";
