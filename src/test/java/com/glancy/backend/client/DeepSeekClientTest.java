@@ -100,12 +100,11 @@ class DeepSeekClientTest {
         server.verify();
     }
 
-    @Disabled("Requires network access to DeepSeek API")
     /**
-     * 测试 callDeepSeekApiExample 接口
+     * 测试 callDeepSeekApiExample 接口，使用 PROMPT_CN.md 的内容作为 prompt
      */
     @Test
-    void callDeepSeekApiExample() {
+    void callDeepSeekApiExample() throws java.io.IOException {
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
         String key = dotenv.get("thirdparty.deepseek.api-key");
         RestTemplate rt = new RestTemplate();
@@ -116,9 +115,17 @@ class DeepSeekClientTest {
             headers.setBearerAuth(key);
         }
 
-        String body = """
-            {"model":"deepseek-chat","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"介绍一下牛顿第一定律"}],"temperature":0.7,"stream":true}
-            """;
+        // 读取 PROMPT_CN.md 文件内容
+        String prompt = java.nio.file.Files.readString(
+            java.nio.file.Paths.get("src/main/resources/prompts/english_to_chinese.txt")
+        );
+
+        String body = String.format("""
+            {"model":"deepseek-chat","messages":[{"role":"system","content":%s},{"role":"user","content":"介绍"}],"temperature":0.7}
+            """, 
+            // 转义 JSON 字符串
+            new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(prompt)
+        );
         var entity = new org.springframework.http.HttpEntity<>(body, headers);
         var response = rt.postForEntity("https://api.deepseek.com/v1/chat/completions", entity, String.class);
         System.out.println(response.getBody());
