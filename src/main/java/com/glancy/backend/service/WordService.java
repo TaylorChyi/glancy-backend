@@ -6,11 +6,7 @@ import com.glancy.backend.client.DictionaryClient;
 import com.glancy.backend.entity.DictionaryModel;
 import com.glancy.backend.repository.UserPreferenceRepository;
 import com.glancy.backend.entity.UserPreference;
-import com.glancy.backend.service.dictionary.DeepSeekStrategy;
-import com.glancy.backend.service.dictionary.DictionaryStrategy;
-import com.glancy.backend.service.dictionary.QianWenStrategy;
-import java.util.HashMap;
-import java.util.Map;
+import com.glancy.backend.llm.service.WordSearcher;
 import org.springframework.beans.factory.annotation.Qualifier;
 import com.glancy.backend.entity.Word;
 import com.glancy.backend.repository.WordRepository;
@@ -25,20 +21,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class WordService {
     private final DictionaryClient dictionaryClient;
+    private final WordSearcher wordSearcher;
     private final WordRepository wordRepository;
     private final UserPreferenceRepository userPreferenceRepository;
-    private final Map<DictionaryModel, DictionaryStrategy> strategies = new HashMap<>();
 
     public WordService(@Qualifier("deepSeekClient") DictionaryClient dictionaryClient,
+                       WordSearcher wordSearcher,
                        WordRepository wordRepository,
-                       UserPreferenceRepository userPreferenceRepository,
-                       DeepSeekStrategy deepSeekStrategy,
-                       QianWenStrategy qianWenStrategy) {
+                       UserPreferenceRepository userPreferenceRepository) {
         this.dictionaryClient = dictionaryClient;
+        this.wordSearcher = wordSearcher;
         this.wordRepository = wordRepository;
         this.userPreferenceRepository = userPreferenceRepository;
-        strategies.put(DictionaryModel.DEEPSEEK, deepSeekStrategy);
-        strategies.put(DictionaryModel.QIANWEN, qianWenStrategy);
     }
 
     /**
@@ -59,17 +53,17 @@ public class WordService {
                     return p;
                 });
         DictionaryModel model = pref.getDictionaryModel();
-        DictionaryStrategy strategy = strategies.get(model);
+        String clientName = model.name().toLowerCase();
         if (model == DictionaryModel.DEEPSEEK) {
             return wordRepository.findByTermAndLanguageAndDeletedFalse(term, language)
                     .map(this::toResponse)
                     .orElseGet(() -> {
-                        WordResponse resp = strategy.fetch(term, language);
+                        WordResponse resp = wordSearcher.search(term, language, clientName);
                         saveWord(term, resp, language);
                         return resp;
                     });
         }
-        return strategy.fetch(term, language);
+        return wordSearcher.search(term, language, clientName);
     }
 
     private void saveWord(String requestedTerm, WordResponse resp, Language language) {

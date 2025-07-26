@@ -5,6 +5,9 @@ import com.glancy.backend.dto.ChatCompletionResponse;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.client.DictionaryClient;
+import com.glancy.backend.llm.llm.LLMClient;
+import com.glancy.backend.llm.model.ChatMessage;
+import com.glancy.backend.llm.parser.WordResponseParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -25,21 +28,29 @@ import java.util.Map;
 
 @Slf4j
 @Component("deepSeekClient")
-public class DeepSeekClient implements DictionaryClient {
+public class DeepSeekClient implements DictionaryClient, LLMClient {
     private final RestTemplate restTemplate;
     private final String baseUrl;
     private final String apiKey;
     private final String enToZhPrompt;
     private final String zhToEnPrompt;
+    private final WordResponseParser parser;
 
     public DeepSeekClient(RestTemplate restTemplate,
                           @Value("${thirdparty.deepseek.base-url:https://api.deepseek.com}") String baseUrl,
-                          @Value("${thirdparty.deepseek.api-key:}") String apiKey) {
+                          @Value("${thirdparty.deepseek.api-key:}") String apiKey,
+                          WordResponseParser parser) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
         this.apiKey = apiKey;
+        this.parser = parser;
         this.enToZhPrompt = loadPrompt("prompts/english_to_chinese.txt");
         this.zhToEnPrompt = loadPrompt("prompts/chinese_to_english.txt");
+    }
+
+    @Override
+    public String name() {
+        return "deepseek";
     }
 
     private String loadPrompt(String path) {
@@ -53,8 +64,7 @@ public class DeepSeekClient implements DictionaryClient {
     }
 
     @Override
-    public WordResponse fetchDefinition(String term, Language language) {
-        log.info("Entering fetchDefinition with term '{}' and language {}", term, language);
+    public String chat(List<ChatMessage> messages, double temperature) {
         String url = UriComponentsBuilder.fromUriString(baseUrl)
                 .path("/v1/chat/completions")
                 .toUriString();
@@ -66,14 +76,14 @@ public class DeepSeekClient implements DictionaryClient {
 
         Map<String, Object> body = new HashMap<>();
         body.put("model", "deepseek-chat");
-        body.put("temperature", 0.7);
+        body.put("temperature", temperature);
         body.put("stream", false);
 
-        String systemPrompt = language == Language.ENGLISH ? enToZhPrompt : zhToEnPrompt;
-        List<Map<String, String>> messages = new ArrayList<>();
-        messages.add(Map.of("role", "system", "content", systemPrompt));
-        messages.add(Map.of("role", "user", "content", term));
-        body.put("messages", messages);
+        List<Map<String, String>> messageList = new ArrayList<>();
+        for (ChatMessage m : messages) {
+            messageList.add(Map.of("role", m.getRole(), "content", m.getContent()));
+        }
+        body.put("messages", messageList);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
         ResponseEntity<String> response = restTemplate.exchange(
@@ -82,18 +92,26 @@ public class DeepSeekClient implements DictionaryClient {
                 entity,
                 String.class
         );
-
         try {
             ObjectMapper mapper = new ObjectMapper();
             ChatCompletionResponse chat = mapper.readValue(response.getBody(), ChatCompletionResponse.class);
-            String content = chat.getChoices().get(0).getMessage().getContent();
-            log.info("DeepSeek response content: {}", content);
-            String json = extractJson(content);
-            return parseWordResponse(json, term, language);
+            return chat.getChoices().get(0).getMessage().getContent();
         } catch (Exception e) {
             log.warn("Failed to parse DeepSeek response", e);
-            return new WordResponse(null, term, new ArrayList<>(), language, null, null);
+            return "";
         }
+    }
+
+    @Override
+    public WordResponse fetchDefinition(String term, Language language) {
+        log.info("Entering fetchDefinition with term '{}' and language {}", term, language);
+        String systemPrompt = language == Language.ENGLISH ? enToZhPrompt : zhToEnPrompt;
+        List<ChatMessage> messages = new ArrayList<>();
+        messages.add(new ChatMessage("system", systemPrompt));
+        messages.add(new ChatMessage("user", term));
+        String content = chat(messages, 0.7);
+        log.info("DeepSeek response content: {}", content);
+        return parser.parse(content, term, language);
     }
 
     @Override
@@ -117,94 +135,4 @@ public class DeepSeekClient implements DictionaryClient {
         return response.getBody();
     }
 
-    private String extractJson(String text) {
-        String trimmed = text.trim();
-        if (trimmed.startsWith("```")) {
-            int firstNewline = trimmed.indexOf('\n');
-            if (firstNewline != -1) {
-                trimmed = trimmed.substring(firstNewline + 1);
-            }
-            int lastFence = trimmed.lastIndexOf("```");
-            if (lastFence != -1) {
-                trimmed = trimmed.substring(0, lastFence);
-            }
-        }
-        int start = trimmed.indexOf('{');
-        int end = trimmed.lastIndexOf('}');
-        if (start != -1 && end != -1 && start < end) {
-            trimmed = trimmed.substring(start, end + 1);
-        }
-        return trimmed.trim();
-    }
-
-    private WordResponse parseWordResponse(String json, String term, Language language) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        var node = mapper.readTree(json);
-        String id = node.path("id").isNull() ? null : node.path("id").asText();
-        String parsedTerm = node.path("term").asText(null);
-        if (parsedTerm == null || parsedTerm.isEmpty()) {
-            parsedTerm = node.path("entry").asText(term);
-        }
-
-        List<String> definitions = new ArrayList<>();
-        var defsNode = node.path("definitions");
-        if (defsNode.isArray()) {
-            defsNode.forEach(n -> {
-                String part = n.path("partOfSpeech").asText();
-                var meaningsNode = n.path("meanings");
-                List<String> meanings = new ArrayList<>();
-                if (meaningsNode.isArray()) {
-                    meaningsNode.forEach(m -> meanings.add(m.asText()));
-                } else if (n.has("definition")) {
-                    meanings.add(n.path("definition").asText());
-                }
-                String combined = String.join("; ", meanings);
-                if (!combined.isEmpty()) {
-                    definitions.add(part.isEmpty() ? combined : part + ": " + combined);
-                }
-            });
-        } else if (defsNode.isTextual()) {
-            definitions.add(defsNode.asText());
-        }
-
-        String langStr = node.path("language").asText();
-        Language lang = language;
-        if (!langStr.isEmpty()) {
-            String upper = langStr.toUpperCase();
-            if (upper.contains("CHINESE")) {
-                lang = Language.CHINESE;
-            } else if (upper.contains("ENGLISH")) {
-                lang = Language.ENGLISH;
-            } else {
-                try {
-                    lang = Language.valueOf(upper);
-                } catch (Exception ignored) {
-                }
-            }
-        }
-
-        String example = node.path("example").isNull() ? null : node.path("example").asText();
-        if ((example == null || example.isEmpty()) && defsNode.isArray()) {
-            for (var def : defsNode) {
-                var exNode = def.path("examples");
-                if (exNode.isArray() && exNode.size() > 0) {
-                    example = exNode.get(0).asText();
-                    break;
-                }
-            }
-        }
-
-        String phonetic = node.path("phonetic").isNull() ? null : node.path("phonetic").asText();
-        if ((phonetic == null || phonetic.isEmpty())) {
-            var pronNode = node.path("pronunciations");
-            if (pronNode.isObject()) {
-                var it = pronNode.fields();
-                if (it.hasNext()) {
-                    phonetic = it.next().getValue().asText();
-                }
-            }
-        }
-
-        return new WordResponse(id, parsedTerm, definitions, lang, example, phonetic);
-    }
 }
