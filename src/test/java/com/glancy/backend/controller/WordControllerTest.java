@@ -2,7 +2,6 @@ package com.glancy.backend.controller;
 
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
-import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.SearchRecordService;
 import com.glancy.backend.service.WordService;
 import com.glancy.backend.service.UserService;
@@ -35,8 +34,6 @@ class WordControllerTest {
     private WordService wordService;
     @MockitoBean
     private SearchRecordService searchRecordService;
-    @MockitoBean
-    private AlertService alertService;
     @MockitoBean
     private UserService userService;
 

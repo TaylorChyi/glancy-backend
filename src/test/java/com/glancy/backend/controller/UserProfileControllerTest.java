@@ -3,7 +3,6 @@ package com.glancy.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.UserProfileRequest;
 import com.glancy.backend.dto.UserProfileResponse;
-import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.UserProfileService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(UserProfileController.class)
 @Import(com.glancy.backend.config.SecurityConfig.class)
 class UserProfileControllerTest {
-    @MockitoBean
-    private AlertService alertService;
 
     @Autowired
     private MockMvc mockMvc;

@@ -3,7 +3,6 @@ package com.glancy.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.*;
 import com.glancy.backend.entity.User;
-import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
         com.glancy.backend.config.TokenAuthenticationInterceptor.class,
         com.glancy.backend.config.auth.AuthenticatedUserArgumentResolver.class})
 class UserControllerTest {
-    @MockitoBean
-    private AlertService alertService;
 
     @Autowired
     private MockMvc mockMvc;

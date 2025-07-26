@@ -94,14 +94,4 @@ Bilingual prompt instructions are available in `docs/PROMPT_BILINGUAL.md`.
   以上接口均需在 `X-USER-TOKEN` 请求头中提供登录令牌
 
 
-### Portal
-- `POST /api/portal/parameters` – create or update a runtime parameter
-- `GET /api/portal/parameters/{name}` – get the value of a parameter
-- `GET /api/portal/parameters` – list all parameters
-- `GET /api/portal/user-stats` – fetch overall user counts
-- `POST /api/portal/alert-recipients` – add an alert email address
-- `GET /api/portal/alert-recipients` – list alert email addresses
-- `PUT /api/portal/alert-recipients/{id}` – update an alert email address
-- `DELETE /api/portal/alert-recipients/{id}` – remove an alert email address
-- `GET /api/portal/daily-active` – daily active users and rate
 

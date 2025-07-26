@@ -3,7 +3,6 @@ package com.glancy.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.NotificationRequest;
 import com.glancy.backend.dto.NotificationResponse;
-import com.glancy.backend.service.AlertService;
 import com.glancy.backend.service.NotificationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +24,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @WebMvcTest(NotificationController.class)
 @Import(com.glancy.backend.config.SecurityConfig.class)
 class NotificationControllerTest {
-    @MockitoBean
-    private AlertService alertService;
     
     @Autowired
     private MockMvc mockMvc;

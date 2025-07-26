@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
-import com.glancy.backend.service.AlertService;
 
 import com.glancy.backend.exception.ResourceNotFoundException;
 import com.glancy.backend.exception.DuplicateResourceException;
@@ -22,10 +21,7 @@ import com.glancy.backend.exception.BusinessException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private final AlertService alertService;
-
-    public GlobalExceptionHandler(AlertService alertService) {
-        this.alertService = alertService;
+    public GlobalExceptionHandler() {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -67,7 +63,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
         log.error("Unhandled exception", ex);
-        alertService.sendAlert("Unhandled exception", ex.getMessage());
         return new ResponseEntity<>(new ErrorResponse("内部服务器错误"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -18,7 +18,7 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/portal/**", "/api/notifications/system").authenticated()
+                .requestMatchers("/api/notifications/system").authenticated()
                 .anyRequest().permitAll()
             )
             .httpBasic(httpBasic -> {}); // 显式启用 httpBasic 认证
