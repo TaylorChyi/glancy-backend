@@ -35,6 +35,11 @@ search:
     limit:
         nonMember: 10
 
+llm:
+    default-client: deepseek
+    temperature: 0.7
+    prompt-path: prompts/english_to_chinese.txt
+
 thirdparty:
     deepseek:
         base-url: https://api.deepseek.com

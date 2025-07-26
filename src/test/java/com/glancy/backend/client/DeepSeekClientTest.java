@@ -25,7 +25,7 @@ class DeepSeekClientTest {
     void setUp() {
         RestTemplate restTemplate = new RestTemplate();
         server = MockRestServiceServer.bindTo(restTemplate).build();
-        client = new DeepSeekClient(restTemplate, "http://mock", "key");
+        client = new DeepSeekClient(restTemplate, "http://mock", "key", new com.glancy.backend.llm.parser.JacksonWordResponseParser());
     }
 
     /**
