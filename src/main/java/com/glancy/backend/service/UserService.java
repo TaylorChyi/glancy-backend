@@ -26,7 +26,6 @@ import com.glancy.backend.exception.InvalidRequestException;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.List;

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.ChatCompletionResponse;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
-import com.glancy.backend.client.DictionaryClient;
 import com.glancy.backend.llm.llm.LLMClient;
 import com.glancy.backend.llm.model.ChatMessage;
 import com.glancy.backend.llm.parser.WordResponseParser;

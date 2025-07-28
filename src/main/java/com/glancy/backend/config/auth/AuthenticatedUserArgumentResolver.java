@@ -8,6 +8,7 @@ import com.glancy.backend.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -21,7 +22,6 @@ import java.util.Map;
  * Resolves parameters annotated with {@link AuthenticatedUser} by validating
  * the user token from request headers.
  */
-import org.springframework.stereotype.Component;
 
 @Component
 public class AuthenticatedUserArgumentResolver implements HandlerMethodArgumentResolver {
@@ -43,16 +43,25 @@ public class AuthenticatedUserArgumentResolver implements HandlerMethodArgumentR
 
     @Override
     public Object resolveArgument(@NonNull MethodParameter parameter,
-                                  ModelAndViewContainer mavContainer,
+                                  @Nullable ModelAndViewContainer mavContainer,
                                   @NonNull NativeWebRequest webRequest,
-                                  WebDataBinderFactory binderFactory) throws Exception {
+                                  @Nullable WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String token = request.getHeader("X-USER-TOKEN");
         if (token == null) {
             throw new UnauthorizedException("Missing X-USER-TOKEN header");
         }
 
-        Map<String, String> pathVars = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        Map<String, String> pathVars = null;
+        Object attr = request.getAttribute(
+                HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        if (attr instanceof Map<?, ?> map) {
+            pathVars = new java.util.HashMap<>();
+            for (var entry : map.entrySet()) {
+                pathVars.put(entry.getKey().toString(),
+                        entry.getValue().toString());
+            }
+        }
         String userIdStr = null;
         if (pathVars != null) {
             userIdStr = pathVars.get("userId");

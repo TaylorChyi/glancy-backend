@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.glancy.backend.config.auth.AuthenticatedUser;
-import com.glancy.backend.entity.User;
 
 /**
  * Provides dictionary lookup functionality. Each request also

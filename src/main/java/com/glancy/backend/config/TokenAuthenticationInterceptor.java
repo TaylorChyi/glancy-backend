@@ -9,6 +9,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 
 import java.util.Map;
+import org.springframework.lang.NonNull;
 
 /**
  * Interceptor that validates the {@code X-USER-TOKEN} header for requests
@@ -23,15 +24,25 @@ public class TokenAuthenticationInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(@NonNull HttpServletRequest request,
+                             @NonNull HttpServletResponse response,
+                             @NonNull Object handler) throws Exception {
         String token = request.getHeader("X-USER-TOKEN");
         if (token == null) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Missing X-USER-TOKEN header");
             return false;
         }
 
-        Map<String, String> pathVariables =
-                (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        Map<String, String> pathVariables = null;
+        Object attr = request.getAttribute(
+                HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        if (attr instanceof Map<?, ?> map) {
+            pathVariables = new java.util.HashMap<>();
+            for (var entry : map.entrySet()) {
+                pathVariables.put(entry.getKey().toString(),
+                        entry.getValue().toString());
+            }
+        }
         String userIdStr = null;
         if (pathVariables != null) {
             userIdStr = pathVariables.get("userId");
