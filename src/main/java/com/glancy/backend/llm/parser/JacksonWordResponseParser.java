@@ -72,9 +72,13 @@ public class JacksonWordResponseParser implements WordResponseParser {
             if ((phonetic == null || phonetic.isEmpty())) {
                 var pronNode = node.path("pronunciations");
                 if (pronNode.isObject()) {
-                    var it = pronNode.properties();
-                    if (it.hasNext()) {
-                        phonetic = it.next().getValue().asText();
+                    var fieldNames = pronNode.fieldNames();
+                    if (fieldNames.hasNext()) {
+                        String firstKey = fieldNames.next();
+                        var value = pronNode.get(firstKey);
+                        if (value != null && !value.isNull()) {
+                            phonetic = value.asText();
+                        }
                     }
                 }
             }

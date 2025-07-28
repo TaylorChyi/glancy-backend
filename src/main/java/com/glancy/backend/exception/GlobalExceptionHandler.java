@@ -9,11 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import com.glancy.backend.exception.ResourceNotFoundException;
-import com.glancy.backend.exception.DuplicateResourceException;
-import com.glancy.backend.exception.InvalidRequestException;
-import com.glancy.backend.exception.BusinessException;
-
 /**
  * Handles application exceptions and logs them.
  */
