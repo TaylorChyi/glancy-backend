@@ -46,24 +46,19 @@ public class WordService {
 
     @Transactional
     public WordResponse findWordForUser(Long userId, String term, Language language) {
-        var pref = userPreferenceRepository.findByUserId(userId)
+        userPreferenceRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     UserPreference p = new UserPreference();
                     p.setDictionaryModel(DictionaryModel.DEEPSEEK);
                     return p;
                 });
-        DictionaryModel model = pref.getDictionaryModel();
-        String clientName = model.name().toLowerCase();
-        if (model == DictionaryModel.DEEPSEEK) {
-            return wordRepository.findByTermAndLanguageAndDeletedFalse(term, language)
-                    .map(this::toResponse)
-                    .orElseGet(() -> {
-                        WordResponse resp = wordSearcher.search(term, language, clientName);
-                        saveWord(term, resp, language);
-                        return resp;
-                    });
-        }
-        return wordSearcher.search(term, language, clientName);
+        return wordRepository.findByTermAndLanguageAndDeletedFalse(term, language)
+                .map(this::toResponse)
+                .orElseGet(() -> {
+                    WordResponse resp = wordSearcher.search(term, language, "deepseek");
+                    saveWord(term, resp, language);
+                    return resp;
+                });
     }
 
     private void saveWord(String requestedTerm, WordResponse resp, Language language) {

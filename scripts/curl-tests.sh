@@ -56,7 +56,7 @@ curl -i -H "Content-Type: application/json" \
 
 section "Save user preference"
 curl -i -H "Content-Type: application/json" \
-    -d '{"theme":"light","systemLanguage":"en","searchLanguage":"en","dictionaryModel":"QIANWEN"}' \
+    -d '{"theme":"light","systemLanguage":"en","searchLanguage":"en","dictionaryModel":"DEEPSEEK"}' \
     "$BASE_URL/api/preferences/user/1"
 
 section "Get user preference"
