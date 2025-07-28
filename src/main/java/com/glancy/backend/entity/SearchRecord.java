@@ -3,6 +3,7 @@ package com.glancy.backend.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 
 /**
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "search_records")
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class SearchRecord extends BaseEntity {
 
     @ManyToOne
