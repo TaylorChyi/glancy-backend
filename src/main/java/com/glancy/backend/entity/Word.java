@@ -1,7 +1,9 @@
 package com.glancy.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,7 @@ import java.util.List;
        uniqueConstraints = @UniqueConstraint(columnNames = {"term", "language"}))
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class Word extends BaseEntity {
 
     @Column(nullable = false, length = 100)
