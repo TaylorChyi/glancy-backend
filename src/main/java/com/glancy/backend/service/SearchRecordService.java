@@ -62,7 +62,9 @@ public class SearchRecordService {
                 .findTopByUserIdAndTermAndLanguageOrderByCreatedAtDesc(userId,
                         request.getTerm(), request.getLanguage());
         if (existing != null) {
-            return searchRecordMapper.toResponse(existing);
+            existing.setCreatedAt(LocalDateTime.now());
+            SearchRecord updated = searchRecordRepository.save(existing);
+            return searchRecordMapper.toResponse(updated);
         }
 
         if (Boolean.FALSE.equals(user.getMember())) {

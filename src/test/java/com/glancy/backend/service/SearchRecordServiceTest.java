@@ -160,7 +160,9 @@ class SearchRecordServiceTest {
         SearchRecordResponse second = searchRecordService.saveRecord(user.getId(), req);
 
         assertEquals(first.getId(), second.getId());
+        assertTrue(second.getCreatedAt().isAfter(first.getCreatedAt()));
         List<SearchRecordResponse> list = searchRecordService.getRecords(user.getId());
         assertEquals(1, list.size());
+        assertEquals(second.getCreatedAt(), list.get(0).getCreatedAt());
     }
 }
