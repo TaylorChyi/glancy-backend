@@ -4,7 +4,6 @@ import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
