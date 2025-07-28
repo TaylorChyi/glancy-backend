@@ -74,4 +74,37 @@ class WordControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    /**
+     * 测试 testGetWordMissingTerm 接口
+     */
+    @Test
+    void testGetWordMissingTerm() throws Exception {
+        doNothing().when(userService).validateToken(1L, "tkn");
+
+        mockMvc.perform(get("/api/words")
+                        .param("userId", "1")
+                        .header("X-USER-TOKEN", "tkn")
+                        .param("language", "ENGLISH"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Missing required parameter: term"));
+    }
+
+    /**
+     * 测试 testGetWordInvalidLanguage 接口
+     */
+    @Test
+    void testGetWordInvalidLanguage() throws Exception {
+        doNothing().when(userService).validateToken(1L, "tkn");
+
+        mockMvc.perform(get("/api/words")
+                        .param("userId", "1")
+                        .header("X-USER-TOKEN", "tkn")
+                        .param("term", "hello")
+                        .param("language", "INVALID"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid value for parameter: language"));
+    }
 }
