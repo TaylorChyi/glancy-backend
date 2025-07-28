@@ -29,10 +29,17 @@ public class JacksonWordResponseParser implements WordResponseParser {
                 parsedTerm = node.path("\u8BCD\u6761").asText(term); // "词条"
             }
 
-            List<String> definitions = parseEnglishDefinitions(node);
+            List<String> synonyms = new ArrayList<>();
+            List<String> antonyms = new ArrayList<>();
+            List<String> related = new ArrayList<>();
+
+            List<String> definitions = parseEnglishDefinitions(node, synonyms, antonyms, related);
             if (definitions.isEmpty()) {
-                definitions = parseChineseDefinitions(node);
+                definitions = parseChineseDefinitions(node, synonyms, antonyms, related);
             }
+
+            List<String> variations = parseVariations(node);
+            List<String> phrases = parsePhrases(node);
 
             Language lang = parseLanguage(node, language);
 
@@ -40,14 +47,19 @@ public class JacksonWordResponseParser implements WordResponseParser {
 
             String phonetic = parsePhonetic(node);
 
-            return new WordResponse(id, parsedTerm, definitions, lang, example, phonetic);
+            return new WordResponse(id, parsedTerm, definitions, lang, example, phonetic,
+                    variations, synonyms, antonyms, related, phrases);
         } catch (Exception e) {
             log.warn("Failed to parse word response", e);
-            return new WordResponse(null, term, new ArrayList<>(), language, null, null);
+            return new WordResponse(null, term, new ArrayList<>(), language, null, null,
+                    new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         }
     }
 
-    private List<String> parseEnglishDefinitions(com.fasterxml.jackson.databind.JsonNode node) {
+    private List<String> parseEnglishDefinitions(com.fasterxml.jackson.databind.JsonNode node,
+                                                List<String> synonyms,
+                                                List<String> antonyms,
+                                                List<String> related) {
         List<String> definitions = new ArrayList<>();
         var defsNode = node.path("definitions");
         if (defsNode.isArray()) {
@@ -64,6 +76,9 @@ public class JacksonWordResponseParser implements WordResponseParser {
                 if (!combined.isEmpty()) {
                     definitions.add(part.isEmpty() ? combined : part + ": " + combined);
                 }
+                addFromNode(n, "synonyms", synonyms);
+                addFromNode(n, "antonyms", antonyms);
+                addFromNode(n, "related", related);
             });
         } else if (defsNode.isTextual()) {
             definitions.add(defsNode.asText());
@@ -71,7 +86,10 @@ public class JacksonWordResponseParser implements WordResponseParser {
         return definitions;
     }
 
-    private List<String> parseChineseDefinitions(com.fasterxml.jackson.databind.JsonNode node) {
+    private List<String> parseChineseDefinitions(com.fasterxml.jackson.databind.JsonNode node,
+                                                 List<String> synonyms,
+                                                 List<String> antonyms,
+                                                 List<String> related) {
         List<String> definitions = new ArrayList<>();
         var explainNode = node.path("\u53D1\u97F3\u89E3\u91CA"); // "发音解释"
         if (explainNode.isArray()) {
@@ -88,11 +106,57 @@ public class JacksonWordResponseParser implements WordResponseParser {
                         if (!combined.isEmpty()) {
                             definitions.add(combined);
                         }
+                        var relation = d.path("\u5173\u7CFB\u8BCD"); // "关系词"
+                        if (relation.isObject()) {
+                            addFromNode(relation, "\u540C\u4E49\u8BCD", synonyms); // 同义词
+                            addFromNode(relation, "\u53CD\u4E49\u8BCD", antonyms); // 反义词
+                            addFromNode(relation, "\u76F8\u5173\u8BCD", related); // 相关词
+                        }
                     }
                 }
             }
         }
         return definitions;
+    }
+
+    private List<String> parseVariations(com.fasterxml.jackson.databind.JsonNode node) {
+        List<String> variations = new ArrayList<>();
+        var formsNode = node.path("\u53D8\u5F62"); // "变形"
+        if (formsNode.isArray()) {
+            for (var form : formsNode) {
+                String state = form.path("\u72B6\u6001").asText(); // "状态"
+                String word = form.path("\u8BCD\u5F62").asText(); // "词形"
+                if (!word.isEmpty()) {
+                    variations.add(state.isEmpty() ? word : state + ": " + word);
+                }
+            }
+        }
+        return variations;
+    }
+
+    private List<String> parsePhrases(com.fasterxml.jackson.databind.JsonNode node) {
+        List<String> phrases = new ArrayList<>();
+        var arr = node.path("\u5E38\u89C1\u8BCD\u7EC4"); // "常见词组"
+        if (arr.isArray()) {
+            arr.forEach(p -> {
+                if (p.isTextual()) {
+                    phrases.add(p.asText());
+                }
+            });
+        }
+        return phrases;
+    }
+
+    private void addFromNode(com.fasterxml.jackson.databind.JsonNode node, String field,
+                              List<String> target) {
+        var arr = node.path(field);
+        if (arr.isArray()) {
+            arr.forEach(a -> {
+                if (a.isTextual()) {
+                    target.add(a.asText());
+                }
+            });
+        }
     }
 
     private Language parseLanguage(com.fasterxml.jackson.databind.JsonNode node, Language fallback) {

@@ -35,5 +35,7 @@ class JacksonWordResponseParserTest {
         assertEquals("glow", resp.getTerm());
         assertFalse(resp.getDefinitions().isEmpty());
         assertNotNull(resp.getPhonetic());
+        assertTrue(resp.getVariations().isEmpty());
+        assertTrue(resp.getPhrases().isEmpty());
     }
 }
