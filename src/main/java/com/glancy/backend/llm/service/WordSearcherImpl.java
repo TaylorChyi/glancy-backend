@@ -38,6 +38,7 @@ public class WordSearcherImpl implements WordSearcher {
 
     @Override
     public WordResponse search(String term, Language language, String clientName) {
+        log.info("WordSearcher searching for '{}' using client {}", term, clientName);
         String cleanInput = searchContentManager.normalize(term);
         String prompt = promptManager.loadPrompt(config.getPromptPath());
         String name = clientName != null ? clientName : config.getDefaultClient();
@@ -46,6 +47,7 @@ public class WordSearcherImpl implements WordSearcher {
         messages.add(new ChatMessage("system", prompt));
         messages.add(new ChatMessage("user", cleanInput));
         String content = client.chat(messages, config.getTemperature());
+        log.info("LLM client '{}' returned content: {}", name, content);
         return parser.parse(content, term, language);
     }
 }

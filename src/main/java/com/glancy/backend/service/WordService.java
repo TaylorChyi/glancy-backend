@@ -46,16 +46,23 @@ public class WordService {
 
     @Transactional
     public WordResponse findWordForUser(Long userId, String term, Language language) {
+        log.info("Finding word '{}' for user {} in language {}", term, userId, language);
         userPreferenceRepository.findByUserId(userId)
                 .orElseGet(() -> {
+                    log.info("No user preference found for user {}, using default", userId);
                     UserPreference p = new UserPreference();
                     p.setDictionaryModel(DictionaryModel.DEEPSEEK);
                     return p;
                 });
         return wordRepository.findByTermAndLanguageAndDeletedFalse(term, language)
-                .map(this::toResponse)
+                .map(word -> {
+                    log.info("Found word '{}' in local repository", term);
+                    return toResponse(word);
+                })
                 .orElseGet(() -> {
+                    log.info("Word '{}' not found locally, searching via LLM", term);
                     WordResponse resp = wordSearcher.search(term, language, "deepseek");
+                    log.info("LLM search result: {}", resp);
                     saveWord(term, resp, language);
                     return resp;
                 });
@@ -70,6 +77,7 @@ public class WordService {
         word.setDefinitions(resp.getDefinitions());
         word.setExample(resp.getExample());
         word.setPhonetic(resp.getPhonetic());
+        log.info("Persisting new word '{}' with language {}", term, lang);
         Word saved = wordRepository.save(word);
         resp.setId(String.valueOf(saved.getId()));
         resp.setLanguage(lang);

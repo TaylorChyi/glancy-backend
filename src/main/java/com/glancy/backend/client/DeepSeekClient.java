@@ -110,7 +110,9 @@ public class DeepSeekClient implements DictionaryClient, LLMClient {
         messages.add(new ChatMessage("user", term));
         String content = chat(messages, 0.7);
         log.info("DeepSeek response content: {}", content);
-        return parser.parse(content, term, language);
+        WordResponse response = parser.parse(content, term, language);
+        log.info("Parsed word response: {}", response);
+        return response;
     }
 
     @Override
