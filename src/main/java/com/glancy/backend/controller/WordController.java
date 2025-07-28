@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.glancy.backend.config.auth.AuthenticatedUser;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Provides dictionary lookup functionality. Each request also
@@ -19,6 +20,7 @@ import com.glancy.backend.config.auth.AuthenticatedUser;
  */
 @RestController
 @RequestMapping("/api/words")
+@Slf4j
 public class WordController {
     private final WordService wordService;
     private final SearchRecordService searchRecordService;
@@ -36,11 +38,13 @@ public class WordController {
     public ResponseEntity<WordResponse> getWord(@AuthenticatedUser Long userId,
                                                 @RequestParam String term,
                                                 @RequestParam Language language) {
+        log.info("Received getWord request from user {} with term '{}' and language {}", userId, term, language);
         SearchRecordRequest req = new SearchRecordRequest();
         req.setTerm(term);
         req.setLanguage(language);
         searchRecordService.saveRecord(userId, req);
         WordResponse resp = wordService.findWordForUser(userId, term, language);
+        log.info("Returning word response for term '{}': {}", term, resp);
         return ResponseEntity.ok(resp);
     }
 
