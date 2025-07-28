@@ -42,7 +42,8 @@ class WordControllerTest {
      */
     @Test
     void testGetWord() throws Exception {
-        WordResponse resp = new WordResponse("1", "hello", List.of("g"), Language.ENGLISH, "ex", "həˈloʊ");
+        WordResponse resp = new WordResponse("1", "hello", List.of("g"), Language.ENGLISH,
+                "ex", "həˈloʊ", List.of(), List.of(), List.of(), List.of(), List.of());
         when(wordService.findWordForUser(eq(1L), eq("hello"), eq(Language.ENGLISH))).thenReturn(resp);
 
         doNothing().when(userService).validateToken(1L, "tkn");

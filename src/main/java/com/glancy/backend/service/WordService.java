@@ -75,6 +75,11 @@ public class WordService {
         Language lang = resp.getLanguage() != null ? resp.getLanguage() : language;
         word.setLanguage(lang);
         word.setDefinitions(resp.getDefinitions());
+        word.setVariations(resp.getVariations());
+        word.setSynonyms(resp.getSynonyms());
+        word.setAntonyms(resp.getAntonyms());
+        word.setRelated(resp.getRelated());
+        word.setPhrases(resp.getPhrases());
         word.setExample(resp.getExample());
         word.setPhonetic(resp.getPhonetic());
         log.info("Persisting new word '{}' with language {}", term, lang);
@@ -85,7 +90,16 @@ public class WordService {
     }
 
     private WordResponse toResponse(Word word) {
-        return new WordResponse(String.valueOf(word.getId()), word.getTerm(), word.getDefinitions(),
-                word.getLanguage(), word.getExample(), word.getPhonetic());
+        return new WordResponse(String.valueOf(word.getId()),
+                word.getTerm(),
+                word.getDefinitions(),
+                word.getLanguage(),
+                word.getExample(),
+                word.getPhonetic(),
+                word.getVariations(),
+                word.getSynonyms(),
+                word.getAntonyms(),
+                word.getRelated(),
+                word.getPhrases());
     }
 }
