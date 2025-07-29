@@ -50,9 +50,8 @@ class OssAvatarStorageTest {
         OssAvatarStorage storage = new OssAvatarStorage(props);
 
         OSS client = mock(OSS.class);
-        when(client.putObject(eq("bucket"), anyString(), any())).thenReturn(null);
+        when(client.putObject(eq("bucket"), anyString(), any(java.io.InputStream.class))).thenReturn(null);
         OSSException ex = new OSSException("AccessDenied");
-        ex.setErrorCode("AccessDenied");
         doThrow(ex).when(client).setObjectAcl(eq("bucket"), anyString(), eq(CannedAccessControlList.PublicRead));
 
         var field = OssAvatarStorage.class.getDeclaredField("ossClient");
