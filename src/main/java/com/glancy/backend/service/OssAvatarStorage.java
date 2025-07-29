@@ -3,6 +3,8 @@ package com.glancy.backend.service;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.CannedAccessControlList;
+import com.aliyun.oss.OSSException;
+import com.aliyun.oss.ClientException;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import com.glancy.backend.config.OssProperties;
@@ -83,10 +85,24 @@ public class OssAvatarStorage implements AvatarStorage {
         }
         String objectName = avatarDir + UUID.randomUUID() + ext;
         ossClient.putObject(bucket, objectName, file.getInputStream());
-        if (publicRead) {
-            ossClient.setObjectAcl(bucket, objectName, CannedAccessControlList.PublicRead);
-        }
+        setPublicReadAcl(objectName);
         return urlPrefix + objectName;
+    }
+
+    /**
+     * Attempt to mark the uploaded object as publicly readable.
+     * Some buckets do not allow changing object ACLs. If an access error occurs
+     * we simply log a warning and continue using the bucket's default ACL.
+     */
+    private void setPublicReadAcl(String objectName) {
+        if (!publicRead) {
+            return;
+        }
+        try {
+            ossClient.setObjectAcl(bucket, objectName, CannedAccessControlList.PublicRead);
+        } catch (OSSException | ClientException e) {
+            log.warn("Unable to set public ACL for {}: {}", objectName, e.getMessage());
+        }
     }
 
     private static String removeProtocol(String url) {
