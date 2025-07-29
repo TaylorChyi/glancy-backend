@@ -26,6 +26,7 @@ oss:
   avatar-dir: avatars/
   public-read: true
   signed-url-expiration-minutes: 60
+  verify-location: true
   access-key-id:
   access-key-secret:
 
