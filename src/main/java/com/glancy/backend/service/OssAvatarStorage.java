@@ -5,16 +5,20 @@ import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.OSSException;
 import com.aliyun.oss.ClientException;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import com.glancy.backend.config.OssProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+
 
 import java.io.IOException;
+import java.net.URL;
+import java.time.Duration;
 import java.util.UUID;
+import java.util.Date;
 
 /**
  * Handles uploading avatar images to Alibaba Cloud OSS.
@@ -28,6 +32,7 @@ public class OssAvatarStorage implements AvatarStorage {
     private final String accessKeySecret;
     private final String avatarDir;
     private final boolean publicRead;
+    private final long signedUrlExpirationMinutes;
     private String urlPrefix;
 
     private OSS ossClient;
@@ -39,6 +44,7 @@ public class OssAvatarStorage implements AvatarStorage {
         this.accessKeySecret = properties.getAccessKeySecret();
         this.avatarDir = properties.getAvatarDir();
         this.publicRead = properties.isPublicRead();
+        this.signedUrlExpirationMinutes = properties.getSignedUrlExpirationMinutes();
         this.urlPrefix = String.format("https://%s.%s/", bucket, removeProtocol(endpoint));
     }
 
@@ -85,8 +91,11 @@ public class OssAvatarStorage implements AvatarStorage {
         }
         String objectName = avatarDir + UUID.randomUUID() + ext;
         ossClient.putObject(bucket, objectName, file.getInputStream());
-        setPublicReadAcl(objectName);
-        return urlPrefix + objectName;
+        boolean isPublic = setPublicReadAcl(objectName);
+        if (isPublic) {
+            return urlPrefix + objectName;
+        }
+        return generatePresignedUrl(objectName);
     }
 
     /**
@@ -94,15 +103,24 @@ public class OssAvatarStorage implements AvatarStorage {
      * Some buckets do not allow changing object ACLs. If an access error occurs
      * we simply log a warning and continue using the bucket's default ACL.
      */
-    private void setPublicReadAcl(String objectName) {
+    private boolean setPublicReadAcl(String objectName) {
         if (!publicRead) {
-            return;
+            return false;
         }
         try {
             ossClient.setObjectAcl(bucket, objectName, CannedAccessControlList.PublicRead);
+            return true;
         } catch (OSSException | ClientException e) {
             log.warn("Unable to set public ACL for {}: {}", objectName, e.getMessage());
+            return false;
         }
+    }
+
+    private String generatePresignedUrl(String objectName) {
+        Date expiration = new Date(System.currentTimeMillis() +
+                Duration.ofMinutes(signedUrlExpirationMinutes).toMillis());
+        URL url = ossClient.generatePresignedUrl(bucket, objectName, expiration);
+        return url.toString();
     }
 
     private static String removeProtocol(String url) {

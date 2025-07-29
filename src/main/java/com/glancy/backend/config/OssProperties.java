@@ -15,4 +15,10 @@ public class OssProperties {
      * Whether uploaded objects should be publicly readable.
      */
     private boolean publicRead = true;
+
+    /**
+     * Expiration time in minutes for generated presigned URLs when objects are
+     * not public.
+     */
+    private long signedUrlExpirationMinutes = 1440;
 }

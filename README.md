@@ -19,6 +19,7 @@ Ensure the MySQL server provides SSL certificates trusted by the JVM. Configure 
 6. Properties under `search.limit` and `oss` are bound to `SearchProperties` and `OssProperties`.
    `search.limit.nonMember` controls the daily search limit for non-members (default `10`).
    `oss.public-read` determines if uploaded avatars are publicly accessible (default `true`).
+   `oss.signed-url-expiration-minutes` sets the lifetime of presigned URLs when objects are private (default `1440`).
    If your bucket policy forbids changing object ACLs, either disable this option
    or configure the bucket itself for public read access.
 
