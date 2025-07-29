@@ -11,4 +11,8 @@ public class OssProperties {
     private String accessKeyId;
     private String accessKeySecret;
     private String avatarDir = "avatars/";
+    /**
+     * Whether uploaded objects should be publicly readable.
+     */
+    private boolean publicRead = true;
 }

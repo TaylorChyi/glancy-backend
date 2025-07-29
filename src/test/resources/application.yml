@@ -20,6 +20,7 @@ oss:
   endpoint: https://oss-cn-beijing.aliyuncs.com
   bucket: glancy-avatar-bucket
   avatar-dir: avatars/
+  public-read: true
   access-key-id:
   access-key-secret:
 
