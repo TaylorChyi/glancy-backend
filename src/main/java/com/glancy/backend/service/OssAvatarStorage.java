@@ -5,6 +5,8 @@ import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.OSSException;
 import com.aliyun.oss.ClientException;
+import com.aliyun.oss.HttpMethod;
+import com.aliyun.oss.model.GeneratePresignedUrlRequest;
 import com.glancy.backend.config.OssProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class OssAvatarStorage implements AvatarStorage {
     private final String bucket;
     private final String accessKeyId;
     private final String accessKeySecret;
+    private final String securityToken;
     private final String avatarDir;
     private final boolean publicRead;
     private final long signedUrlExpirationMinutes;
@@ -47,6 +50,7 @@ public class OssAvatarStorage implements AvatarStorage {
         this.publicRead = properties.isPublicRead();
         this.verifyLocation = properties.isVerifyLocation();
         this.signedUrlExpirationMinutes = properties.getSignedUrlExpirationMinutes();
+        this.securityToken = properties.getSecurityToken();
         this.urlPrefix = String.format("https://%s.%s/", bucket, removeProtocol(endpoint));
     }
 
@@ -54,7 +58,12 @@ public class OssAvatarStorage implements AvatarStorage {
     public void init() {
         if (accessKeyId != null && !accessKeyId.isEmpty()
                 && accessKeySecret != null && !accessKeySecret.isEmpty()) {
-            this.ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+            if (securityToken != null && !securityToken.isEmpty()) {
+                this.ossClient = new OSSClientBuilder().build(endpoint, accessKeyId,
+                        accessKeySecret, securityToken);
+            } else {
+                this.ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+            }
             if (verifyLocation) {
                 try {
                     String location = ossClient.getBucketLocation(bucket);
@@ -62,7 +71,13 @@ public class OssAvatarStorage implements AvatarStorage {
                     String configured = removeProtocol(endpoint);
                     if (!configured.contains(location)) {
                         ossClient.shutdown();
-                        this.ossClient = new OSSClientBuilder().build(expected, accessKeyId, accessKeySecret);
+                        if (securityToken != null && !securityToken.isEmpty()) {
+                            this.ossClient = new OSSClientBuilder().build(expected,
+                                    accessKeyId, accessKeySecret, securityToken);
+                        } else {
+                            this.ossClient = new OSSClientBuilder().build(expected,
+                                    accessKeyId, accessKeySecret);
+                        }
                         this.endpoint = expected;
                         this.urlPrefix = String.format("https://%s.%s/", bucket, removeProtocol(expected));
                     }
@@ -121,9 +136,18 @@ public class OssAvatarStorage implements AvatarStorage {
     }
 
     private String generatePresignedUrl(String objectName) {
-        Date expiration = new Date(System.currentTimeMillis() +
-                Duration.ofMinutes(signedUrlExpirationMinutes).toMillis());
-        URL url = ossClient.generatePresignedUrl(bucket, objectName, expiration);
+        Date expiration = new Date(System.currentTimeMillis()
+                + Duration.ofMinutes(signedUrlExpirationMinutes).toMillis());
+        URL url;
+        if (securityToken != null && !securityToken.isEmpty()) {
+            GeneratePresignedUrlRequest req =
+                    new GeneratePresignedUrlRequest(bucket, objectName, HttpMethod.GET);
+            req.setExpiration(expiration);
+            req.setSecurityToken(securityToken);
+            url = ossClient.generatePresignedUrl(req);
+        } else {
+            url = ossClient.generatePresignedUrl(bucket, objectName, expiration);
+        }
         return url.toString();
     }
 

@@ -10,6 +10,10 @@ public class OssProperties {
     private String bucket;
     private String accessKeyId;
     private String accessKeySecret;
+    /**
+     * Optional security token when using STS temporary credentials.
+     */
+    private String securityToken;
     private String avatarDir = "avatars/";
     /**
      * Whether uploaded objects should be publicly readable.
