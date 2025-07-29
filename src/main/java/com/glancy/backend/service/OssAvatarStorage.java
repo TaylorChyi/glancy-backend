@@ -2,6 +2,7 @@ package com.glancy.backend.service;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.model.CannedAccessControlList;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import com.glancy.backend.config.OssProperties;
@@ -24,6 +25,7 @@ public class OssAvatarStorage implements AvatarStorage {
     private final String accessKeyId;
     private final String accessKeySecret;
     private final String avatarDir;
+    private final boolean publicRead;
     private String urlPrefix;
 
     private OSS ossClient;
@@ -34,6 +36,7 @@ public class OssAvatarStorage implements AvatarStorage {
         this.accessKeyId = properties.getAccessKeyId();
         this.accessKeySecret = properties.getAccessKeySecret();
         this.avatarDir = properties.getAvatarDir();
+        this.publicRead = properties.isPublicRead();
         this.urlPrefix = String.format("https://%s.%s/", bucket, removeProtocol(endpoint));
     }
 
@@ -80,6 +83,9 @@ public class OssAvatarStorage implements AvatarStorage {
         }
         String objectName = avatarDir + UUID.randomUUID() + ext;
         ossClient.putObject(bucket, objectName, file.getInputStream());
+        if (publicRead) {
+            ossClient.setObjectAcl(bucket, objectName, CannedAccessControlList.PublicRead);
+        }
         return urlPrefix + objectName;
     }
 
