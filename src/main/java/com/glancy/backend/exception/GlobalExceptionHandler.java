@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -63,6 +64,12 @@ public class GlobalExceptionHandler {
         log.error("Invalid parameter: {}", ex.getName());
         String msg = "Invalid value for parameter: " + ex.getName();
         return new ResponseEntity<>(new ErrorResponse(msg), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMaxSize(MaxUploadSizeExceededException ex) {
+        log.error("File upload too large: {}", ex.getMessage());
+        return new ResponseEntity<>(new ErrorResponse("上传文件过大"), HttpStatus.PAYLOAD_TOO_LARGE);
     }
 
     @ExceptionHandler({NoHandlerFoundException.class, NoResourceFoundException.class})
