@@ -20,6 +20,8 @@ import com.glancy.backend.entity.ThirdPartyAccount;
 import com.glancy.backend.repository.UserRepository;
 import com.glancy.backend.repository.LoginDeviceRepository;
 import com.glancy.backend.repository.ThirdPartyAccountRepository;
+import com.glancy.backend.service.UserProfileService;
+import com.glancy.backend.service.AvatarStorage;
 import com.glancy.backend.exception.ResourceNotFoundException;
 import com.glancy.backend.exception.DuplicateResourceException;
 import com.glancy.backend.exception.InvalidRequestException;
@@ -43,15 +45,18 @@ public class UserService {
     private final ThirdPartyAccountRepository thirdPartyAccountRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final AvatarStorage avatarStorage;
+    private final UserProfileService userProfileService;
 
     public UserService(UserRepository userRepository,
                        LoginDeviceRepository loginDeviceRepository,
                        ThirdPartyAccountRepository thirdPartyAccountRepository,
-                       AvatarStorage avatarStorage) {
+                       AvatarStorage avatarStorage,
+                       UserProfileService userProfileService) {
         this.userRepository = userRepository;
         this.loginDeviceRepository = loginDeviceRepository;
         this.thirdPartyAccountRepository = thirdPartyAccountRepository;
         this.avatarStorage = avatarStorage;
+        this.userProfileService = userProfileService;
     }
 
     /**
@@ -79,6 +84,7 @@ public class UserService {
         user.setAvatar(req.getAvatar());
         user.setPhone(req.getPhone());
         User saved = userRepository.save(user);
+        userProfileService.initProfile(saved.getId());
         return new UserResponse(saved.getId(), saved.getUsername(), saved.getEmail(),
                 saved.getAvatar(), saved.getPhone());
     }

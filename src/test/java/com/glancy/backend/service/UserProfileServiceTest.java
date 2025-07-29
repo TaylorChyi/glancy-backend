@@ -68,4 +68,22 @@ class UserProfileServiceTest {
         assertEquals(saved.getId(), fetched.getId());
         assertEquals("dev", fetched.getJob());
     }
+
+    /**
+     * Return default profile when none exists.
+     */
+    @Test
+    void testDefaultProfileWhenMissing() {
+        User user = new User();
+        user.setUsername("p2");
+        user.setPassword("pass");
+        user.setEmail("p2@example.com");
+        user.setPhone("112");
+        userRepository.save(user);
+
+        UserProfileResponse fetched = userProfileService.getProfile(user.getId());
+        assertNull(fetched.getId());
+        assertNull(fetched.getAge());
+        assertEquals(user.getId(), fetched.getUserId());
+    }
 }
