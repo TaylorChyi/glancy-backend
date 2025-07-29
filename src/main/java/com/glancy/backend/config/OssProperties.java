@@ -17,6 +17,12 @@ public class OssProperties {
     private boolean publicRead = true;
 
     /**
+     * Whether the service should verify the bucket location at startup.
+     * Some cross-account buckets may not allow this operation.
+     */
+    private boolean verifyLocation = true;
+
+    /**
      * Expiration time in minutes for generated presigned URLs when objects are
      * not public.
      */

@@ -33,6 +33,7 @@ public class OssAvatarStorage implements AvatarStorage {
     private final String avatarDir;
     private final boolean publicRead;
     private final long signedUrlExpirationMinutes;
+    private final boolean verifyLocation;
     private String urlPrefix;
 
     private OSS ossClient;
@@ -44,6 +45,7 @@ public class OssAvatarStorage implements AvatarStorage {
         this.accessKeySecret = properties.getAccessKeySecret();
         this.avatarDir = properties.getAvatarDir();
         this.publicRead = properties.isPublicRead();
+        this.verifyLocation = properties.isVerifyLocation();
         this.signedUrlExpirationMinutes = properties.getSignedUrlExpirationMinutes();
         this.urlPrefix = String.format("https://%s.%s/", bucket, removeProtocol(endpoint));
     }
@@ -53,19 +55,21 @@ public class OssAvatarStorage implements AvatarStorage {
         if (accessKeyId != null && !accessKeyId.isEmpty()
                 && accessKeySecret != null && !accessKeySecret.isEmpty()) {
             this.ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
-            try {
-                String location = ossClient.getBucketLocation(bucket);
-                String expected = formatEndpoint(location);
-                String configured = removeProtocol(endpoint);
-                if (!configured.contains(location)) {
-                    ossClient.shutdown();
-                    this.ossClient = new OSSClientBuilder().build(expected, accessKeyId, accessKeySecret);
-                    this.endpoint = expected;
-                    this.urlPrefix = String.format("https://%s.%s/", bucket, removeProtocol(expected));
+            if (verifyLocation) {
+                try {
+                    String location = ossClient.getBucketLocation(bucket);
+                    String expected = formatEndpoint(location);
+                    String configured = removeProtocol(endpoint);
+                    if (!configured.contains(location)) {
+                        ossClient.shutdown();
+                        this.ossClient = new OSSClientBuilder().build(expected, accessKeyId, accessKeySecret);
+                        this.endpoint = expected;
+                        this.urlPrefix = String.format("https://%s.%s/", bucket, removeProtocol(expected));
+                    }
+                } catch (Exception e) {
+                    // log and continue with configured endpoint
+                    log.warn("Failed to verify OSS endpoint: {}", e.getMessage());
                 }
-            } catch (Exception e) {
-                // log and continue with configured endpoint
-                log.warn("Failed to verify OSS endpoint: {}", e.getMessage());
             }
         }
     }
