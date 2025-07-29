@@ -22,6 +22,8 @@ Ensure the MySQL server provides SSL certificates trusted by the JVM. Configure 
    `oss.signed-url-expiration-minutes` sets the lifetime of presigned URLs when objects are private (default `1440`).
    If your bucket policy forbids changing object ACLs, either disable this option
    or configure the bucket itself for public read access.
+   `spring.servlet.multipart.max-file-size` controls the maximum upload size for avatars.
+   Update your Nginx proxy with a matching `client_max_body_size` to avoid 413 errors.
 
 ## Database Initialization
 
