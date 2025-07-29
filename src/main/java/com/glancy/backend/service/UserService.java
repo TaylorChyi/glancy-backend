@@ -284,8 +284,10 @@ public class UserService {
         log.info("Updating avatar for user {}", userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
+        String previousAvatar = user.getAvatar();
         user.setAvatar(avatar);
         User saved = userRepository.save(user);
+        log.info("Avatar updated for user {} from {} to {}", userId, previousAvatar, saved.getAvatar());
         return new AvatarResponse(saved.getAvatar());
     }
 
