@@ -21,6 +21,7 @@ oss:
   bucket: glancy-avatar-bucket
   avatar-dir: avatars/
   public-read: true
+  signed-url-expiration-minutes: 60
   access-key-id:
   access-key-secret:
 
