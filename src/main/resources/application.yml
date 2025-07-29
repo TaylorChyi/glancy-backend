@@ -46,7 +46,7 @@ thirdparty:
         api-key: ''
 
 oss:
-    endpoint: https://oss-cn-hangzhou.aliyuncs.com
+    endpoint: https://oss-cn-beijing.aliyuncs.com
     bucket: glancy-avatar-bucket
     avatar-dir: avatars/
     access-key-id: ${OSS_ACCESS_KEY_ID:}

@@ -17,7 +17,7 @@ class OssAvatarStorageTest {
     @Test
     void uploadWithoutClientThrows() {
         OssProperties props = new OssProperties();
-        props.setEndpoint("https://oss-cn-hangzhou.aliyuncs.com");
+        props.setEndpoint("https://oss-cn-beijing.aliyuncs.com");
         props.setBucket("bucket");
         props.setAccessKeyId("");
         props.setAccessKeySecret("");
