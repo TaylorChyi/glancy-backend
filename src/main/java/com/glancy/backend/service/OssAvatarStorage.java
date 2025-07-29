@@ -5,6 +5,7 @@ import com.aliyun.oss.OSSClientBuilder;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import com.glancy.backend.config.OssProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,13 +17,14 @@ import java.util.UUID;
  * Handles uploading avatar images to Alibaba Cloud OSS.
  */
 @Service
+@Slf4j
 public class OssAvatarStorage implements AvatarStorage {
-    private final String endpoint;
+    private String endpoint;
     private final String bucket;
     private final String accessKeyId;
     private final String accessKeySecret;
     private final String avatarDir;
-    private final String urlPrefix;
+    private String urlPrefix;
 
     private OSS ossClient;
 
@@ -32,7 +34,7 @@ public class OssAvatarStorage implements AvatarStorage {
         this.accessKeyId = properties.getAccessKeyId();
         this.accessKeySecret = properties.getAccessKeySecret();
         this.avatarDir = properties.getAvatarDir();
-        this.urlPrefix = String.format("https://%s.%s/", bucket, endpoint.replaceFirst("https?://", ""));
+        this.urlPrefix = String.format("https://%s.%s/", bucket, removeProtocol(endpoint));
     }
 
     @PostConstruct
@@ -40,6 +42,20 @@ public class OssAvatarStorage implements AvatarStorage {
         if (accessKeyId != null && !accessKeyId.isEmpty()
                 && accessKeySecret != null && !accessKeySecret.isEmpty()) {
             this.ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+            try {
+                String location = ossClient.getBucketLocation(bucket);
+                String expected = formatEndpoint(location);
+                String configured = removeProtocol(endpoint);
+                if (!configured.contains(location)) {
+                    ossClient.shutdown();
+                    this.ossClient = new OSSClientBuilder().build(expected, accessKeyId, accessKeySecret);
+                    this.endpoint = expected;
+                    this.urlPrefix = String.format("https://%s.%s/", bucket, removeProtocol(expected));
+                }
+            } catch (Exception e) {
+                // log and continue with configured endpoint
+                log.warn("Failed to verify OSS endpoint: {}", e.getMessage());
+            }
         }
     }
 
@@ -65,5 +81,17 @@ public class OssAvatarStorage implements AvatarStorage {
         String objectName = avatarDir + UUID.randomUUID() + ext;
         ossClient.putObject(bucket, objectName, file.getInputStream());
         return urlPrefix + objectName;
+    }
+
+    private static String removeProtocol(String url) {
+        return url.replaceFirst("https?://", "");
+    }
+
+    private static String formatEndpoint(String location) {
+        String loc = location.startsWith("http") ? removeProtocol(location) : location;
+        if (!loc.startsWith("oss-")) {
+            loc = "oss-" + loc;
+        }
+        return "https://" + loc + ".aliyuncs.com";
     }
 }
