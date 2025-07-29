@@ -138,16 +138,13 @@ public class OssAvatarStorage implements AvatarStorage {
     private String generatePresignedUrl(String objectName) {
         Date expiration = new Date(System.currentTimeMillis()
                 + Duration.ofMinutes(signedUrlExpirationMinutes).toMillis());
-        URL url;
+        GeneratePresignedUrlRequest req =
+                new GeneratePresignedUrlRequest(bucket, objectName, HttpMethod.GET);
+        req.setExpiration(expiration);
         if (securityToken != null && !securityToken.isEmpty()) {
-            GeneratePresignedUrlRequest req =
-                    new GeneratePresignedUrlRequest(bucket, objectName, HttpMethod.GET);
-            req.setExpiration(expiration);
-            req.setSecurityToken(securityToken);
-            url = ossClient.generatePresignedUrl(req);
-        } else {
-            url = ossClient.generatePresignedUrl(bucket, objectName, expiration);
+            req.addQueryParameter("security-token", securityToken);
         }
+        URL url = ossClient.generatePresignedUrl(req);
         return url.toString();
     }
 
