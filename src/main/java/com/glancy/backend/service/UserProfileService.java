@@ -27,6 +27,22 @@ public class UserProfileService {
         this.userRepository = userRepository;
     }
 
+    private UserProfile createDefaultProfile(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
+        UserProfile profile = new UserProfile();
+        profile.setUser(user);
+        return profile;
+    }
+
+    @Transactional
+    public void initProfile(Long userId) {
+        if (userProfileRepository.findByUserId(userId).isEmpty()) {
+            log.info("Initializing default profile for user {}", userId);
+            userProfileRepository.save(createDefaultProfile(userId));
+        }
+    }
+
     /**
      * Save the profile for a user.
      */
@@ -36,7 +52,7 @@ public class UserProfileService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         UserProfile profile = userProfileRepository.findByUserId(userId)
-                .orElse(new UserProfile());
+                .orElseGet(UserProfile::new);
         profile.setUser(user);
         profile.setAge(req.getAge());
         profile.setGender(req.getGender());
@@ -54,7 +70,7 @@ public class UserProfileService {
     public UserProfileResponse getProfile(Long userId) {
         log.info("Fetching profile for user {}", userId);
         UserProfile profile = userProfileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("未找到用户配置"));
+                .orElseGet(() -> createDefaultProfile(userId));
         return toResponse(profile);
     }
 

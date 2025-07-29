@@ -8,6 +8,7 @@ import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.LoginDevice;
 import com.glancy.backend.repository.UserRepository;
 import com.glancy.backend.repository.LoginDeviceRepository;
+import com.glancy.backend.repository.UserProfileRepository;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,6 +37,8 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Autowired
     private LoginDeviceRepository loginDeviceRepository;
+    @Autowired
+    private UserProfileRepository userProfileRepository;
     @MockitoBean
     private AvatarStorage avatarStorage;
 
@@ -316,5 +319,20 @@ class UserServiceTest {
         userService.removeMembership(resp.getId());
         User user2 = userRepository.findById(resp.getId()).orElseThrow();
         assertFalse(user2.getMember());
+    }
+
+    /**
+     * Ensure a default profile is created on registration.
+     */
+    @Test
+    void testDefaultProfileOnRegister() {
+        UserRegistrationRequest req = new UserRegistrationRequest();
+        req.setUsername("pro1");
+        req.setPassword("pass");
+        req.setEmail("p1@example.com");
+        req.setPhone("301");
+        UserResponse resp = userService.register(req);
+
+        assertTrue(userProfileRepository.findByUserId(resp.getId()).isPresent());
     }
 }
