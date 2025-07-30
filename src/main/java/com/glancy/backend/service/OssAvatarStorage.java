@@ -111,10 +111,14 @@ public class OssAvatarStorage implements AvatarStorage {
         String objectName = avatarDir + UUID.randomUUID() + ext;
         ossClient.putObject(bucket, objectName, file.getInputStream());
         boolean isPublic = setPublicReadAcl(objectName);
+        String url;
         if (isPublic) {
-            return urlPrefix + objectName;
+            url = urlPrefix + objectName;
+        } else {
+            url = generatePresignedUrl(objectName);
         }
-        return generatePresignedUrl(objectName);
+        log.info("Avatar stored as {}. URL returned: {}", objectName, url);
+        return url;
     }
 
     /**
@@ -145,7 +149,9 @@ public class OssAvatarStorage implements AvatarStorage {
             req.addQueryParameter("security-token", securityToken);
         }
         URL url = ossClient.generatePresignedUrl(req);
-        return url.toString();
+        String result = url.toString();
+        log.info("Generated presigned URL: {}", result);
+        return result;
     }
 
     private static String removeProtocol(String url) {
