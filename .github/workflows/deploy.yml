@@ -27,7 +27,6 @@ jobs:
                   host: ${{ secrets.REMOTE_HOST }}
                   username: ${{ secrets.REMOTE_USER }}
                   key: ${{ secrets.DEPLOY_KEY }}
-                  port: ${{ secrets.REMOTE_PORT }}
                   timeout: 2m
                   source: target/glancy-backend.jar
                   target: /home/ecs-user/glancy-backend/target/
