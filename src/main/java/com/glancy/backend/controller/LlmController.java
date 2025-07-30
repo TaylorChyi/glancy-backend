@@ -5,12 +5,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 /**
  * Provides meta information about available LLM models.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/llm")
 public class LlmController {
@@ -22,7 +24,9 @@ public class LlmController {
 
     @GetMapping("/models")
     public ResponseEntity<List<String>> getModels() {
+        log.info("Received request for available LLM models");
         List<String> models = modelService.getModelNames();
+        log.info("Returning {} models: {}", models.size(), models);
         return ResponseEntity.ok(models);
     }
 }
