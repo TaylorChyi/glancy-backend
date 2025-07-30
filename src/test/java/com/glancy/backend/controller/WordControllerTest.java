@@ -44,7 +44,7 @@ class WordControllerTest {
     void testGetWord() throws Exception {
         WordResponse resp = new WordResponse("1", "hello", List.of("g"), Language.ENGLISH,
                 "ex", "həˈloʊ", List.of(), List.of(), List.of(), List.of(), List.of());
-        when(wordService.findWordForUser(eq(1L), eq("hello"), eq(Language.ENGLISH))).thenReturn(resp);
+        when(wordService.findWordForUser(eq(1L), eq("hello"), eq(Language.ENGLISH), eq(null))).thenReturn(resp);
 
         doNothing().when(userService).validateToken(1L, "tkn");
 
@@ -58,6 +58,29 @@ class WordControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.term").value("hello"));
+    }
+
+    /**
+     * 测试携带模型参数时接口正常工作
+     */
+    @Test
+    void testGetWordWithModel() throws Exception {
+        WordResponse resp = new WordResponse("1", "hello", List.of("g"), Language.ENGLISH,
+                "ex", "həˈloʊ", List.of(), List.of(), List.of(), List.of(), List.of());
+        when(wordService.findWordForUser(eq(1L), eq("hello"), eq(Language.ENGLISH), eq("doubao"))).thenReturn(resp);
+
+        doNothing().when(userService).validateToken(1L, "tkn");
+
+        mockMvc.perform(get("/api/words")
+                        .param("userId", "1")
+                        .header("X-USER-TOKEN", "tkn")
+                        .param("term", "hello")
+                        .param("language", "ENGLISH")
+                        .param("model", "doubao")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("1"));
     }
 
 

@@ -37,13 +37,15 @@ public class WordController {
     @GetMapping
     public ResponseEntity<WordResponse> getWord(@AuthenticatedUser Long userId,
                                                 @RequestParam String term,
-                                                @RequestParam Language language) {
-        log.info("Received getWord request from user {} with term '{}' and language {}", userId, term, language);
+                                                @RequestParam Language language,
+                                                @RequestParam(required = false) String model) {
+        log.info("Received getWord request from user {} with term '{}' and language {} using model {}",
+                userId, term, language, model);
         SearchRecordRequest req = new SearchRecordRequest();
         req.setTerm(term);
         req.setLanguage(language);
         searchRecordService.saveRecord(userId, req);
-        WordResponse resp = wordService.findWordForUser(userId, term, language);
+        WordResponse resp = wordService.findWordForUser(userId, term, language, model);
         log.info("Returning word response for term '{}': {}", term, resp);
         return ResponseEntity.ok(resp);
     }

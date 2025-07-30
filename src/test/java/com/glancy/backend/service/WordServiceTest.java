@@ -50,7 +50,7 @@ class WordServiceTest {
      */
     @Test
     void testFetchAndCacheWord() {
-        WordResponse result = wordService.findWordForUser(1L, "hello", Language.ENGLISH);
+        WordResponse result = wordService.findWordForUser(1L, "hello", Language.ENGLISH, null);
 
         assertNotNull(result.getId());
         assertTrue(wordRepository.findById(Long.parseLong(result.getId())).isPresent());
@@ -67,7 +67,7 @@ class WordServiceTest {
         word.setDefinitions(List.of("store"));
         wordRepository.save(word);
 
-        WordResponse result = wordService.findWordForUser(1L, "cached", Language.ENGLISH);
+        WordResponse result = wordService.findWordForUser(1L, "cached", Language.ENGLISH, null);
 
         assertEquals(String.valueOf(word.getId()), result.getId());
     }
@@ -88,7 +88,7 @@ class WordServiceTest {
      */
     @Test
     void testCacheWordWhenLanguageMissing() {
-        WordResponse result = wordService.findWordForUser(1L, "bye", Language.ENGLISH);
+        WordResponse result = wordService.findWordForUser(1L, "bye", Language.ENGLISH, null);
 
         assertEquals(Language.ENGLISH, result.getLanguage());
         assertTrue(wordRepository.findByTermAndLanguageAndDeletedFalse("bye", Language.ENGLISH).isPresent());
