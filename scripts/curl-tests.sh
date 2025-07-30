@@ -97,3 +97,7 @@ section "Clear search records"
 curl -i -X DELETE "$BASE_URL/api/search-records/user/1"
 
 
+
+section "List LLM models"
+curl -i "$BASE_URL/api/llm/models"
+

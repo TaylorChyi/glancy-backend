@@ -29,6 +29,10 @@ public class GlancyBackendApplication {
         if (deepseekKey != null) {
             System.setProperty("thirdparty.deepseek.api-key", deepseekKey);
         }
+        String doubaoKey = dotenv.get("thirdparty.doubao.api-key");
+        if (doubaoKey != null) {
+            System.setProperty("thirdparty.doubao.api-key", doubaoKey);
+        }
         String ossKey = dotenv.get("OSS_ACCESS_KEY_ID");
         if (ossKey != null) {
             System.setProperty("OSS_ACCESS_KEY_ID", ossKey);

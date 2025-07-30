@@ -50,6 +50,9 @@ thirdparty:
         base-url: https://api.deepseek.com
         api-key: ''
 
+    doubao:
+        base-url: https://ark.cn-beijing.volces.com/api/v3
+        api-key: ''
 oss:
     endpoint: https://oss-cn-beijing.aliyuncs.com
     bucket: glancy-avatar-bucket
