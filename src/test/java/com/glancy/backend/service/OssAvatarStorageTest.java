@@ -5,7 +5,6 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static org.mockito.ArgumentMatchers.*;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSException;
@@ -13,7 +12,6 @@ import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.model.GeneratePresignedUrlRequest;
 import com.glancy.backend.config.OssProperties;
 import java.util.Date;
-import java.net.URL;
 
 /**
  * Simple tests for OssAvatarStorage.

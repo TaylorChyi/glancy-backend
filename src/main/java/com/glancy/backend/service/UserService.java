@@ -20,8 +20,6 @@ import com.glancy.backend.entity.ThirdPartyAccount;
 import com.glancy.backend.repository.UserRepository;
 import com.glancy.backend.repository.LoginDeviceRepository;
 import com.glancy.backend.repository.ThirdPartyAccountRepository;
-import com.glancy.backend.service.UserProfileService;
-import com.glancy.backend.service.AvatarStorage;
 import com.glancy.backend.exception.ResourceNotFoundException;
 import com.glancy.backend.exception.DuplicateResourceException;
 import com.glancy.backend.exception.InvalidRequestException;
