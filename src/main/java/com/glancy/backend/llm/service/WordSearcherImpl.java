@@ -43,6 +43,16 @@ public class WordSearcherImpl implements WordSearcher {
         String prompt = promptManager.loadPrompt(config.getPromptPath());
         String name = clientName != null ? clientName : config.getDefaultClient();
         LLMClient client = clientFactory.get(name);
+        if (client == null) {
+            log.warn("LLM client '{}' not found, falling back to default", name);
+            String fallback = config.getDefaultClient();
+            client = clientFactory.get(fallback);
+            if (client == null) {
+                throw new IllegalStateException(
+                        String.format("LLM client '%s' not available and default '%s' not configured", name, fallback));
+            }
+            name = fallback;
+        }
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(new ChatMessage("system", prompt));
         messages.add(new ChatMessage("user", cleanInput));
