@@ -35,12 +35,6 @@ public class DoubaoClient implements LLMClient {
         this.apiKey = apiKey;
     }
 
-    DoubaoClient(RestTemplate restTemplate, String baseUrl, String apiKey) {
-        this.restTemplate = restTemplate;
-        this.baseUrl = baseUrl;
-        this.apiKey = apiKey;
-    }
-
     @Override
     public String name() {
         return "doubao";
