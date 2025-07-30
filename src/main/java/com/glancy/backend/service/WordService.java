@@ -45,8 +45,8 @@ public class WordService {
     }
 
     @Transactional
-    public WordResponse findWordForUser(Long userId, String term, Language language) {
-        log.info("Finding word '{}' for user {} in language {}", term, userId, language);
+    public WordResponse findWordForUser(Long userId, String term, Language language, String model) {
+        log.info("Finding word '{}' for user {} in language {} using model {}", term, userId, language, model);
         userPreferenceRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     log.info("No user preference found for user {}, using default", userId);
@@ -61,7 +61,7 @@ public class WordService {
                 })
                 .orElseGet(() -> {
                     log.info("Word '{}' not found locally, searching via LLM", term);
-                    WordResponse resp = wordSearcher.search(term, language, "deepseek");
+                    WordResponse resp = wordSearcher.search(term, language, model);
                     log.info("LLM search result: {}", resp);
                     saveWord(term, resp, language);
                     return resp;

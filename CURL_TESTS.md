@@ -30,4 +30,5 @@ curl -i -H "Content-Type: application/json" \
 
 ```bash
 curl -i "http://localhost:8080/api/words?userId=1&term=hello&language=ENGLISH"
+curl -i "http://localhost:8080/api/words?userId=1&term=hello&language=ENGLISH&model=doubao"
 ```

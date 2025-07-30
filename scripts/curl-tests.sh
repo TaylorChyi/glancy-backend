@@ -90,8 +90,11 @@ curl -i -X DELETE "$BASE_URL/api/search-records/user/1/1/favorite"
 section "Delete one search record"
 curl -i -X DELETE "$BASE_URL/api/search-records/user/1/1"
 
-section "Lookup word"
+section "Lookup word (default model)"
 curl -i "$BASE_URL/api/words?userId=1&term=hello&language=ENGLISH"
+
+section "Lookup word (doubao model)"
+curl -i "$BASE_URL/api/words?userId=1&term=hello&language=ENGLISH&model=doubao"
 
 section "Clear search records"
 curl -i -X DELETE "$BASE_URL/api/search-records/user/1"
