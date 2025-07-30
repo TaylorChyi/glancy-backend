@@ -7,7 +7,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import com.glancy.backend.llm.llm.LLMClientFactory;
+import com.glancy.backend.service.LlmModelService;
 import java.util.List;
 import static org.mockito.BDDMockito.given;
 
@@ -25,16 +25,16 @@ class LlmControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private LLMClientFactory clientFactory;
+    private LlmModelService modelService;
 
     @Test
     void getModels() throws Exception {
-        given(clientFactory.getClientNames()).willReturn(List.of("deepseek", "doubao"));
+        given(modelService.getModelNames()).willReturn(List.of("DEEPSEEK", "DOUBAO_FLASH"));
         mockMvc.perform(get("/api/llm/models"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0]").value("deepseek"))
-                .andExpect(jsonPath("$[1]").value("doubao"));
+                .andExpect(jsonPath("$[0]").value("DEEPSEEK"))
+                .andExpect(jsonPath("$[1]").value("DOUBAO_FLASH"));
     }
 }
 
