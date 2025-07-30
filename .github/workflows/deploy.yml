@@ -28,6 +28,24 @@ jobs:
             set -e
             cd /home/ecs-user/glancy-backend
 
+            echo "📄 \u5199\u5165 Maven \u963f\u91cc\u4e91\u955c\u50cf\u914d\u7f6e"
+            mkdir -p ~/.m2
+            cat > ~/.m2/settings.xml <<'EOF_SETTINGS'
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                              https://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <mirrors>
+    <mirror>
+      <id>aliyunmaven</id>
+      <mirrorOf>*</mirrorOf>
+      <name>\u963f\u91cc\u4e91\u516c\u5171\u4ed3\u5e93</name>
+      <url>https://maven.aliyun.com/repository/public</url>
+    </mirror>
+  </mirrors>
+</settings>
+EOF_SETTINGS
+
             echo "📦 修改远程仓库为 SSH"
             git remote set-url origin git@github.com:TaylorChyi/glancy-backend.git  # ✅ 确保用 SSH
 
