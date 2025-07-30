@@ -29,10 +29,10 @@ class LocaleControllerTest {
      */
     @Test
     void getLocaleFromHeader() throws Exception {
-        mockMvc.perform(get("/api/locale").header("Accept-Language", "de-DE,de;q=0.9"))
+        mockMvc.perform(get("/api/locale").header("Accept-Language", "zh-CN,zh;q=0.9"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.country").value("DE"))
-                .andExpect(jsonPath("$.language").value("de"));
+                .andExpect(jsonPath("$.country").value("CN"))
+                .andExpect(jsonPath("$.language").value("zh"));
     }
 
     /**
@@ -43,10 +43,10 @@ class LocaleControllerTest {
      */
     @Test
     void getLocaleFromRequestLocale() throws Exception {
-        mockMvc.perform(get("/api/locale").locale(Locale.FRANCE))
+        mockMvc.perform(get("/api/locale").locale(Locale.CHINA))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.country").value("FR"))
-                .andExpect(jsonPath("$.language").value("fr"));
+                .andExpect(jsonPath("$.country").value("CN"))
+                .andExpect(jsonPath("$.language").value("zh"));
     }
 
     /**
