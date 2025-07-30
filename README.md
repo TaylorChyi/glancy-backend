@@ -47,6 +47,31 @@ Or build a jar:
 java -jar target/glancy-backend.jar
 ```
 
+## Deploying as a Systemd Service
+
+The project can run under `systemd` for easier management. Example unit file:
+
+```ini
+[Unit]
+Description=Glancy Backend Service
+After=network.target
+
+[Service]
+User=ecs-user
+WorkingDirectory=/home/ecs-user/glancy-backend
+ExecStart=/usr/bin/java -jar /home/ecs-user/glancy-backend/target/glancy-backend.jar
+SuccessExitStatus=143
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Place this file at `/etc/systemd/system/glancy-backend.service` on the server,
+run `sudo systemctl daemon-reload` and `sudo systemctl enable --now glancy-backend.service`.
+The deployment workflow expects this service name when restarting the application.
+
 ## Running Tests
 
 ```bash
