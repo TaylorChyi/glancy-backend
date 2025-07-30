@@ -1,66 +1,41 @@
-name: Deploy Maven Project to Dev Server
+name: Deploy Backend
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+            - name: Set up JDK
+              uses: actions/setup-java@v3
+              with:
+                  distribution: 'temurin'
+                  java-version: '17'
 
+            - name: Build project
+              run: ./mvnw -B clean package -DskipTests
 
-      - name: Deploy to remote server
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            set -e
-            cd /home/ecs-user/glancy-backend
+            - name: Upload jar to server
+              uses: appleboy/scp-action@v1.0.0
+              with:
+                  host: ${{ secrets.REMOTE_HOST }}
+                  username: ${{ secrets.REMOTE_USER }}
+                  key: ${{ secrets.DEPLOY_KEY }}
+                  source: target/glancy-backend.jar
+                  target: /home/ecs-user/glancy-backend/target/
 
-            echo "📄 \u5199\u5165 Maven \u963f\u91cc\u4e91\u955c\u50cf\u914d\u7f6e"
-            mkdir -p ~/.m2
-            cat > ~/.m2/settings.xml <<'EOF_SETTINGS'
-            <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                      xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
-                                          https://maven.apache.org/xsd/settings-1.0.0.xsd">
-              <mirrors>
-                <mirror>
-                  <id>aliyunmaven</id>
-                  <mirrorOf>*</mirrorOf>
-                  <name>\u963f\u91cc\u4e91\u516c\u5171\u4ed3\u5e93</name>
-                  <url>https://maven.aliyun.com/repository/public</url>
-                </mirror>
-              </mirrors>
-            </settings>
-            EOF_SETTINGS
+            - name: Restart service
+              uses: appleboy/ssh-action@v1.0.0
+              with:
+                  host: ${{ secrets.REMOTE_HOST }}
+                  username: ${{ secrets.REMOTE_USER }}
+                  key: ${{ secrets.DEPLOY_KEY }}
+                  script: |
+                      sudo systemctl restart glancy-backend.service
 
-            echo "📦 修改远程仓库为 SSH"
-            git remote set-url origin git@github.com:TaylorChyi/glancy-backend.git  # ✅ 确保用 SSH
-
-            echo "📦 拉取最新代码"
-            git pull origin main
-
-            echo "🔧 打包项目"
-            ./mvnw clean package -DskipTests
-
-            echo "🛑 终止旧服务（如有）"
-            PID=$(ps -ef | grep 'glancy-backend.*.jar' | grep -v grep | awk '{print $2}')
-            if [ -n "$PID" ]; then
-              kill -9 $PID
-              echo "✅ 已杀掉旧进程 PID=$PID"
-            else
-              echo "ℹ️ 未找到旧进程，跳过 kill"
-            fi
-
-            echo "🚀 启动新服务"
-            nohup java -jar target/glancy-backend.jar > backend.log 2>&1 &
-
-            echo "✅ 部署完成"
