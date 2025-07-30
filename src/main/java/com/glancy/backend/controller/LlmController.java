@@ -1,6 +1,5 @@
 package com.glancy.backend.controller;
 
-import com.glancy.backend.llm.llm.LLMClientFactory;
 import com.glancy.backend.service.LlmModelService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,11 +14,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/llm")
 public class LlmController {
-    private final LLMClientFactory clientFactory;
     private final LlmModelService modelService;
 
-    public LlmController(LLMClientFactory clientFactory, LlmModelService modelService) {
-        this.clientFactory = clientFactory;
+    public LlmController(LlmModelService modelService) {
         this.modelService = modelService;
     }
 
