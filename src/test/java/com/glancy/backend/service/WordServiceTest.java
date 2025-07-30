@@ -5,8 +5,6 @@ import com.glancy.backend.entity.Language;
 import com.glancy.backend.entity.Word;
 import com.glancy.backend.repository.WordRepository;
 import com.glancy.backend.repository.UserPreferenceRepository;
-import com.glancy.backend.entity.UserPreference;
-import com.glancy.backend.entity.DictionaryModel;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
