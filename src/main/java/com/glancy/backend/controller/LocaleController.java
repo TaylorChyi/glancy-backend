@@ -21,12 +21,7 @@ public class LocaleController {
     private static final Map<String, String> COUNTRY_TO_LANG = Map.of(
             "CN", "zh",
             "US", "en",
-            "GB", "en",
-            "DE", "de",
-            "FR", "fr",
-            "RU", "ru",
-            "JP", "ja",
-            "ES", "es");
+            "GB", "en");
 
     /**
      * Determine language and country from Accept-Language header.
