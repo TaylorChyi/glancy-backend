@@ -60,10 +60,13 @@ After=network.target
 [Service]
 User=ecs-user
 WorkingDirectory=/home/ecs-user/glancy-backend
+EnvironmentFile=/home/ecs-user/glancy-backend/.env
 ExecStart=/usr/bin/java -jar /home/ecs-user/glancy-backend/target/glancy-backend.jar
 SuccessExitStatus=143
 Restart=always
 RestartSec=10
+StandardOutput=file:/home/ecs-user/glancy-backend/backend.log
+StandardError=file:/home/ecs-user/glancy-backend/backend.log
 
 [Install]
 WantedBy=multi-user.target
@@ -72,6 +75,9 @@ WantedBy=multi-user.target
 Place this file at `/etc/systemd/system/glancy-backend.service` on the server,
 run `sudo systemctl daemon-reload` and `sudo systemctl enable --now glancy-backend.service`.
 The deployment workflow expects this service name when restarting the application.
+Create an `.env` file beside the service with `DB_PASSWORD` and any API keys.
+Logs will be written to `backend.log` under the working directory and can also be viewed using
+`journalctl -u glancy-backend.service`.
 
 ## Running Tests
 
