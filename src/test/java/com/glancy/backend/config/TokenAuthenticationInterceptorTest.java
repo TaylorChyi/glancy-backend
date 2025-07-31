@@ -50,4 +50,16 @@ class TokenAuthenticationInterceptorTest {
                 .content("{\"term\":\"hello\",\"language\":\"ENGLISH\"}"))
                 .andExpect(status().isUnauthorized());
     }
+
+    /**
+     * Test that token provided via query parameter is accepted.
+     */
+    @Test
+    void tokenQueryParamAccepted() throws Exception {
+        mockMvc.perform(post("/api/search-records/user/1")
+                .param("token", "tkn")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"term\":\"hello\",\"language\":\"ENGLISH\"}"))
+                .andExpect(status().isCreated());
+    }
 }

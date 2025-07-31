@@ -131,4 +131,22 @@ class WordControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Invalid value for parameter: language"));
     }
-}
+
+    /**
+     * Test access with token query parameter.
+     */
+    @Test
+    void testGetWordTokenQueryParam() throws Exception {
+        WordResponse resp = new WordResponse("1", "hi", List.of("g"), Language.ENGLISH,
+                "ex", "h\u0259\u02c8lo\u028a", List.of(), List.of(), List.of(), List.of(), List.of());
+        when(wordService.findWordForUser(eq(1L), eq("hi"), eq(Language.ENGLISH), eq(null))).thenReturn(resp);
+
+        mockMvc.perform(get("/api/words")
+                        .param("userId", "1")
+                        .param("token", "tkn")
+                        .param("term", "hi")
+                        .param("language", "ENGLISH")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.term").value("hi"));
+    }

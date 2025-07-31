@@ -1,14 +1,13 @@
 package com.glancy.backend.config;
 
 import com.glancy.backend.service.UserService;
+import com.glancy.backend.config.auth.TokenResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.HandlerMapping;
-
-import java.util.Map;
+import com.glancy.backend.config.auth.UserIdResolver;
 import org.springframework.lang.NonNull;
 
 /**
@@ -27,29 +26,13 @@ public class TokenAuthenticationInterceptor implements HandlerInterceptor {
     public boolean preHandle(@NonNull HttpServletRequest request,
                              @NonNull HttpServletResponse response,
                              @NonNull Object handler) throws Exception {
-        String token = request.getHeader("X-USER-TOKEN");
+        String token = TokenResolver.resolveToken(request);
         if (token == null) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Missing X-USER-TOKEN header");
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Missing authentication token");
             return false;
         }
 
-        Map<String, String> pathVariables = null;
-        Object attr = request.getAttribute(
-                HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        if (attr instanceof Map<?, ?> map) {
-            pathVariables = new java.util.HashMap<>();
-            for (var entry : map.entrySet()) {
-                pathVariables.put(entry.getKey().toString(),
-                        entry.getValue().toString());
-            }
-        }
-        String userIdStr = null;
-        if (pathVariables != null) {
-            userIdStr = pathVariables.get("userId");
-        }
-        if (userIdStr == null) {
-            userIdStr = request.getParameter("userId");
-        }
+        String userIdStr = UserIdResolver.resolveUserId(request);
         if (userIdStr == null) {
             response.sendError(HttpStatus.BAD_REQUEST.value(), "Missing userId");
             return false;
