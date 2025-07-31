@@ -11,7 +11,7 @@ Glancy Backend is a Spring Boot service that powers the Glancy dictionary applic
 ## Setup
 
 1. Clone this repository.
-2. Create a `.env` file with `DB_PASSWORD`, `thirdparty.deepseek.api-key`, and `thirdparty.doubao.api-key` values.
+2. Create a `.env` file with `DB_PASSWORD`, `thirdparty.deepseek.api-key`, and `thirdparty.doubao.api-key` values. Optional `thirdparty.doubao.model` overrides the default model.
 3. Ensure MySQL is running with a database named `glancy_db`, matching credentials, and SSL certificates configured as `useSSL=true` requires.
 4. Use the `local` Spring profile if SSL is unavailable: `./mvnw spring-boot:run -Dspring.profiles.active=local`.
 5. Configure optional API base URLs in `application.yml` under the `thirdparty` section.
