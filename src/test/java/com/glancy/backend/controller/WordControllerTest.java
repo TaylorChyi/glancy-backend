@@ -150,3 +150,4 @@ class WordControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.term").value("hi"));
     }
+}
