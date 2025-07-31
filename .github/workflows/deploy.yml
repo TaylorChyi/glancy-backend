@@ -34,6 +34,19 @@ jobs:
                   strip_components: 1
                   debug: true
 
+            - name: Upload service unit
+              uses: appleboy/scp-action@v1.0.0
+              with:
+                  host: ${{ secrets.REMOTE_HOST }}
+                  username: ${{ secrets.REMOTE_USER }}
+                  key: ${{ secrets.DEPLOY_KEY }}
+                  timeout: 2m
+                  source: scripts/glancy-backend.service
+                  target: /home/ecs-user/glancy-backend/
+                  overwrite: true
+                  strip_components: 1
+                  debug: true
+
             - name: Restart service
               uses: appleboy/ssh-action@v1.0.0
               with:
@@ -41,9 +54,11 @@ jobs:
                   username: ${{ secrets.REMOTE_USER }}
                   key: ${{ secrets.DEPLOY_KEY }}
                   script: |
+                      sudo cp /home/ecs-user/glancy-backend/glancy-backend.service /etc/systemd/system/glancy-backend.service
+                      sudo systemctl daemon-reload
                       if sudo systemctl list-units --type=service --all | grep -q 'glancy-backend.service'; then
                           sudo systemctl restart glancy-backend.service
                       else
-                          echo 'glancy-backend.service not found on remote host'
+                          sudo systemctl enable --now glancy-backend.service
                       fi
 

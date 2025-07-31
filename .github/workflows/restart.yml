@@ -14,9 +14,11 @@ jobs:
                   username: ${{ secrets.SERVER_USER }}
                   key: ${{ secrets.SERVER_KEY }}
                   script: |
+                      sudo cp /home/ecs-user/glancy-backend/glancy-backend.service /etc/systemd/system/glancy-backend.service
+                      sudo systemctl daemon-reload
                       if sudo systemctl list-units --type=service --all | grep -q 'glancy-backend.service'; then
                           sudo systemctl restart glancy-backend.service
                       else
-                          echo 'glancy-backend.service not found on remote host'
+                          sudo systemctl enable --now glancy-backend.service
                       fi
 
