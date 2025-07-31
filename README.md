@@ -65,8 +65,9 @@ ExecStart=/usr/bin/java -jar /home/ecs-user/glancy-backend/target/glancy-backend
 SuccessExitStatus=143
 Restart=always
 RestartSec=10
-StandardOutput=file:/home/ecs-user/glancy-backend/backend.log
-StandardError=file:/home/ecs-user/glancy-backend/backend.log
+ExecStartPre=/usr/bin/truncate -s 0 /home/ecs-user/glancy-backend/backend.log
+StandardOutput=append:/home/ecs-user/glancy-backend/backend.log
+StandardError=append:/home/ecs-user/glancy-backend/backend.log
 
 [Install]
 WantedBy=multi-user.target
@@ -76,8 +77,8 @@ Place this file at `/etc/systemd/system/glancy-backend.service` on the server,
 run `sudo systemctl daemon-reload` and `sudo systemctl enable --now glancy-backend.service`.
 The deployment workflow expects this service name when restarting the application.
 Create an `.env` file beside the service with `DB_PASSWORD` and any API keys.
-Logs will be written to `backend.log` under the working directory and can also be viewed using
-`journalctl -u glancy-backend.service`.
+Logs will be written to `backend.log` under the working directory. The file is truncated at each service start so old output does not linger. Logback also rotates the file daily and keeps 30 days by default.
+You can also view recent logs with `journalctl -u glancy-backend.service`.
 
 ## Running Tests
 
