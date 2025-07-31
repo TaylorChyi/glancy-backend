@@ -101,7 +101,7 @@ Bilingual prompt instructions are available in `docs/PROMPT_BILINGUAL.md`.
 - `DELETE /api/users/{id}` – logically delete a user
 - `GET /api/users/{id}` – fetch user details
 - `POST /api/users/login` – user login (send `account` and `password`)
-- 登录成功后将返回 `token`，后续需要在 `X-USER-TOKEN` 请求头中携带此值
+- 登录成功后将返回 `token`，后续请求需在 `X-USER-TOKEN` 请求头或 `token` 参数中携带该值
 - `POST /api/users/{id}/logout` – invalidate the login token
 - `POST /api/users/{id}/third-party-accounts` – bind a third‑party account (returns the bound account)
 - `GET /api/users/count` – total number of active users
@@ -129,7 +129,7 @@ Bilingual prompt instructions are available in `docs/PROMPT_BILINGUAL.md`.
 - `DELETE /api/search-records/user/{userId}/{recordId}` – delete a specific search record of the user
 - `DELETE /api/search-records/user/{userId}` – clear all search records of the user
 - `DELETE /api/search-records/user/{userId}/{recordId}/favorite` – unfavorite a search record
-  以上接口均需在 `X-USER-TOKEN` 请求头中提供登录令牌
+  以上接口均需在 `X-USER-TOKEN` 请求头或 `token` 参数中提供登录令牌
 
 
 

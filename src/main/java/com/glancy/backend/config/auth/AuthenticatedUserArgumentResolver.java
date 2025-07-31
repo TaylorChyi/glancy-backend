@@ -5,6 +5,8 @@ import com.glancy.backend.exception.InvalidRequestException;
 import com.glancy.backend.exception.UnauthorizedException;
 import com.glancy.backend.exception.BusinessException;
 import com.glancy.backend.service.UserService;
+import com.glancy.backend.config.auth.TokenResolver;
+import com.glancy.backend.config.auth.UserIdResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.NonNull;
@@ -13,10 +15,7 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 /**
  * Resolves parameters annotated with {@link AuthenticatedUser} by validating
@@ -47,31 +46,12 @@ public class AuthenticatedUserArgumentResolver implements HandlerMethodArgumentR
                                   @NonNull NativeWebRequest webRequest,
                                   @Nullable WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        String token = request.getHeader("X-USER-TOKEN");
+        String token = TokenResolver.resolveToken(request);
         if (token == null) {
-            throw new UnauthorizedException("Missing X-USER-TOKEN header");
+            throw new UnauthorizedException("Missing authentication token");
         }
 
-        Map<String, String> pathVars = null;
-        Object attr = request.getAttribute(
-                HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        if (attr instanceof Map<?, ?> map) {
-            pathVars = new java.util.HashMap<>();
-            for (var entry : map.entrySet()) {
-                pathVars.put(entry.getKey().toString(),
-                        entry.getValue().toString());
-            }
-        }
-        String userIdStr = null;
-        if (pathVars != null) {
-            userIdStr = pathVars.get("userId");
-            if (userIdStr == null) {
-                userIdStr = pathVars.get("id");
-            }
-        }
-        if (userIdStr == null) {
-            userIdStr = request.getParameter("userId");
-        }
+        String userIdStr = UserIdResolver.resolveUserId(request);
         if (userIdStr == null) {
             throw new InvalidRequestException("Missing userId");
         }
