@@ -33,6 +33,11 @@ public class DoubaoClient implements LLMClient {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
         this.apiKey = apiKey;
+        if (apiKey == null || apiKey.isBlank()) {
+            log.warn("Doubao API key is empty");
+        } else {
+            log.info("Doubao API key loaded: {}", maskKey(apiKey));
+        }
     }
 
     @Override
@@ -88,5 +93,13 @@ public class DoubaoClient implements LLMClient {
             log.warn("Failed to parse Doubao response", e);
             return "";
         }
+    }
+
+    private String maskKey(String key) {
+        if (key.length() <= 8) {
+            return "****";
+        }
+        int end = key.length() - 4;
+        return key.substring(0, 4) + "****" + key.substring(end);
     }
 }

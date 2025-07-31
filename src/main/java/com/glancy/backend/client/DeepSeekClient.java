@@ -43,6 +43,11 @@ public class DeepSeekClient implements DictionaryClient, LLMClient {
         this.baseUrl = baseUrl;
         this.apiKey = apiKey;
         this.parser = parser;
+        if (apiKey == null || apiKey.isBlank()) {
+            log.warn("DeepSeek API key is empty");
+        } else {
+            log.info("DeepSeek API key loaded: {}", maskKey(apiKey));
+        }
         this.enToZhPrompt = loadPrompt("prompts/english_to_chinese.txt");
         this.zhToEnPrompt = loadPrompt("prompts/chinese_to_english.txt");
     }
@@ -145,6 +150,14 @@ public class DeepSeekClient implements DictionaryClient, LLMClient {
                 byte[].class
         );
         return response.getBody();
+    }
+
+    private String maskKey(String key) {
+        if (key.length() <= 8) {
+            return "****";
+        }
+        int end = key.length() - 4;
+        return key.substring(0, 4) + "****" + key.substring(end);
     }
 
 }
