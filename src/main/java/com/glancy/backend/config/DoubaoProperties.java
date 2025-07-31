@@ -10,7 +10,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "thirdparty.doubao")
 public class DoubaoProperties {
     /** Base URL for Doubao API. */
-    private String baseUrl = "https://ark.cn-beijing.volces.com/api/v3";
+    private String baseUrl = "https://ark.cn-beijing.volces.com";
+    /** Endpoint path for chat completions. */
+    private String chatPath = "/api/v3/chat/completions";
     /** API key for authentication. */
     private String apiKey;
     /** Doubao LLM model to use. */

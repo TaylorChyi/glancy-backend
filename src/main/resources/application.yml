@@ -51,7 +51,8 @@ thirdparty:
         api-key: ''
 
     doubao:
-        base-url: https://ark.cn-beijing.volces.com/api/v3
+        base-url: https://ark.cn-beijing.volces.com
+        chat-path: /api/v3/chat/completions
         api-key: ''
 oss:
     endpoint: https://oss-cn-beijing.aliyuncs.com

@@ -22,13 +22,15 @@ import org.springframework.http.HttpStatus;
 class DoubaoClientTest {
     private MockRestServiceServer server;
     private DoubaoClient client;
+    private DoubaoProperties properties;
 
     @BeforeEach
     void setUp() {
         RestTemplate restTemplate = new RestTemplate();
         server = MockRestServiceServer.bindTo(restTemplate).build();
-        DoubaoProperties properties = new DoubaoProperties();
+        properties = new DoubaoProperties();
         properties.setBaseUrl("http://mock");
+        properties.setChatPath("/api/v3/chat/completions");
         properties.setApiKey(" key ");
         properties.setModel("test-model");
         client = new DoubaoClient(restTemplate, properties);
@@ -37,7 +39,7 @@ class DoubaoClientTest {
     @Test
     void chatReturnsContent() {
         String json = "{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"hi\"}}]}";
-        server.expect(requestTo("http://mock/v1/chat/completions"))
+        server.expect(requestTo("http://mock" + properties.getChatPath()))
                 .andExpect(method(POST))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer key"))
                 .andExpect(jsonPath("$.model").value("test-model"))
@@ -50,7 +52,7 @@ class DoubaoClientTest {
 
     @Test
     void chatUnauthorizedThrowsException() {
-        server.expect(requestTo("http://mock/v1/chat/completions"))
+        server.expect(requestTo("http://mock" + properties.getChatPath()))
                 .andExpect(method(POST))
                 .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
 
