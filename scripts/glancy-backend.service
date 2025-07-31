@@ -5,10 +5,13 @@ After=network.target
 [Service]
 User=ecs-user
 WorkingDirectory=/home/ecs-user/glancy-backend
+EnvironmentFile=/home/ecs-user/glancy-backend/.env
 ExecStart=/usr/bin/java -jar /home/ecs-user/glancy-backend/target/glancy-backend.jar
 SuccessExitStatus=143
 Restart=always
 RestartSec=10
+StandardOutput=file:/home/ecs-user/glancy-backend/backend.log
+StandardError=file:/home/ecs-user/glancy-backend/backend.log
 
 [Install]
 WantedBy=multi-user.target
