@@ -85,16 +85,27 @@ public class DeepSeekClient implements DictionaryClient, LLMClient {
         body.put("messages", messageList);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<String> response = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                entity,
-                String.class
-        );
         try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    entity,
+                    String.class
+            );
             ObjectMapper mapper = new ObjectMapper();
-            ChatCompletionResponse chat = mapper.readValue(response.getBody(), ChatCompletionResponse.class);
+            ChatCompletionResponse chat = mapper.readValue(
+                    response.getBody(),
+                    ChatCompletionResponse.class
+            );
             return chat.getChoices().get(0).getMessage().getContent();
+        } catch (org.springframework.web.client.HttpClientErrorException.Unauthorized ex) {
+            log.error("DeepSeek API unauthorized", ex);
+            throw new com.glancy.backend.exception.UnauthorizedException("Invalid DeepSeek API key");
+        } catch (org.springframework.web.client.HttpClientErrorException ex) {
+            log.error("DeepSeek API error: {}", ex.getStatusCode());
+            throw new com.glancy.backend.exception.BusinessException(
+                    "Failed to call DeepSeek API: " + ex.getStatusCode(), ex
+            );
         } catch (Exception e) {
             log.warn("Failed to parse DeepSeek response", e);
             return "";

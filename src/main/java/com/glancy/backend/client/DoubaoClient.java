@@ -63,11 +63,27 @@ public class DoubaoClient implements LLMClient {
         body.put("messages", reqMessages);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
         try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    entity,
+                    String.class
+            );
             ObjectMapper mapper = new ObjectMapper();
-            ChatCompletionResponse resp = mapper.readValue(response.getBody(), ChatCompletionResponse.class);
+            ChatCompletionResponse resp = mapper.readValue(
+                    response.getBody(),
+                    ChatCompletionResponse.class
+            );
             return resp.getChoices().get(0).getMessage().getContent();
+        } catch (org.springframework.web.client.HttpClientErrorException.Unauthorized ex) {
+            log.error("Doubao API unauthorized", ex);
+            throw new com.glancy.backend.exception.UnauthorizedException("Invalid Doubao API key");
+        } catch (org.springframework.web.client.HttpClientErrorException ex) {
+            log.error("Doubao API error: {}", ex.getStatusCode());
+            throw new com.glancy.backend.exception.BusinessException(
+                    "Failed to call Doubao API: " + ex.getStatusCode(), ex
+            );
         } catch (Exception e) {
             log.warn("Failed to parse Doubao response", e);
             return "";
