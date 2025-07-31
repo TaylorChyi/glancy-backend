@@ -49,7 +49,8 @@ java -jar target/glancy-backend.jar
 
 ## Deploying as a Systemd Service
 
-The project can run under `systemd` for easier management. Example unit file:
+The project can run under `systemd` for easier management. An example unit file
+is provided at `scripts/glancy-backend.service`:
 
 ```ini
 [Unit]

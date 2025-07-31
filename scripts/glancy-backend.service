@@ -1,0 +1,14 @@
+[Unit]
+Description=Glancy Backend Service
+After=network.target
+
+[Service]
+User=ecs-user
+WorkingDirectory=/home/ecs-user/glancy-backend
+ExecStart=/usr/bin/java -jar /home/ecs-user/glancy-backend/target/glancy-backend.jar
+SuccessExitStatus=143
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
