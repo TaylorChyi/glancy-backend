@@ -5,10 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Utility to load key-value pairs from a .env file without failing when keys
  * appear multiple times. Later entries override previous ones.
  */
+@Slf4j
 public final class EnvLoader {
     private EnvLoader() {}
 
@@ -20,6 +23,7 @@ public final class EnvLoader {
      */
     public static void load(Path file) {
         if (!Files.exists(file)) {
+            log.debug("No .env file found at {}", file.toAbsolutePath());
             return;
         }
         try (Stream<String> lines = Files.lines(file)) {
@@ -29,12 +33,14 @@ public final class EnvLoader {
                      int idx = line.indexOf('=');
                      if (idx > 0) {
                          String key = line.substring(0, idx).trim();
-                         String value = line.substring(idx + 1).trim();
-                         System.setProperty(key, value);
+                         if (System.getProperty(key) == null && System.getenv(key) == null) {
+                             String value = line.substring(idx + 1).trim();
+                             System.setProperty(key, value);
+                         }
                      }
                  });
-        } catch (IOException ignored) {
-            // ignore malformed lines and loading errors for developer convenience
+        } catch (IOException ex) {
+            log.warn("Failed to load {}", file, ex);
         }
     }
 }
