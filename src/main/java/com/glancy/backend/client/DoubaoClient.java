@@ -25,12 +25,14 @@ import java.util.Map;
 public class DoubaoClient implements LLMClient {
     private final RestTemplate restTemplate;
     private final String baseUrl;
+    private final String chatPath;
     private final String apiKey;
     private final String model;
 
     public DoubaoClient(RestTemplate restTemplate, DoubaoProperties properties) {
         this.restTemplate = restTemplate;
-        this.baseUrl = properties.getBaseUrl();
+        this.baseUrl = trimTrailingSlash(properties.getBaseUrl());
+        this.chatPath = ensureLeadingSlash(properties.getChatPath());
         this.apiKey = properties.getApiKey() == null ? null : properties.getApiKey().trim();
         this.model = properties.getModel();
         if (apiKey == null || apiKey.isBlank()) {
@@ -47,9 +49,8 @@ public class DoubaoClient implements LLMClient {
 
     @Override
     public String chat(List<ChatMessage> messages, double temperature) {
-        String url = UriComponentsBuilder.fromUriString(baseUrl)
-                .path("/v1/chat/completions")
-                .toUriString();
+        String url = baseUrl + chatPath;
+        log.debug("Doubao request URL: {}", url);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         if (apiKey != null && !apiKey.isEmpty()) {
@@ -93,6 +94,20 @@ public class DoubaoClient implements LLMClient {
             log.warn("Failed to parse Doubao response", e);
             return "";
         }
+    }
+
+    private String trimTrailingSlash(String url) {
+        if (url == null || url.isBlank()) {
+            return "";
+        }
+        return url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+    }
+
+    private String ensureLeadingSlash(String path) {
+        if (path == null || path.isBlank()) {
+            return "";
+        }
+        return path.startsWith("/") ? path : "/" + path;
     }
 
     private String maskKey(String key) {
