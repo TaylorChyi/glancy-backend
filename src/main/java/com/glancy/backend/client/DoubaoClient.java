@@ -6,7 +6,7 @@ import com.glancy.backend.entity.LlmModel;
 import com.glancy.backend.llm.llm.LLMClient;
 import com.glancy.backend.llm.model.ChatMessage;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import com.glancy.backend.config.DoubaoProperties;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -26,13 +26,13 @@ public class DoubaoClient implements LLMClient {
     private final RestTemplate restTemplate;
     private final String baseUrl;
     private final String apiKey;
+    private final String model;
 
-    public DoubaoClient(RestTemplate restTemplate,
-                        @Value("${thirdparty.doubao.base-url:https://ark.cn-beijing.volces.com/api/v3}") String baseUrl,
-                        @Value("${thirdparty.doubao.api-key:}") String apiKey) {
+    public DoubaoClient(RestTemplate restTemplate, DoubaoProperties properties) {
         this.restTemplate = restTemplate;
-        this.baseUrl = baseUrl;
-        this.apiKey = apiKey;
+        this.baseUrl = properties.getBaseUrl();
+        this.apiKey = properties.getApiKey() == null ? null : properties.getApiKey().trim();
+        this.model = properties.getModel();
         if (apiKey == null || apiKey.isBlank()) {
             log.warn("Doubao API key is empty");
         } else {
@@ -57,7 +57,7 @@ public class DoubaoClient implements LLMClient {
         }
 
         Map<String, Object> body = new HashMap<>();
-        body.put("model", LlmModel.DOUBAO_FLASH.getModelName());
+        body.put("model", model);
         body.put("temperature", temperature);
         body.put("stream", false);
 
