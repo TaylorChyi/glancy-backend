@@ -15,6 +15,8 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import org.springframework.http.HttpStatus;
 
 class DeepSeekClientTest {
     private MockRestServiceServer server;
@@ -96,6 +98,17 @@ class DeepSeekClientTest {
 
         byte[] resp = client.fetchAudio("hello", Language.ENGLISH);
         assertArrayEquals(audio, resp);
+        server.verify();
+    }
+
+    @Test
+    void chatUnauthorizedThrowsException() {
+        server.expect(requestTo("http://mock/v1/chat/completions"))
+                .andExpect(method(POST))
+                .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
+
+        assertThrows(com.glancy.backend.exception.UnauthorizedException.class,
+                () -> client.chat(List.of(new com.glancy.backend.llm.model.ChatMessage("user", "hi")), 0.5));
         server.verify();
     }
 

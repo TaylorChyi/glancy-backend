@@ -11,9 +11,12 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import org.springframework.http.HttpStatus;
 
 class DoubaoClientTest {
     private MockRestServiceServer server;
@@ -36,6 +39,17 @@ class DoubaoClientTest {
 
         String result = client.chat(List.of(new ChatMessage("user", "hi")), 0.5);
         assertEquals("hi", result);
+        server.verify();
+    }
+
+    @Test
+    void chatUnauthorizedThrowsException() {
+        server.expect(requestTo("http://mock/v1/chat/completions"))
+                .andExpect(method(POST))
+                .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
+
+        assertThrows(com.glancy.backend.exception.UnauthorizedException.class,
+                () -> client.chat(List.of(new ChatMessage("user", "hi")), 0.5));
         server.verify();
     }
 }
