@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.glancy.backend.dto.LocaleResponse;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Provides the user's likely locale based on request headers.
  */
 @RestController
 @RequestMapping("/api")
+@Slf4j
 public class LocaleController {
 
     private static final Map<String, String> COUNTRY_TO_LANG = Map.of(
@@ -29,6 +31,7 @@ public class LocaleController {
     @GetMapping("/locale")
     public ResponseEntity<LocaleResponse> getLocale(HttpServletRequest request) {
         String header = request.getHeader("Accept-Language");
+        log.info("Determining locale from header: {}", header);
         String country = "US";
         String lang = "en";
         if (header != null && !header.isBlank()) {
@@ -44,6 +47,7 @@ public class LocaleController {
             }
         }
         lang = COUNTRY_TO_LANG.getOrDefault(country, lang);
+        log.info("Resolved locale - country: {}, language: {}", country, lang);
         return ResponseEntity.ok(new LocaleResponse(country, lang));
     }
 }

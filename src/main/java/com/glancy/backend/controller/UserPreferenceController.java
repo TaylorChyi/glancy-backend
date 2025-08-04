@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.*;
 import com.glancy.backend.dto.UserPreferenceRequest;
 import com.glancy.backend.dto.UserPreferenceResponse;
 import com.glancy.backend.service.UserPreferenceService;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Manage user interface and language preferences.
  */
 @RestController
 @RequestMapping("/api/preferences")
+@Slf4j
 public class UserPreferenceController {
     private final UserPreferenceService userPreferenceService;
 
@@ -27,6 +29,7 @@ public class UserPreferenceController {
     @PostMapping("/user/{userId}")
     public ResponseEntity<UserPreferenceResponse> savePreference(@PathVariable Long userId,
                                                                  @Valid @RequestBody UserPreferenceRequest req) {
+        log.info("Saving preferences for user {}", userId);
         UserPreferenceResponse resp = userPreferenceService.savePreference(userId, req);
         return new ResponseEntity<>(resp, HttpStatus.CREATED);
     }
@@ -36,6 +39,7 @@ public class UserPreferenceController {
      */
     @GetMapping("/user/{userId}")
     public ResponseEntity<UserPreferenceResponse> getPreference(@PathVariable Long userId) {
+        log.info("Retrieving preferences for user {}", userId);
         UserPreferenceResponse resp = userPreferenceService.getPreference(userId);
         return ResponseEntity.ok(resp);
     }

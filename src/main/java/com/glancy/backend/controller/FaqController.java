@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import com.glancy.backend.dto.FaqRequest;
 import com.glancy.backend.dto.FaqResponse;
 import com.glancy.backend.service.FaqService;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Controller exposing FAQ management endpoints used by admins
@@ -17,6 +18,7 @@ import com.glancy.backend.service.FaqService;
  */
 @RestController
 @RequestMapping("/api/faqs")
+@Slf4j
 public class FaqController {
 
     private final FaqService faqService;
@@ -31,7 +33,9 @@ public class FaqController {
      */
     @PostMapping
     public ResponseEntity<FaqResponse> create(@Valid @RequestBody FaqRequest req) {
+        log.info("Creating FAQ with question '{}'", req.getQuestion());
         FaqResponse resp = faqService.createFaq(req);
+        log.info("Created FAQ {}", resp.getId());
         return new ResponseEntity<>(resp, HttpStatus.CREATED);
     }
 
@@ -40,7 +44,9 @@ public class FaqController {
      */
     @GetMapping
     public ResponseEntity<List<FaqResponse>> list() {
+        log.info("Retrieving all FAQs");
         List<FaqResponse> resp = faqService.getAllFaqs();
+        log.info("Returning {} FAQs", resp.size());
         return ResponseEntity.ok(resp);
     }
 }
