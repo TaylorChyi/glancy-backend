@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import com.glancy.backend.dto.NotificationRequest;
 import com.glancy.backend.dto.NotificationResponse;
 import com.glancy.backend.service.NotificationService;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Provides endpoints for managing notifications sent to users.
@@ -17,6 +18,7 @@ import com.glancy.backend.service.NotificationService;
  */
 @RestController
 @RequestMapping("/api/notifications")
+@Slf4j
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -30,7 +32,9 @@ public class NotificationController {
      */
     @PostMapping("/system")
     public ResponseEntity<NotificationResponse> createSystem(@Valid @RequestBody NotificationRequest req) {
+        log.info("Creating system notification with title '{}'", req.getTitle());
         NotificationResponse resp = notificationService.createSystemNotification(req);
+        log.info("Created system notification {}", resp.getId());
         return new ResponseEntity<>(resp, HttpStatus.CREATED);
     }
 
@@ -41,7 +45,9 @@ public class NotificationController {
     @PostMapping("/user/{userId}")
     public ResponseEntity<NotificationResponse> createUser(@PathVariable Long userId,
                                                            @Valid @RequestBody NotificationRequest req) {
+        log.info("Creating user notification for user {} with title '{}'", userId, req.getTitle());
         NotificationResponse resp = notificationService.createUserNotification(userId, req);
+        log.info("Created user notification {} for user {}", resp.getId(), userId);
         return new ResponseEntity<>(resp, HttpStatus.CREATED);
     }
 
@@ -51,7 +57,9 @@ public class NotificationController {
      */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<NotificationResponse>> getForUser(@PathVariable Long userId) {
+        log.info("Retrieving notifications for user {}", userId);
         List<NotificationResponse> resp = notificationService.getNotificationsForUser(userId);
+        log.info("Returning {} notifications for user {}", resp.size(), userId);
         return ResponseEntity.ok(resp);
     }
 }

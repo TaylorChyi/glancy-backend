@@ -56,7 +56,9 @@ public class WordController {
     @GetMapping(value = "/audio", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> getAudio(@RequestParam String term,
                                            @RequestParam Language language) {
+        log.info("Fetching audio for term '{}' in language {}", term, language);
         byte[] data = wordService.getAudio(term, language);
+        log.info("Returning audio for term '{}' with {} bytes", term, data.length);
         return ResponseEntity.ok(data);
     }
 
