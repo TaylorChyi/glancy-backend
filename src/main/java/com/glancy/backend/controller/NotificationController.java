@@ -32,7 +32,7 @@ public class NotificationController {
      */
     @PostMapping("/system")
     public ResponseEntity<NotificationResponse> createSystem(@Valid @RequestBody NotificationRequest req) {
-        log.info("Creating system notification with title '{}'", req.getTitle());
+        log.info("Creating system notification with message '{}'", req.getMessage());
         NotificationResponse resp = notificationService.createSystemNotification(req);
         log.info("Created system notification {}", resp.getId());
         return new ResponseEntity<>(resp, HttpStatus.CREATED);
@@ -45,7 +45,7 @@ public class NotificationController {
     @PostMapping("/user/{userId}")
     public ResponseEntity<NotificationResponse> createUser(@PathVariable Long userId,
                                                            @Valid @RequestBody NotificationRequest req) {
-        log.info("Creating user notification for user {} with title '{}'", userId, req.getTitle());
+        log.info("Creating user notification for user {} with message '{}'", userId, req.getMessage());
         NotificationResponse resp = notificationService.createUserNotification(userId, req);
         log.info("Created user notification {} for user {}", resp.getId(), userId);
         return new ResponseEntity<>(resp, HttpStatus.CREATED);
