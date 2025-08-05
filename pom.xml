@@ -25,9 +25,11 @@
 		<tag/>
 		<url/>
 	</scm>
-	<properties>
-		<java.version>17</java.version>
-	</properties>
+        <properties>
+                <java.version>17</java.version>
+                <prettier.version>3.2.5</prettier.version>
+                <prettier-plugin-java.version>2.7.4</prettier-plugin-java.version>
+        </properties>
         <dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -115,10 +117,10 @@
                                 <configuration>
                                         <java>
                                                 <prettier>
-                                                        <devDependencies>
-                                                                <prettier>3.2.5</prettier>
-                                                                <prettier-plugin-java>2.5.1</prettier-plugin-java>
-                                                        </devDependencies>
+                                                       <devDependencies>
+                                                               <prettier>${prettier.version}</prettier>
+                                                               <prettier-plugin-java>${prettier-plugin-java.version}</prettier-plugin-java>
+                                                       </devDependencies>
                                                         <configFile>${project.basedir}/spotless-config.json</configFile>
                                                 </prettier>
                                         </java>
@@ -130,7 +132,7 @@
                                                 </includes>
                                                 <prettier>
                                                         <devDependencies>
-                                                                <prettier>3.2.5</prettier>
+                                                                <prettier>${prettier.version}</prettier>
                                                         </devDependencies>
                                                         <parser>yaml</parser>
                                                         <configFile>${project.basedir}/spotless-config.json</configFile>
