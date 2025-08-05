@@ -13,7 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class EnvLoader {
 
-    private EnvLoader() {}
+    private EnvLoader() {
+    }
 
     /**
      * Loads environment variables from the given path if it exists.
@@ -28,24 +29,22 @@ public final class EnvLoader {
         }
         try (Stream<String> lines = Files.lines(file)) {
             lines
-                .map(String::trim)
-                .filter(line -> !line.isEmpty() && !line.startsWith("#"))
-                .forEach(line -> {
-                    int idx = line.indexOf('=');
-                    if (idx > 0) {
-                        String key = line.substring(0, idx).trim();
-                        if (System.getProperty(key) == null && System.getenv(key) == null) {
-                            String value = line.substring(idx + 1).trim();
-                            if (
-                                (value.startsWith("\"") && value.endsWith("\"")) ||
-                                (value.startsWith("'") && value.endsWith("'"))
-                            ) {
-                                value = value.substring(1, value.length() - 1);
+                    .map(String::trim)
+                    .filter(line -> !line.isEmpty() && !line.startsWith("#"))
+                    .forEach(line -> {
+                        int idx = line.indexOf('=');
+                        if (idx > 0) {
+                            String key = line.substring(0, idx).trim();
+                            if (System.getProperty(key) == null && System.getenv(key) == null) {
+                                String value = line.substring(idx + 1).trim();
+                                if ((value.startsWith("\"") && value.endsWith("\"")) ||
+                                        (value.startsWith("'") && value.endsWith("'"))) {
+                                    value = value.substring(1, value.length() - 1);
+                                }
+                                System.setProperty(key, value);
                             }
-                            System.setProperty(key, value);
                         }
-                    }
-                });
+                    });
         } catch (IOException ex) {
             log.warn("Failed to load {}", file, ex);
         }
