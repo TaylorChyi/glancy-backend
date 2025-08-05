@@ -36,12 +36,12 @@ public final class EnvLoader {
                         String key = line.substring(0, idx).trim();
                         if (System.getProperty(key) == null && System.getenv(key) == null) {
                             String value = line.substring(idx + 1).trim();
-                                    if (
-                                        (value.startsWith("\"") && value.endsWith("\"")) ||
-                                        (value.startsWith("'") && value.endsWith("'"))
-                                    ) {
-                                        value = value.substring(1, value.length() - 1);
-                                    }
+                            if (
+                                (value.startsWith("\"") && value.endsWith("\"")) ||
+                                (value.startsWith("'") && value.endsWith("'"))
+                            ) {
+                                value = value.substring(1, value.length() - 1);
+                            }
                             System.setProperty(key, value);
                         }
                     }
