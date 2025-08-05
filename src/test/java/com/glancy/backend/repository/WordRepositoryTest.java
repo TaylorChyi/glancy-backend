@@ -17,10 +17,10 @@ class WordRepositoryTest {
 
     @Test
     void findByTermAndLanguageAndDeletedFalse() {
-        Word word = TestEntityFactory.word("hello", Language.EN);
+        Word word = TestEntityFactory.word("hello", Language.ENGLISH);
         wordRepository.save(word);
 
-        Optional<Word> found = wordRepository.findByTermAndLanguageAndDeletedFalse("hello", Language.EN);
+        Optional<Word> found = wordRepository.findByTermAndLanguageAndDeletedFalse("hello", Language.ENGLISH);
         assertTrue(found.isPresent());
         assertEquals("hello", found.get().getTerm());
     }

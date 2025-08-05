@@ -23,8 +23,8 @@ class SearchRecordRepositoryTest {
     @Test
     void searchRecordQueries() {
         User user = userRepository.save(TestEntityFactory.user(10));
-        SearchRecord r1 = TestEntityFactory.searchRecord(user, "term1", Language.EN, LocalDateTime.now().minusDays(1));
-        SearchRecord r2 = TestEntityFactory.searchRecord(user, "term2", Language.EN, LocalDateTime.now());
+        SearchRecord r1 = TestEntityFactory.searchRecord(user, "term1", Language.ENGLISH, LocalDateTime.now().minusDays(1));
+        SearchRecord r2 = TestEntityFactory.searchRecord(user, "term2", Language.ENGLISH, LocalDateTime.now());
         searchRecordRepository.save(r1);
         searchRecordRepository.save(r2);
 
@@ -38,19 +38,19 @@ class SearchRecordRepositoryTest {
         );
         assertEquals(2, count);
 
-        assertTrue(searchRecordRepository.existsByUserIdAndTermAndLanguage(user.getId(), "term1", Language.EN));
+        assertTrue(searchRecordRepository.existsByUserIdAndTermAndLanguage(user.getId(), "term1", Language.ENGLISH));
 
         SearchRecord r3 = TestEntityFactory.searchRecord(
             user,
             "term1",
-            Language.EN,
+            Language.ENGLISH,
             LocalDateTime.now().plusMinutes(1)
         );
         searchRecordRepository.save(r3);
         SearchRecord top = searchRecordRepository.findTopByUserIdAndTermAndLanguageOrderByCreatedAtDesc(
             user.getId(),
             "term1",
-            Language.EN
+            Language.ENGLISH
         );
         assertEquals(r3.getId(), top.getId());
 
