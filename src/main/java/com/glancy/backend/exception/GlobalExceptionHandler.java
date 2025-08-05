@@ -4,9 +4,9 @@ import com.glancy.backend.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -19,8 +19,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    public GlobalExceptionHandler() {
-    }
+    public GlobalExceptionHandler() {}
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
@@ -72,7 +71,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse("上传文件过大"), HttpStatus.PAYLOAD_TOO_LARGE);
     }
 
-    @ExceptionHandler({NoHandlerFoundException.class, NoResourceFoundException.class})
+    @ExceptionHandler({ NoHandlerFoundException.class, NoResourceFoundException.class })
     public ResponseEntity<ErrorResponse> handleSpringNotFound(Exception ex) {
         log.error("Resource not found: {}", ex.getMessage());
         return new ResponseEntity<>(new ErrorResponse("未找到资源"), HttpStatus.NOT_FOUND);

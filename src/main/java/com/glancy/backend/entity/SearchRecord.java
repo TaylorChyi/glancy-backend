@@ -2,9 +2,8 @@ package com.glancy.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
-
+import lombok.NoArgsConstructor;
 
 /**
  * Record of a single dictionary search performed by a user.

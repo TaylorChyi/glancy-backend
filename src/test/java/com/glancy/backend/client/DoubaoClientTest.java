@@ -62,7 +62,7 @@ class DoubaoClientTest {
             .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
 
         assertThrows(com.glancy.backend.exception.UnauthorizedException.class, () ->
-                client.chat(List.of(new ChatMessage("user", "hi")), 0.5)
+            client.chat(List.of(new ChatMessage("user", "hi")), 0.5)
         );
         server.verify();
     }

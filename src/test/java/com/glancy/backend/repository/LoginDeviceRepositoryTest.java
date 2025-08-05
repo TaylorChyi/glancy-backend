@@ -1,21 +1,21 @@
 package com.glancy.backend.repository;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.glancy.backend.entity.LoginDevice;
 import com.glancy.backend.entity.User;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class LoginDeviceRepositoryTest {
 
     @Autowired
     private LoginDeviceRepository loginDeviceRepository;
+
     @Autowired
     private UserRepository userRepository;
 

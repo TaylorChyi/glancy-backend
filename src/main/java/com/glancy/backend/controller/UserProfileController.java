@@ -1,13 +1,12 @@
 package com.glancy.backend.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import com.glancy.backend.dto.UserProfileRequest;
 import com.glancy.backend.dto.UserProfileResponse;
 import com.glancy.backend.service.UserProfileService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Manage user personal profiles.
@@ -16,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/profiles")
 @Slf4j
 public class UserProfileController {
+
     private final UserProfileService userProfileService;
 
     public UserProfileController(UserProfileService userProfileService) {
@@ -26,8 +26,10 @@ public class UserProfileController {
      * Save profile for a user.
      */
     @PostMapping("/user/{userId}")
-    public ResponseEntity<UserProfileResponse> saveProfile(@PathVariable Long userId,
-                                                           @RequestBody UserProfileRequest req) {
+    public ResponseEntity<UserProfileResponse> saveProfile(
+        @PathVariable Long userId,
+        @RequestBody UserProfileRequest req
+    ) {
         log.info("Saving profile for user {}", userId);
         UserProfileResponse resp = userProfileService.saveProfile(userId, req);
         log.info("Saved profile for user {}", userId);

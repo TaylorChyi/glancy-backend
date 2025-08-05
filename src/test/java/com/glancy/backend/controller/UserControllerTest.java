@@ -1,5 +1,12 @@
 package com.glancy.backend.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.*;
 import com.glancy.backend.entity.User;
@@ -7,25 +14,22 @@ import com.glancy.backend.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.context.annotation.Import;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MultipartFile;
 
 @WebMvcTest(UserController.class)
-@Import({com.glancy.backend.config.SecurityConfig.class,
+@Import(
+    {
+        com.glancy.backend.config.SecurityConfig.class,
         com.glancy.backend.config.WebConfig.class,
         com.glancy.backend.config.TokenAuthenticationInterceptor.class,
-        com.glancy.backend.config.auth.AuthenticatedUserArgumentResolver.class})
+        com.glancy.backend.config.auth.AuthenticatedUserArgumentResolver.class,
+    }
+)
 class UserControllerTest {
 
     @Autowired
@@ -51,11 +55,14 @@ class UserControllerTest {
         req.setEmail("test@example.com");
         req.setPhone("555");
 
-        mockMvc.perform(post("/api/users/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1L));
+        mockMvc
+            .perform(
+                post("/api/users/register")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req))
+            )
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").value(1L));
     }
 
     /**
@@ -64,8 +71,7 @@ class UserControllerTest {
     @Test
     void deleteUser() throws Exception {
         doNothing().when(userService).deleteUser(1L);
-        mockMvc.perform(delete("/api/users/1"))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/users/1")).andExpect(status().isNoContent());
     }
 
     /**
@@ -81,10 +87,11 @@ class UserControllerTest {
         user.setPhone("p1");
         when(userService.getUserRaw(1L)).thenReturn(user);
 
-        mockMvc.perform(get("/api/users/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.password").doesNotExist());
+        mockMvc
+            .perform(get("/api/users/1"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1L))
+            .andExpect(jsonPath("$.password").doesNotExist());
     }
 
     /**
@@ -99,11 +106,14 @@ class UserControllerTest {
         req.setAccount("u");
         req.setPassword("pass");
 
-        mockMvc.perform(post("/api/users/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L));
+        mockMvc
+            .perform(
+                post("/api/users/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req))
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1L));
     }
 
     /**
@@ -118,11 +128,14 @@ class UserControllerTest {
         req.setAccount("555");
         req.setPassword("pass");
 
-        mockMvc.perform(post("/api/users/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L));
+        mockMvc
+            .perform(
+                post("/api/users/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req))
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1L));
     }
 
     /**
@@ -137,11 +150,14 @@ class UserControllerTest {
         req.setProvider("p");
         req.setExternalId("e");
 
-        mockMvc.perform(post("/api/users/1/third-party-accounts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1L));
+        mockMvc
+            .perform(
+                post("/api/users/1/third-party-accounts")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req))
+            )
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").value(1L));
     }
 
     /**
@@ -152,9 +168,10 @@ class UserControllerTest {
         AvatarResponse resp = new AvatarResponse("url");
         when(userService.getAvatar(1L)).thenReturn(resp);
 
-        mockMvc.perform(get("/api/users/1/avatar"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.avatar").value("url"));
+        mockMvc
+            .perform(get("/api/users/1/avatar"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.avatar").value("url"));
     }
 
     /**
@@ -168,11 +185,14 @@ class UserControllerTest {
         AvatarRequest req = new AvatarRequest();
         req.setAvatar("url");
 
-        mockMvc.perform(put("/api/users/1/avatar")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.avatar").value("url"));
+        mockMvc
+            .perform(
+                put("/api/users/1/avatar")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req))
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.avatar").value("url"));
     }
 
     /**
@@ -184,9 +204,10 @@ class UserControllerTest {
         AvatarResponse resp = new AvatarResponse("path/url.jpg");
         when(userService.uploadAvatar(eq(1L), any(MultipartFile.class))).thenReturn(resp);
 
-        mockMvc.perform(multipart("/api/users/1/avatar-file").file(file))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.avatar").value("path/url.jpg"));
+        mockMvc
+            .perform(multipart("/api/users/1/avatar-file").file(file))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.avatar").value("path/url.jpg"));
     }
 
     /**
@@ -196,9 +217,7 @@ class UserControllerTest {
     void logout() throws Exception {
         doNothing().when(userService).logout(1L, "tkn");
 
-        mockMvc.perform(post("/api/users/1/logout")
-                        .header("X-USER-TOKEN", "tkn"))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(post("/api/users/1/logout").header("X-USER-TOKEN", "tkn")).andExpect(status().isNoContent());
     }
 
     /**
@@ -207,8 +226,6 @@ class UserControllerTest {
     @Test
     void countUsers() throws Exception {
         when(userService.countActiveUsers()).thenReturn(5L);
-        mockMvc.perform(get("/api/users/count"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("5"));
+        mockMvc.perform(get("/api/users/count")).andExpect(status().isOk()).andExpect(content().string("5"));
     }
 }

@@ -1,30 +1,29 @@
 package com.glancy.backend.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.NotificationRequest;
 import com.glancy.backend.dto.NotificationResponse;
 import com.glancy.backend.service.NotificationService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.context.annotation.Import;
-
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(NotificationController.class)
 @Import(com.glancy.backend.config.SecurityConfig.class)
 class NotificationControllerTest {
-    
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -45,12 +44,15 @@ class NotificationControllerTest {
         NotificationRequest req = new NotificationRequest();
         req.setMessage("msg");
 
-        mockMvc.perform(post("/api/notifications/system")
-                        .with(httpBasic("admin", "password"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.systemLevel").value(true));
+        mockMvc
+            .perform(
+                post("/api/notifications/system")
+                    .with(httpBasic("admin", "password"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req))
+            )
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.systemLevel").value(true));
     }
 
     /**
@@ -64,11 +66,14 @@ class NotificationControllerTest {
         NotificationRequest req = new NotificationRequest();
         req.setMessage("msg");
 
-        mockMvc.perform(post("/api/notifications/user/2")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.userId").value(2L));
+        mockMvc
+            .perform(
+                post("/api/notifications/user/2")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req))
+            )
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.userId").value(2L));
     }
 
     /**
@@ -80,9 +85,10 @@ class NotificationControllerTest {
         NotificationResponse sresp = new NotificationResponse(2L, "sys", true, null);
         when(notificationService.getNotificationsForUser(2L)).thenReturn(List.of(uresp, sresp));
 
-        mockMvc.perform(get("/api/notifications/user/2"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].message").value("user"))
-                .andExpect(jsonPath("$[1].message").value("sys"));
+        mockMvc
+            .perform(get("/api/notifications/user/2"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].message").value("user"))
+            .andExpect(jsonPath("$[1].message").value("sys"));
     }
 }

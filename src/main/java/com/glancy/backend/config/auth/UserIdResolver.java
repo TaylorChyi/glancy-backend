@@ -1,15 +1,15 @@
 package com.glancy.backend.config.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.servlet.HandlerMapping;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.web.servlet.HandlerMapping;
 
 /**
  * Utility for extracting the userId from path variables or query parameters.
  */
 public final class UserIdResolver {
+
     private UserIdResolver() {}
 
     /**

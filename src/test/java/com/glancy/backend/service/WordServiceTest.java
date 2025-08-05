@@ -1,11 +1,14 @@
 package com.glancy.backend.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.entity.Word;
-import com.glancy.backend.repository.WordRepository;
 import com.glancy.backend.repository.UserPreferenceRepository;
+import com.glancy.backend.repository.WordRepository;
 import io.github.cdimascio.dotenv.Dotenv;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,17 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 class WordServiceTest {
+
     @Autowired
     private WordService wordService;
+
     @Autowired
     private UserPreferenceRepository userPreferenceRepository;
+
     @Autowired
     private WordRepository wordRepository;
 
@@ -41,7 +43,6 @@ class WordServiceTest {
         wordRepository.deleteAll();
         userPreferenceRepository.deleteAll();
     }
-
 
     /**
      * 测试 testFetchAndCacheWord 接口
@@ -78,8 +79,6 @@ class WordServiceTest {
         byte[] result = wordService.getAudio("hello", Language.ENGLISH);
         assertNotNull(result);
     }
-
-
 
     /**
      * 测试 testCacheWordWhenLanguageMissing 接口

@@ -9,5 +9,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AvatarResponse {
+
     private String avatar;
 }

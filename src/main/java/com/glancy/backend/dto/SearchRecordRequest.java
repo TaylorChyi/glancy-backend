@@ -10,6 +10,7 @@ import lombok.Data;
  */
 @Data
 public class SearchRecordRequest {
+
     @NotBlank(message = "{validation.searchRecord.term.notblank}")
     private String term;
 

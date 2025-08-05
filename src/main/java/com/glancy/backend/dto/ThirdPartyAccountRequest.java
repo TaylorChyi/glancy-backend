@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 public class ThirdPartyAccountRequest {
+
     @NotBlank(message = "{validation.thirdPartyAccount.provider.notblank}")
     private String provider;
 

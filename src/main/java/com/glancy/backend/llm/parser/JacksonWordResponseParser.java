@@ -3,15 +3,15 @@ package com.glancy.backend.llm.parser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class JacksonWordResponseParser implements WordResponseParser {
+
     @Override
     public WordResponse parse(String content, String term, Language language) {
         String json = extractJson(content);
@@ -47,19 +47,43 @@ public class JacksonWordResponseParser implements WordResponseParser {
 
             String phonetic = parsePhonetic(node);
 
-            return new WordResponse(id, parsedTerm, definitions, lang, example, phonetic,
-                    variations, synonyms, antonyms, related, phrases);
+            return new WordResponse(
+                id,
+                parsedTerm,
+                definitions,
+                lang,
+                example,
+                phonetic,
+                variations,
+                synonyms,
+                antonyms,
+                related,
+                phrases
+            );
         } catch (Exception e) {
             log.warn("Failed to parse word response", e);
-            return new WordResponse(null, term, new ArrayList<>(), language, null, null,
-                    new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+            return new WordResponse(
+                null,
+                term,
+                new ArrayList<>(),
+                language,
+                null,
+                null,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>()
+            );
         }
     }
 
-    private List<String> parseEnglishDefinitions(com.fasterxml.jackson.databind.JsonNode node,
-                                                List<String> synonyms,
-                                                List<String> antonyms,
-                                                List<String> related) {
+    private List<String> parseEnglishDefinitions(
+        com.fasterxml.jackson.databind.JsonNode node,
+        List<String> synonyms,
+        List<String> antonyms,
+        List<String> related
+    ) {
         List<String> definitions = new ArrayList<>();
         var defsNode = node.path("definitions");
         if (defsNode.isArray()) {
@@ -86,10 +110,12 @@ public class JacksonWordResponseParser implements WordResponseParser {
         return definitions;
     }
 
-    private List<String> parseChineseDefinitions(com.fasterxml.jackson.databind.JsonNode node,
-                                                 List<String> synonyms,
-                                                 List<String> antonyms,
-                                                 List<String> related) {
+    private List<String> parseChineseDefinitions(
+        com.fasterxml.jackson.databind.JsonNode node,
+        List<String> synonyms,
+        List<String> antonyms,
+        List<String> related
+    ) {
         List<String> definitions = new ArrayList<>();
         var explainNode = node.path("\u53D1\u97F3\u89E3\u91CA"); // "发音解释"
         if (explainNode.isArray()) {
@@ -147,8 +173,7 @@ public class JacksonWordResponseParser implements WordResponseParser {
         return phrases;
     }
 
-    private void addFromNode(com.fasterxml.jackson.databind.JsonNode node, String field,
-                              List<String> target) {
+    private void addFromNode(com.fasterxml.jackson.databind.JsonNode node, String field, List<String> target) {
         var arr = node.path(field);
         if (arr.isArray()) {
             arr.forEach(a -> {
@@ -174,8 +199,7 @@ public class JacksonWordResponseParser implements WordResponseParser {
             } else {
                 try {
                     lang = Language.valueOf(upper);
-                } catch (Exception ignored) {
-                }
+                } catch (Exception ignored) {}
             }
         }
         return lang;
@@ -203,7 +227,8 @@ public class JacksonWordResponseParser implements WordResponseParser {
                             var exNode = d.path("\u4F8B\u53E5"); // "例句"
                             if (exNode.isArray() && exNode.size() > 0) {
                                 var first = exNode.get(0);
-                                if (first.has("\u6E90\u8BED\u8A00")) { // "源语言"
+                                if (first.has("\u6E90\u8BED\u8A00")) {
+                                    // "源语言"
                                     example = first.path("\u6E90\u8BED\u8A00").asText();
                                 } else if (first.isTextual()) {
                                     example = first.asText();

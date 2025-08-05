@@ -1,16 +1,15 @@
 package com.glancy.backend.controller;
 
+import com.glancy.backend.config.auth.AuthenticatedUser;
 import com.glancy.backend.dto.SearchRecordRequest;
 import com.glancy.backend.dto.SearchRecordResponse;
 import com.glancy.backend.service.SearchRecordService;
 import jakarta.validation.Valid;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.glancy.backend.config.auth.AuthenticatedUser;
-import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 /**
  * Endpoints for managing user search history. It allows recording
@@ -20,6 +19,7 @@ import java.util.List;
 @RequestMapping("/api/search-records")
 @Slf4j
 public class SearchRecordController {
+
     private final SearchRecordService searchRecordService;
 
     public SearchRecordController(SearchRecordService searchRecordService) {
@@ -31,8 +31,10 @@ public class SearchRecordController {
      * 10 searches per day as enforced in the service layer.
      */
     @PostMapping("/user/{userId}")
-    public ResponseEntity<SearchRecordResponse> create(@AuthenticatedUser Long userId,
-                                                       @Valid @RequestBody SearchRecordRequest req) {
+    public ResponseEntity<SearchRecordResponse> create(
+        @AuthenticatedUser Long userId,
+        @Valid @RequestBody SearchRecordRequest req
+    ) {
         log.info("Recording search term '{}' for user {}", req.getTerm(), userId);
         SearchRecordResponse resp = searchRecordService.saveRecord(userId, req);
         log.info("Created search record {} for user {}", resp.getId(), userId);
@@ -64,8 +66,7 @@ public class SearchRecordController {
      * Mark a search record as favorite for the user.
      */
     @PostMapping("/user/{userId}/{recordId}/favorite")
-    public ResponseEntity<SearchRecordResponse> favorite(@AuthenticatedUser Long userId,
-                                                         @PathVariable Long recordId) {
+    public ResponseEntity<SearchRecordResponse> favorite(@AuthenticatedUser Long userId, @PathVariable Long recordId) {
         log.info("Marking search record {} as favorite for user {}", recordId, userId);
         SearchRecordResponse resp = searchRecordService.favoriteRecord(userId, recordId);
         return ResponseEntity.ok(resp);
@@ -75,19 +76,17 @@ public class SearchRecordController {
      * Cancel favorite for a specific search record of the user.
      */
     @DeleteMapping("/user/{userId}/{recordId}/favorite")
-    public ResponseEntity<Void> unfavorite(@AuthenticatedUser Long userId,
-                                           @PathVariable Long recordId) {
+    public ResponseEntity<Void> unfavorite(@AuthenticatedUser Long userId, @PathVariable Long recordId) {
         log.info("Unfavoriting search record {} for user {}", recordId, userId);
         searchRecordService.unfavoriteRecord(userId, recordId);
         return ResponseEntity.noContent().build();
     }
-    
-     /**
+
+    /**
      * Delete a specific search record of a user.
      */
     @DeleteMapping("/user/{userId}/{recordId}")
-    public ResponseEntity<Void> delete(@AuthenticatedUser Long userId,
-                                       @PathVariable Long recordId) {
+    public ResponseEntity<Void> delete(@AuthenticatedUser Long userId, @PathVariable Long recordId) {
         log.info("Deleting search record {} for user {}", recordId, userId);
         searchRecordService.deleteRecord(userId, recordId);
         return ResponseEntity.noContent().build();

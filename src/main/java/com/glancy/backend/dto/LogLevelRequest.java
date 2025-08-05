@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 public class LogLevelRequest {
+
     @NotBlank(message = "{validation.logLevel.logger.notblank}")
     private String logger;
 

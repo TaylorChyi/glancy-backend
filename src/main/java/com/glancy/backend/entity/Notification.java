@@ -1,9 +1,9 @@
 package com.glancy.backend.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
 
 /**
  * Notification entity representing both system and user messages.
@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class Notification {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

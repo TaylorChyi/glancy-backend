@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class UserProfileResponse {
+
     private Long id;
     private Long userId;
     private Integer age;

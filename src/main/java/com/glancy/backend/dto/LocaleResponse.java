@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class LocaleResponse {
+
     private String country;
     private String lang;
 }

@@ -9,6 +9,7 @@ import lombok.Data;
  */
 @Data
 public class ContactRequest {
+
     @NotBlank(message = "{validation.contact.name.notblank}")
     private String name;
 

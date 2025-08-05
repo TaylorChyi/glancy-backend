@@ -7,27 +7,27 @@ import com.glancy.backend.entity.Language;
 import com.glancy.backend.llm.llm.LLMClient;
 import com.glancy.backend.llm.model.ChatMessage;
 import com.glancy.backend.llm.parser.WordResponseParser;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StreamUtils;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.MediaType;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Component("deepSeekClient")
 public class DeepSeekClient implements DictionaryClient, LLMClient {
+
     private final RestTemplate restTemplate;
     private final String baseUrl;
     private final String apiKey;
@@ -35,10 +35,12 @@ public class DeepSeekClient implements DictionaryClient, LLMClient {
     private final String zhToEnPrompt;
     private final WordResponseParser parser;
 
-    public DeepSeekClient(RestTemplate restTemplate,
-                          @Value("${thirdparty.deepseek.base-url:https://api.deepseek.com}") String baseUrl,
-                          @Value("${thirdparty.deepseek.api-key:}") String apiKey,
-                          WordResponseParser parser) {
+    public DeepSeekClient(
+        RestTemplate restTemplate,
+        @Value("${thirdparty.deepseek.base-url:https://api.deepseek.com}") String baseUrl,
+        @Value("${thirdparty.deepseek.api-key:}") String apiKey,
+        WordResponseParser parser
+    ) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
         this.apiKey = apiKey;
@@ -69,9 +71,7 @@ public class DeepSeekClient implements DictionaryClient, LLMClient {
 
     @Override
     public String chat(List<ChatMessage> messages, double temperature) {
-        String url = UriComponentsBuilder.fromUriString(baseUrl)
-                .path("/v1/chat/completions")
-                .toUriString();
+        String url = UriComponentsBuilder.fromUriString(baseUrl).path("/v1/chat/completions").toUriString();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         if (apiKey != null && !apiKey.isEmpty()) {
@@ -91,17 +91,9 @@ public class DeepSeekClient implements DictionaryClient, LLMClient {
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
         try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    entity,
-                    String.class
-            );
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
             ObjectMapper mapper = new ObjectMapper();
-            ChatCompletionResponse chat = mapper.readValue(
-                    response.getBody(),
-                    ChatCompletionResponse.class
-            );
+            ChatCompletionResponse chat = mapper.readValue(response.getBody(), ChatCompletionResponse.class);
             return chat.getChoices().get(0).getMessage().getContent();
         } catch (org.springframework.web.client.HttpClientErrorException.Unauthorized ex) {
             log.error("DeepSeek API unauthorized", ex);
@@ -109,7 +101,8 @@ public class DeepSeekClient implements DictionaryClient, LLMClient {
         } catch (org.springframework.web.client.HttpClientErrorException ex) {
             log.error("DeepSeek API error: {}", ex.getStatusCode());
             throw new com.glancy.backend.exception.BusinessException(
-                    "Failed to call DeepSeek API: " + ex.getStatusCode(), ex
+                "Failed to call DeepSeek API: " + ex.getStatusCode(),
+                ex
             );
         } catch (Exception e) {
             log.warn("Failed to parse DeepSeek response", e);
@@ -134,21 +127,16 @@ public class DeepSeekClient implements DictionaryClient, LLMClient {
     @Override
     public byte[] fetchAudio(String term, Language language) {
         String url = UriComponentsBuilder.fromUriString(baseUrl)
-                .path("/words/audio")
-                .queryParam("term", term)
-                .queryParam("language", language.name().toLowerCase())
-                .toUriString();
+            .path("/words/audio")
+            .queryParam("term", term)
+            .queryParam("language", language.name().toLowerCase())
+            .toUriString();
         HttpHeaders headers = new HttpHeaders();
         if (apiKey != null && !apiKey.isEmpty()) {
             headers.setBearerAuth(apiKey);
         }
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-        ResponseEntity<byte[]> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                requestEntity,
-                byte[].class
-        );
+        ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, byte[].class);
         return response.getBody();
     }
 
@@ -159,5 +147,4 @@ public class DeepSeekClient implements DictionaryClient, LLMClient {
         int end = key.length() - 4;
         return key.substring(0, 4) + "****" + key.substring(end);
     }
-
 }

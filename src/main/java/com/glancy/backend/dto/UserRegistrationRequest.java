@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 public class UserRegistrationRequest {
+
     @NotBlank(message = "{validation.userRegistration.username.notblank}")
     @Size(min = 3, max = 50, message = "用户名长度需在3到50之间")
     private String username;

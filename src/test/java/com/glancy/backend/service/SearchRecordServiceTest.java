@@ -1,26 +1,24 @@
 package com.glancy.backend.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import com.glancy.backend.config.SearchProperties;
 import com.glancy.backend.dto.SearchRecordRequest;
 import com.glancy.backend.dto.SearchRecordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.entity.User;
+import com.glancy.backend.exception.InvalidRequestException;
 import com.glancy.backend.repository.SearchRecordRepository;
 import com.glancy.backend.repository.UserRepository;
 import io.github.cdimascio.dotenv.Dotenv;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import com.glancy.backend.config.SearchProperties;
-
-import java.util.List;
-import java.time.LocalDateTime;
-
-import com.glancy.backend.exception.InvalidRequestException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(properties = "search.limit.nonMember=2")
 @Transactional
@@ -28,10 +26,13 @@ class SearchRecordServiceTest {
 
     @Autowired
     private SearchRecordService searchRecordService;
+
     @Autowired
     private SearchRecordRepository searchRecordRepository;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private SearchProperties searchProperties;
 
@@ -102,8 +103,9 @@ class SearchRecordServiceTest {
         req.setTerm("hi");
         req.setLanguage(Language.ENGLISH);
 
-        Exception ex = assertThrows(InvalidRequestException.class,
-                () -> searchRecordService.saveRecord(user.getId(), req));
+        Exception ex = assertThrows(InvalidRequestException.class, () ->
+            searchRecordService.saveRecord(user.getId(), req)
+        );
         assertEquals("用户未登录", ex.getMessage());
     }
 
@@ -133,8 +135,9 @@ class SearchRecordServiceTest {
 
         searchRecordService.saveRecord(user.getId(), req1);
         searchRecordService.saveRecord(user.getId(), req2);
-        Exception ex = assertThrows(InvalidRequestException.class,
-                () -> searchRecordService.saveRecord(user.getId(), req3));
+        Exception ex = assertThrows(InvalidRequestException.class, () ->
+            searchRecordService.saveRecord(user.getId(), req3)
+        );
         assertEquals("非会员每天只能搜索2次", ex.getMessage());
     }
 

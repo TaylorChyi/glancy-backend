@@ -1,13 +1,12 @@
 package com.glancy.backend.service;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import lombok.extern.slf4j.Slf4j;
-
 import com.glancy.backend.dto.ContactRequest;
 import com.glancy.backend.dto.ContactResponse;
 import com.glancy.backend.entity.ContactMessage;
 import com.glancy.backend.repository.ContactMessageRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles persistence of contact messages sent from the front-end

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PromptManagerImpl implements PromptManager {
+
     @Override
     public String loadPrompt(String path) {
         try {

@@ -1,25 +1,24 @@
 package com.glancy.backend.controller;
 
+import com.glancy.backend.config.auth.AuthenticatedUser;
+import com.glancy.backend.dto.AvatarRequest;
+import com.glancy.backend.dto.AvatarResponse;
+import com.glancy.backend.dto.LoginRequest;
+import com.glancy.backend.dto.LoginResponse;
+import com.glancy.backend.dto.ThirdPartyAccountRequest;
+import com.glancy.backend.dto.ThirdPartyAccountResponse;
+import com.glancy.backend.dto.UserRegistrationRequest;
+import com.glancy.backend.dto.UserResponse;
+import com.glancy.backend.dto.UsernameRequest;
+import com.glancy.backend.dto.UsernameResponse;
+import com.glancy.backend.entity.User;
+import com.glancy.backend.service.UserService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.glancy.backend.config.auth.AuthenticatedUser;
-
-import com.glancy.backend.dto.LoginRequest;
-import com.glancy.backend.dto.LoginResponse;
-import com.glancy.backend.dto.UserRegistrationRequest;
-import com.glancy.backend.dto.UserResponse;
-import com.glancy.backend.dto.ThirdPartyAccountRequest;
-import com.glancy.backend.dto.ThirdPartyAccountResponse;
-import com.glancy.backend.dto.AvatarRequest;
-import com.glancy.backend.dto.AvatarResponse;
-import com.glancy.backend.dto.UsernameRequest;
-import com.glancy.backend.dto.UsernameResponse;
 import org.springframework.web.multipart.MultipartFile;
-import com.glancy.backend.entity.User;
-import com.glancy.backend.service.UserService;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * User management endpoints including registration, login and
@@ -93,8 +92,9 @@ public class UserController {
      */
     @PostMapping("/{id}/third-party-accounts")
     public ResponseEntity<ThirdPartyAccountResponse> bindThirdParty(
-            @PathVariable Long id,
-            @Valid @RequestBody ThirdPartyAccountRequest req) {
+        @PathVariable Long id,
+        @Valid @RequestBody ThirdPartyAccountRequest req
+    ) {
         log.info("Binding third-party account '{}' for user {}", req.getProvider(), id);
         ThirdPartyAccountResponse resp = userService.bindThirdPartyAccount(id, req);
         log.info("Bound third-party account {} for user {}", resp.getId(), id);
@@ -115,9 +115,7 @@ public class UserController {
      * Update the avatar URL for a user.
      */
     @PutMapping("/{id}/avatar")
-    public ResponseEntity<AvatarResponse> updateAvatar(
-            @PathVariable Long id,
-            @Valid @RequestBody AvatarRequest req) {
+    public ResponseEntity<AvatarResponse> updateAvatar(@PathVariable Long id, @Valid @RequestBody AvatarRequest req) {
         log.info("Updating avatar for user {}", id);
         AvatarResponse resp = userService.updateAvatar(id, req.getAvatar());
         return ResponseEntity.ok(resp);
@@ -128,8 +126,9 @@ public class UserController {
      */
     @PostMapping("/{id}/avatar-file")
     public ResponseEntity<AvatarResponse> uploadAvatar(
-            @PathVariable Long id,
-            @RequestParam("file") MultipartFile file) {
+        @PathVariable Long id,
+        @RequestParam("file") MultipartFile file
+    ) {
         log.info("Uploading avatar file for user {}", id);
         AvatarResponse resp = userService.uploadAvatar(id, file);
         return ResponseEntity.ok(resp);
@@ -140,8 +139,9 @@ public class UserController {
      */
     @PutMapping("/{id}/username")
     public ResponseEntity<UsernameResponse> updateUsername(
-            @PathVariable Long id,
-            @Valid @RequestBody UsernameRequest req) {
+        @PathVariable Long id,
+        @Valid @RequestBody UsernameRequest req
+    ) {
         log.info("Updating username for user {}", id);
         UsernameResponse resp = userService.updateUsername(id, req.getUsername());
         return ResponseEntity.ok(resp);

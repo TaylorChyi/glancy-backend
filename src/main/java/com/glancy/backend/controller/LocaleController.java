@@ -1,16 +1,14 @@
 package com.glancy.backend.controller;
 
+import com.glancy.backend.dto.LocaleResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Locale;
 import java.util.Map;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.glancy.backend.dto.LocaleResponse;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Provides the user's likely locale based on request headers.
@@ -20,10 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LocaleController {
 
-    private static final Map<String, String> COUNTRY_TO_LANG = Map.of(
-            "CN", "zh",
-            "US", "en",
-            "GB", "en");
+    private static final Map<String, String> COUNTRY_TO_LANG = Map.of("CN", "zh", "US", "en", "GB", "en");
 
     /**
      * Determine language and country from Accept-Language header.

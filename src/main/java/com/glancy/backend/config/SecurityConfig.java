@@ -2,12 +2,12 @@ package com.glancy.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
@@ -17,9 +17,8 @@ public class SecurityConfig {
         http
             .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/notifications/system").authenticated()
-                .anyRequest().permitAll()
+            .authorizeHttpRequests(auth ->
+                auth.requestMatchers("/api/notifications/system").authenticated().anyRequest().permitAll()
             )
             .httpBasic(httpBasic -> {}); // 显式启用 httpBasic 认证
         return http.build();

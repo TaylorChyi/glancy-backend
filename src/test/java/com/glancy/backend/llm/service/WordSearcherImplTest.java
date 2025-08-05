@@ -1,5 +1,9 @@
 package com.glancy.backend.llm.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
 import com.glancy.backend.llm.config.LLMConfig;
@@ -11,12 +15,8 @@ import com.glancy.backend.llm.search.SearchContentManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
 class WordSearcherImplTest {
+
     private LLMClientFactory factory;
     private LLMConfig config;
     private PromptManager promptManager;

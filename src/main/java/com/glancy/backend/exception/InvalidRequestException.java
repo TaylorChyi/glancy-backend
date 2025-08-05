@@ -5,6 +5,7 @@ package com.glancy.backend.exception;
  * parameters.
  */
 public class InvalidRequestException extends BusinessException {
+
     public InvalidRequestException(String message) {
         super(message);
     }

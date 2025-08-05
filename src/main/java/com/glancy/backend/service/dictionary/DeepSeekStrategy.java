@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DeepSeekStrategy implements DictionaryStrategy {
+
     private final DictionaryClient dictionaryClient;
 
     public DeepSeekStrategy(@Qualifier("deepSeekClient") DictionaryClient dictionaryClient) {

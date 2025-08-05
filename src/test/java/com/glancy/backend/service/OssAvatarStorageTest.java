@@ -1,8 +1,5 @@
 package com.glancy.backend.service;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockMultipartFile;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -12,6 +9,8 @@ import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.model.GeneratePresignedUrlRequest;
 import com.glancy.backend.config.OssProperties;
 import java.util.Date;
+import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
 
 /**
  * Simple tests for OssAvatarStorage.
@@ -30,8 +29,7 @@ class OssAvatarStorageTest {
         props.setAccessKeySecret("");
         props.setAvatarDir("avatars/");
         OssAvatarStorage storage = new OssAvatarStorage(props);
-        MockMultipartFile file = new MockMultipartFile(
-                "file", "avatar.jpg", "image/jpeg", "data".getBytes());
+        MockMultipartFile file = new MockMultipartFile("file", "avatar.jpg", "image/jpeg", "data".getBytes());
         assertThrows(IllegalStateException.class, () -> storage.upload(file));
     }
 
@@ -51,12 +49,12 @@ class OssAvatarStorageTest {
         OssAvatarStorage storage = new OssAvatarStorage(props);
 
         OSS client = mock(OSS.class);
-        when(client.putObject(eq("bucket"), anyString(),
-                any(java.io.InputStream.class))).thenReturn(null);
+        when(client.putObject(eq("bucket"), anyString(), any(java.io.InputStream.class))).thenReturn(null);
         OSSException ex = new OSSException("AccessDenied");
         doThrow(ex).when(client).setObjectAcl(eq("bucket"), anyString(), eq(CannedAccessControlList.PublicRead));
-        when(client.generatePresignedUrl(eq("bucket"), anyString(),
-                any(Date.class))).thenReturn(new java.net.URL("https://example.com"));
+        when(client.generatePresignedUrl(eq("bucket"), anyString(), any(Date.class))).thenReturn(
+            new java.net.URL("https://example.com")
+        );
 
         var field = OssAvatarStorage.class.getDeclaredField("ossClient");
         field.setAccessible(true);
@@ -81,10 +79,10 @@ class OssAvatarStorageTest {
         OssAvatarStorage storage = new OssAvatarStorage(props);
 
         OSS client = mock(OSS.class);
-        when(client.putObject(eq("bucket"), anyString(),
-                any(java.io.InputStream.class))).thenReturn(null);
-        when(client.generatePresignedUrl(eq("bucket"), anyString(),
-                any(Date.class))).thenReturn(new java.net.URL("https://example.com"));
+        when(client.putObject(eq("bucket"), anyString(), any(java.io.InputStream.class))).thenReturn(null);
+        when(client.generatePresignedUrl(eq("bucket"), anyString(), any(Date.class))).thenReturn(
+            new java.net.URL("https://example.com")
+        );
 
         var field = OssAvatarStorage.class.getDeclaredField("ossClient");
         field.setAccessible(true);
@@ -110,10 +108,10 @@ class OssAvatarStorageTest {
         OssAvatarStorage storage = new OssAvatarStorage(props);
 
         OSS client = mock(OSS.class);
-        when(client.putObject(eq("bucket"), anyString(),
-                any(java.io.InputStream.class))).thenReturn(null);
-        when(client.generatePresignedUrl(any(GeneratePresignedUrlRequest.class)))
-                .thenReturn(new java.net.URL("https://example.com"));
+        when(client.putObject(eq("bucket"), anyString(), any(java.io.InputStream.class))).thenReturn(null);
+        when(client.generatePresignedUrl(any(GeneratePresignedUrlRequest.class))).thenReturn(
+            new java.net.URL("https://example.com")
+        );
 
         var field = OssAvatarStorage.class.getDeclaredField("ossClient");
         field.setAccessible(true);

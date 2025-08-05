@@ -14,7 +14,7 @@ public class LoginIdentifier {
     public enum Type {
         USERNAME,
         EMAIL,
-        PHONE
+        PHONE,
     }
 
     /** Identifier type, may be null if not provided. */

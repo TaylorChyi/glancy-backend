@@ -1,31 +1,28 @@
 package com.glancy.backend.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import com.glancy.backend.dto.AvatarResponse;
+import com.glancy.backend.dto.LoginRequest;
 import com.glancy.backend.dto.UserRegistrationRequest;
 import com.glancy.backend.dto.UserResponse;
-import com.glancy.backend.dto.LoginRequest;
-import com.glancy.backend.dto.AvatarResponse;
-import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.LoginDevice;
-import com.glancy.backend.repository.UserRepository;
+import com.glancy.backend.entity.User;
+import com.glancy.backend.exception.DuplicateResourceException;
 import com.glancy.backend.repository.LoginDeviceRepository;
 import com.glancy.backend.repository.UserProfileRepository;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.web.multipart.MultipartFile;
-
+import com.glancy.backend.repository.UserRepository;
 import io.github.cdimascio.dotenv.Dotenv;
-
+import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import org.junit.jupiter.api.BeforeAll;
-import com.glancy.backend.exception.DuplicateResourceException;
+import org.springframework.web.multipart.MultipartFile;
 
 @SpringBootTest
 @Transactional
@@ -33,20 +30,24 @@ class UserServiceTest {
 
     @Autowired
     private UserService userService;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private LoginDeviceRepository loginDeviceRepository;
+
     @Autowired
     private UserProfileRepository userProfileRepository;
+
     @MockitoBean
     private AvatarStorage avatarStorage;
 
     @BeforeAll
     static void loadEnv() {
         Dotenv dotenv = Dotenv.configure()
-                .ignoreIfMissing()  // 如果没有 .env 文件也不报错
-                .load();
+            .ignoreIfMissing() // 如果没有 .env 文件也不报错
+            .load();
 
         String dbPassword = dotenv.get("DB_PASSWORD");
         if (dbPassword != null) {
@@ -190,8 +191,7 @@ class UserServiceTest {
         loginReq.setDeviceInfo("d4");
         userService.login(loginReq);
 
-        List<LoginDevice> devices = loginDeviceRepository
-                .findByUserIdOrderByLoginTimeAsc(resp.getId());
+        List<LoginDevice> devices = loginDeviceRepository.findByUserIdOrderByLoginTimeAsc(resp.getId());
         assertEquals(3, devices.size());
         assertFalse(devices.stream().anyMatch(d -> "d1".equals(d.getDeviceInfo())));
     }

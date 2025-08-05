@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "llm")
 public class LLMConfig {
+
     private String defaultClient = "deepseek";
     private double temperature = 0.7;
     private Map<String, String> apiKeys;

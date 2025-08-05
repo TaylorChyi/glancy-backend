@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import com.glancy.backend.dto.WordResponse;
 import com.glancy.backend.entity.Language;
@@ -29,7 +29,11 @@ class DeepSeekClientTest {
         RestTemplate restTemplate = new RestTemplate();
         server = MockRestServiceServer.bindTo(restTemplate).build();
         client = new DeepSeekClient(
-                restTemplate, "http://mock", "key", new com.glancy.backend.llm.parser.JacksonWordResponseParser());
+            restTemplate,
+            "http://mock",
+            "key",
+            new com.glancy.backend.llm.parser.JacksonWordResponseParser()
+        );
     }
 
     /**
@@ -38,15 +42,16 @@ class DeepSeekClientTest {
     @Test
     void fetchDefinitionWithAuth() {
         String content =
-                "{\\\"entry\\\":\\\"hello\\\",\\\"pronunciations\\\":{\\\"英音\\\":\\\"/həˈloʊ/\\\"},"
-                        + "\\\"definitions\\\":[{\\\"partOfSpeech\\\":\\\"noun\\\",\\\"meanings\\\":[\\\"hi\\\"]}]}";
+            "{\\\"entry\\\":\\\"hello\\\",\\\"pronunciations\\\":{\\\"英音\\\":\\\"/həˈloʊ/\\\"}," +
+            "\\\"definitions\\\":[{\\\"partOfSpeech\\\":\\\"noun\\\",\\\"meanings\\\":[\\\"hi\\\"]}]}";
         String json = "{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"" + content + "\"}}]}";
-        server.expect(requestTo("http://mock/v1/chat/completions"))
-                .andExpect(method(POST))
-                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer key"))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.messages[1].content").value("hello"))
-                .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
+        server
+            .expect(requestTo("http://mock/v1/chat/completions"))
+            .andExpect(method(POST))
+            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer key"))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.messages[1].content").value("hello"))
+            .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 
         WordResponse resp = client.fetchDefinition("hello", Language.ENGLISH);
         assertEquals("hello", resp.getTerm());
@@ -60,12 +65,13 @@ class DeepSeekClientTest {
     @Test
     void fetchDefinitionWithCodeFence() {
         String content =
-                "```json{\\\"entry\\\":\\\"hi\\\",\\\"definitions\\\":[{\\\"partOfSpeech\\\":\\\"interj.\\\","
-                        + "\\\"meanings\\\":[\\\"hey\\\"]}]}```";
+            "```json{\\\"entry\\\":\\\"hi\\\",\\\"definitions\\\":[{\\\"partOfSpeech\\\":\\\"interj.\\\"," +
+            "\\\"meanings\\\":[\\\"hey\\\"]}]}```";
         String json = "{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"" + content + "\"}}]}";
-        server.expect(requestTo("http://mock/v1/chat/completions"))
-                .andExpect(method(POST))
-                .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
+        server
+            .expect(requestTo("http://mock/v1/chat/completions"))
+            .andExpect(method(POST))
+            .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 
         WordResponse resp = client.fetchDefinition("hi", Language.ENGLISH);
         assertEquals("hi", resp.getTerm());
@@ -80,12 +86,13 @@ class DeepSeekClientTest {
     @Test
     void fetchDefinitionWithNonStandardLanguage() {
         String content =
-                "{\\\"entry\\\":\\\"\\u770B\\u770B\\\",\\\"language\\\":\\\"Chinese (Mandarin)\\\","
-                        + "\\\"definitions\\\":[{\\\"partOfSpeech\\\":\\\"verb\\\",\\\"meanings\\\":[\\\"look\\\"]}]}";
+            "{\\\"entry\\\":\\\"\\u770B\\u770B\\\",\\\"language\\\":\\\"Chinese (Mandarin)\\\"," +
+            "\\\"definitions\\\":[{\\\"partOfSpeech\\\":\\\"verb\\\",\\\"meanings\\\":[\\\"look\\\"]}]}";
         String json = "{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"" + content + "\"}}]}";
-        server.expect(requestTo("http://mock/v1/chat/completions"))
-                .andExpect(method(POST))
-                .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
+        server
+            .expect(requestTo("http://mock/v1/chat/completions"))
+            .andExpect(method(POST))
+            .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 
         WordResponse resp = client.fetchDefinition("看看", Language.CHINESE);
         assertEquals(Language.CHINESE, resp.getLanguage());
@@ -99,11 +106,12 @@ class DeepSeekClientTest {
      */
     @Test
     void fetchAudioWithAuth() {
-        byte[] audio = new byte[] {1};
-        server.expect(requestTo("http://mock/words/audio?term=hello&language=english"))
-                .andExpect(method(GET))
-                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer key"))
-                .andRespond(withSuccess(audio, MediaType.APPLICATION_OCTET_STREAM));
+        byte[] audio = new byte[] { 1 };
+        server
+            .expect(requestTo("http://mock/words/audio?term=hello&language=english"))
+            .andExpect(method(GET))
+            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer key"))
+            .andRespond(withSuccess(audio, MediaType.APPLICATION_OCTET_STREAM));
 
         byte[] resp = client.fetchAudio("hello", Language.ENGLISH);
         assertArrayEquals(audio, resp);
@@ -112,12 +120,13 @@ class DeepSeekClientTest {
 
     @Test
     void chatUnauthorizedThrowsException() {
-        server.expect(requestTo("http://mock/v1/chat/completions"))
-                .andExpect(method(POST))
-                .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
+        server
+            .expect(requestTo("http://mock/v1/chat/completions"))
+            .andExpect(method(POST))
+            .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
 
         assertThrows(com.glancy.backend.exception.UnauthorizedException.class, () ->
-                client.chat(List.of(new com.glancy.backend.llm.model.ChatMessage("user", "hi")), 0.5)
+            client.chat(List.of(new com.glancy.backend.llm.model.ChatMessage("user", "hi")), 0.5)
         );
         server.verify();
     }
@@ -143,12 +152,12 @@ class DeepSeekClientTest {
         );
 
         String body = String.format(
-                """
-                    {"model":"deepseek-chat","messages":[{"role":"system","content":%s},
-                    {"role":"user","content":"介绍"}],"temperature":0.7}
-                """,
-                // 转义 JSON 字符串
-                new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(prompt)
+            """
+                {"model":"deepseek-chat","messages":[{"role":"system","content":%s},
+                {"role":"user","content":"介绍"}],"temperature":0.7}
+            """,
+            // 转义 JSON 字符串
+            new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(prompt)
         );
         var entity = new org.springframework.http.HttpEntity<>(body, headers);
         var response = rt.postForEntity("https://api.deepseek.com/v1/chat/completions", entity, String.class);

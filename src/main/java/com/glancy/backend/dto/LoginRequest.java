@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 public class LoginRequest {
+
     /**
      * Account string entered by the user. May be a username, email or phone number.
      */
@@ -15,6 +16,7 @@ public class LoginRequest {
 
     @NotBlank(message = "{validation.login.password.notblank}")
     private String password;
+
     // Optional device information used during login
     private String deviceInfo;
 }

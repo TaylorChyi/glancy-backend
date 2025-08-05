@@ -1,5 +1,11 @@
 package com.glancy.backend.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.glancy.backend.dto.UserProfileRequest;
 import com.glancy.backend.dto.UserProfileResponse;
@@ -7,16 +13,10 @@ import com.glancy.backend.service.UserProfileService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.context.annotation.Import;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserProfileController.class)
 @Import(com.glancy.backend.config.SecurityConfig.class)
@@ -46,11 +46,14 @@ class UserProfileControllerTest {
         req.setInterest("code");
         req.setGoal("learn");
 
-        mockMvc.perform(post("/api/profiles/user/2")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.userId").value(2L));
+        mockMvc
+            .perform(
+                post("/api/profiles/user/2")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req))
+            )
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.userId").value(2L));
     }
 
     /**
@@ -61,8 +64,9 @@ class UserProfileControllerTest {
         UserProfileResponse resp = new UserProfileResponse(1L, 2L, 20, "M", "dev", "code", "learn");
         when(userProfileService.getProfile(2L)).thenReturn(resp);
 
-        mockMvc.perform(get("/api/profiles/user/2"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").value(2L));
+        mockMvc
+            .perform(get("/api/profiles/user/2"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.userId").value(2L));
     }
 }

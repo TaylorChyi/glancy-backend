@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @ConfigurationProperties(prefix = "thirdparty.doubao")
 public class DoubaoProperties {
+
     /** Base URL for Doubao API. */
     private String baseUrl = "https://ark.cn-beijing.volces.com";
     /** Endpoint path for chat completions. */
@@ -18,4 +19,3 @@ public class DoubaoProperties {
     /** Doubao LLM model to use. */
     private String model = "doubao-seed-1-6-flash-250715";
 }
-

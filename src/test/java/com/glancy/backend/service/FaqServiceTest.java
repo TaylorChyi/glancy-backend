@@ -1,11 +1,12 @@
 package com.glancy.backend.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.glancy.backend.dto.FaqRequest;
 import com.glancy.backend.dto.FaqResponse;
 import com.glancy.backend.repository.FaqRepository;
-
 import io.github.cdimascio.dotenv.Dotenv;
-
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,16 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 class FaqServiceTest {
 
     @Autowired
     private FaqService faqService;
+
     @Autowired
     private FaqRepository faqRepository;
 

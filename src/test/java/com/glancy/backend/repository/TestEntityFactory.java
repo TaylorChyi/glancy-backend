@@ -8,8 +8,8 @@ import java.util.Collections;
  * Helper factory creating test entities with sensible defaults.
  */
 final class TestEntityFactory {
-    private TestEntityFactory() {
-    }
+
+    private TestEntityFactory() {}
 
     static User user(int idx) {
         User user = new User();

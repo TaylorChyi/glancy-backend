@@ -1,16 +1,14 @@
 package com.glancy.backend.controller;
 
-import java.util.List;
-
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import com.glancy.backend.dto.FaqRequest;
 import com.glancy.backend.dto.FaqResponse;
 import com.glancy.backend.service.FaqService;
+import jakarta.validation.Valid;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Controller exposing FAQ management endpoints used by admins

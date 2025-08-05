@@ -1,11 +1,11 @@
 package com.glancy.backend.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.glancy.backend.dto.ContactRequest;
 import com.glancy.backend.dto.ContactResponse;
 import com.glancy.backend.repository.ContactMessageRepository;
-
 import io.github.cdimascio.dotenv.Dotenv;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,14 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 class ContactServiceTest {
 
     @Autowired
     private ContactService contactService;
+
     @Autowired
     private ContactMessageRepository contactMessageRepository;
 

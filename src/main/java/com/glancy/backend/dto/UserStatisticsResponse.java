@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class UserStatisticsResponse {
+
     private long totalUsers;
     private long memberUsers;
     private long deletedUsers;

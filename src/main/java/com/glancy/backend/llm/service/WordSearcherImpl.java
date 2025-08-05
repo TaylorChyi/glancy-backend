@@ -6,29 +6,31 @@ import com.glancy.backend.llm.config.LLMConfig;
 import com.glancy.backend.llm.llm.LLMClient;
 import com.glancy.backend.llm.llm.LLMClientFactory;
 import com.glancy.backend.llm.model.ChatMessage;
+import com.glancy.backend.llm.parser.WordResponseParser;
 import com.glancy.backend.llm.prompt.PromptManager;
 import com.glancy.backend.llm.search.SearchContentManager;
-import com.glancy.backend.llm.parser.WordResponseParser;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class WordSearcherImpl implements WordSearcher {
+
     private final LLMClientFactory clientFactory;
     private final LLMConfig config;
     private final PromptManager promptManager;
     private final SearchContentManager searchContentManager;
     private final WordResponseParser parser;
 
-    public WordSearcherImpl(LLMClientFactory clientFactory,
-                            LLMConfig config,
-                            PromptManager promptManager,
-                            SearchContentManager searchContentManager,
-                            WordResponseParser parser) {
+    public WordSearcherImpl(
+        LLMClientFactory clientFactory,
+        LLMConfig config,
+        PromptManager promptManager,
+        SearchContentManager searchContentManager,
+        WordResponseParser parser
+    ) {
         this.clientFactory = clientFactory;
         this.config = config;
         this.promptManager = promptManager;
@@ -49,7 +51,8 @@ public class WordSearcherImpl implements WordSearcher {
             client = clientFactory.get(fallback);
             if (client == null) {
                 throw new IllegalStateException(
-                        String.format("LLM client '%s' not available and default '%s' not configured", name, fallback));
+                    String.format("LLM client '%s' not available and default '%s' not configured", name, fallback)
+                );
             }
             name = fallback;
         }

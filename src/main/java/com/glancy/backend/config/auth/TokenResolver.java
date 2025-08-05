@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * Utility for extracting the user authentication token from a request.
  */
 public final class TokenResolver {
+
     public static final String HEADER_NAME = "X-USER-TOKEN";
     public static final String PARAM_NAME = "token";
 

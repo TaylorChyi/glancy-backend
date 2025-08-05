@@ -1,14 +1,13 @@
 package com.glancy.backend.controller;
 
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import com.glancy.backend.dto.UserPreferenceRequest;
 import com.glancy.backend.dto.UserPreferenceResponse;
 import com.glancy.backend.service.UserPreferenceService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Manage user interface and language preferences.
@@ -17,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/preferences")
 @Slf4j
 public class UserPreferenceController {
+
     private final UserPreferenceService userPreferenceService;
 
     public UserPreferenceController(UserPreferenceService userPreferenceService) {
@@ -27,8 +27,10 @@ public class UserPreferenceController {
      * Persist UI and language preferences for a user.
      */
     @PostMapping("/user/{userId}")
-    public ResponseEntity<UserPreferenceResponse> savePreference(@PathVariable Long userId,
-                                                                 @Valid @RequestBody UserPreferenceRequest req) {
+    public ResponseEntity<UserPreferenceResponse> savePreference(
+        @PathVariable Long userId,
+        @Valid @RequestBody UserPreferenceRequest req
+    ) {
         log.info("Saving preferences for user {}", userId);
         UserPreferenceResponse resp = userPreferenceService.savePreference(userId, req);
         return new ResponseEntity<>(resp, HttpStatus.CREATED);

@@ -1,21 +1,20 @@
 package com.glancy.backend.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.glancy.backend.config.DoubaoProperties;
 import com.glancy.backend.dto.ChatCompletionResponse;
 import com.glancy.backend.entity.LlmModel;
 import com.glancy.backend.llm.llm.LLMClient;
 import com.glancy.backend.llm.model.ChatMessage;
-import lombok.extern.slf4j.Slf4j;
-import com.glancy.backend.config.DoubaoProperties;
-import org.springframework.http.*;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.*;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Client for Doubao LLM using simple HTTP calls.
@@ -23,6 +22,7 @@ import java.util.Map;
 @Slf4j
 @Component("doubaoClient")
 public class DoubaoClient implements LLMClient {
+
     private final RestTemplate restTemplate;
     private final String baseUrl;
     private final String chatPath;
@@ -70,17 +70,9 @@ public class DoubaoClient implements LLMClient {
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
         try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    entity,
-                    String.class
-            );
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
             ObjectMapper mapper = new ObjectMapper();
-            ChatCompletionResponse resp = mapper.readValue(
-                    response.getBody(),
-                    ChatCompletionResponse.class
-            );
+            ChatCompletionResponse resp = mapper.readValue(response.getBody(), ChatCompletionResponse.class);
             return resp.getChoices().get(0).getMessage().getContent();
         } catch (org.springframework.web.client.HttpClientErrorException.Unauthorized ex) {
             log.error("Doubao API unauthorized", ex);
@@ -88,7 +80,8 @@ public class DoubaoClient implements LLMClient {
         } catch (org.springframework.web.client.HttpClientErrorException ex) {
             log.error("Doubao API error: {}", ex.getStatusCode());
             throw new com.glancy.backend.exception.BusinessException(
-                    "Failed to call Doubao API: " + ex.getStatusCode(), ex
+                "Failed to call Doubao API: " + ex.getStatusCode(),
+                ex
             );
         } catch (Exception e) {
             log.warn("Failed to parse Doubao response", e);

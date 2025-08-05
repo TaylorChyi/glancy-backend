@@ -1,11 +1,9 @@
 package com.glancy.backend.repository;
 
+import com.glancy.backend.entity.Notification;
 import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import com.glancy.backend.entity.Notification;
 
 /**
  * Accessor for {@link Notification} entities used by notification services.

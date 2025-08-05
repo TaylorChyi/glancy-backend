@@ -1,16 +1,14 @@
 package com.glancy.backend.controller;
 
-import java.util.List;
-
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import com.glancy.backend.dto.NotificationRequest;
 import com.glancy.backend.dto.NotificationResponse;
 import com.glancy.backend.service.NotificationService;
+import jakarta.validation.Valid;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Provides endpoints for managing notifications sent to users.
@@ -43,8 +41,10 @@ public class NotificationController {
      * requirement of user targeted messages.
      */
     @PostMapping("/user/{userId}")
-    public ResponseEntity<NotificationResponse> createUser(@PathVariable Long userId,
-                                                           @Valid @RequestBody NotificationRequest req) {
+    public ResponseEntity<NotificationResponse> createUser(
+        @PathVariable Long userId,
+        @Valid @RequestBody NotificationRequest req
+    ) {
         log.info("Creating user notification for user {} with message '{}'", userId, req.getMessage());
         NotificationResponse resp = notificationService.createUserNotification(userId, req);
         log.info("Created user notification {} for user {}", resp.getId(), userId);

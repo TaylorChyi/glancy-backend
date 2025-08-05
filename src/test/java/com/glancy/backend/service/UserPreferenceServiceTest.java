@@ -1,14 +1,14 @@
 package com.glancy.backend.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.glancy.backend.dto.UserPreferenceRequest;
 import com.glancy.backend.dto.UserPreferenceResponse;
-import com.glancy.backend.entity.User;
 import com.glancy.backend.entity.DictionaryModel;
+import com.glancy.backend.entity.User;
 import com.glancy.backend.repository.UserPreferenceRepository;
 import com.glancy.backend.repository.UserRepository;
-
 import io.github.cdimascio.dotenv.Dotenv;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,16 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 class UserPreferenceServiceTest {
 
     @Autowired
     private UserPreferenceService userPreferenceService;
+
     @Autowired
     private UserPreferenceRepository userPreferenceRepository;
+
     @Autowired
     private UserRepository userRepository;
 

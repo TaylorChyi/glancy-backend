@@ -1,5 +1,7 @@
 package com.glancy.backend.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.glancy.backend.dto.UserProfileRequest;
 import com.glancy.backend.dto.UserProfileResponse;
 import com.glancy.backend.entity.User;
@@ -13,16 +15,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 class UserProfileServiceTest {
 
     @Autowired
     private UserProfileService userProfileService;
+
     @Autowired
     private UserProfileRepository userProfileRepository;
+
     @Autowired
     private UserRepository userRepository;
 

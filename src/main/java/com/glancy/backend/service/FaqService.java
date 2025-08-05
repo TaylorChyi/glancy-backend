@@ -1,17 +1,15 @@
 package com.glancy.backend.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import lombok.extern.slf4j.Slf4j;
-
 import com.glancy.backend.dto.FaqRequest;
 import com.glancy.backend.dto.FaqResponse;
 import com.glancy.backend.entity.Faq;
-import com.glancy.backend.repository.FaqRepository;
 import com.glancy.backend.mapper.FaqMapper;
+import com.glancy.backend.repository.FaqRepository;
+import java.util.List;
+import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Business logic for FAQ management. Allows admins to create and
@@ -48,7 +46,6 @@ public class FaqService {
     @Transactional(readOnly = true)
     public List<FaqResponse> getAllFaqs() {
         log.info("Retrieving all FAQs");
-        return faqRepository.findAll().stream().map(faqMapper::toResponse)
-                .collect(Collectors.toList());
+        return faqRepository.findAll().stream().map(faqMapper::toResponse).collect(Collectors.toList());
     }
 }

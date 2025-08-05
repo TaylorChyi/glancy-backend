@@ -1,20 +1,18 @@
 package com.glancy.backend.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import lombok.extern.slf4j.Slf4j;
-
 import com.glancy.backend.dto.NotificationRequest;
 import com.glancy.backend.dto.NotificationResponse;
 import com.glancy.backend.entity.Notification;
 import com.glancy.backend.entity.User;
+import com.glancy.backend.exception.ResourceNotFoundException;
 import com.glancy.backend.repository.NotificationRepository;
 import com.glancy.backend.repository.UserRepository;
-import com.glancy.backend.exception.ResourceNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Business logic around creating and listing notifications that may
@@ -51,8 +49,7 @@ public class NotificationService {
     @Transactional
     public NotificationResponse createUserNotification(Long userId, NotificationRequest request) {
         log.info("Creating notification for user {}: {}", userId, request.getMessage());
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         Notification notification = new Notification();
         notification.setMessage(request.getMessage());
         notification.setSystemLevel(false);

@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 public class FaqRequest {
+
     @NotBlank(message = "{validation.faq.question.notblank}")
     private String question;
 

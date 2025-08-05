@@ -5,5 +5,5 @@ package com.glancy.backend.entity;
  */
 public enum Language {
     CHINESE,
-    ENGLISH
+    ENGLISH,
 }

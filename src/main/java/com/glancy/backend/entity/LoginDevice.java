@@ -1,10 +1,9 @@
 package com.glancy.backend.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 /**
  * Records each device a user has logged in from.
@@ -14,6 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class LoginDevice {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

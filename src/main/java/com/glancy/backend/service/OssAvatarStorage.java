@@ -1,26 +1,23 @@
 package com.glancy.backend.service;
 
-import com.aliyun.oss.OSS;
-import com.aliyun.oss.OSSClientBuilder;
-import com.aliyun.oss.model.CannedAccessControlList;
-import com.aliyun.oss.OSSException;
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.HttpMethod;
+import com.aliyun.oss.OSS;
+import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.OSSException;
+import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.model.GeneratePresignedUrlRequest;
 import com.glancy.backend.config.OssProperties;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-
-
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
-import java.util.UUID;
 import java.util.Date;
+import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Handles uploading avatar images to Alibaba Cloud OSS.
@@ -28,6 +25,7 @@ import java.util.Date;
 @Service
 @Slf4j
 public class OssAvatarStorage implements AvatarStorage {
+
     private String endpoint;
     private final String bucket;
     private final String accessKeyId;
@@ -56,11 +54,9 @@ public class OssAvatarStorage implements AvatarStorage {
 
     @PostConstruct
     public void init() {
-        if (accessKeyId != null && !accessKeyId.isEmpty()
-                && accessKeySecret != null && !accessKeySecret.isEmpty()) {
+        if (accessKeyId != null && !accessKeyId.isEmpty() && accessKeySecret != null && !accessKeySecret.isEmpty()) {
             if (securityToken != null && !securityToken.isEmpty()) {
-                this.ossClient = new OSSClientBuilder().build(endpoint, accessKeyId,
-                        accessKeySecret, securityToken);
+                this.ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret, securityToken);
             } else {
                 this.ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
             }
@@ -72,11 +68,14 @@ public class OssAvatarStorage implements AvatarStorage {
                     if (!configured.contains(location)) {
                         ossClient.shutdown();
                         if (securityToken != null && !securityToken.isEmpty()) {
-                            this.ossClient = new OSSClientBuilder().build(expected,
-                                    accessKeyId, accessKeySecret, securityToken);
+                            this.ossClient = new OSSClientBuilder().build(
+                                expected,
+                                accessKeyId,
+                                accessKeySecret,
+                                securityToken
+                            );
                         } else {
-                            this.ossClient = new OSSClientBuilder().build(expected,
-                                    accessKeyId, accessKeySecret);
+                            this.ossClient = new OSSClientBuilder().build(expected, accessKeyId, accessKeySecret);
                         }
                         this.endpoint = expected;
                         this.urlPrefix = String.format("https://%s.%s/", bucket, removeProtocol(expected));
@@ -140,10 +139,10 @@ public class OssAvatarStorage implements AvatarStorage {
     }
 
     private String generatePresignedUrl(String objectName) {
-        Date expiration = new Date(System.currentTimeMillis()
-                + Duration.ofMinutes(signedUrlExpirationMinutes).toMillis());
-        GeneratePresignedUrlRequest req =
-                new GeneratePresignedUrlRequest(bucket, objectName, HttpMethod.GET);
+        Date expiration = new Date(
+            System.currentTimeMillis() + Duration.ofMinutes(signedUrlExpirationMinutes).toMillis()
+        );
+        GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest(bucket, objectName, HttpMethod.GET);
         req.setExpiration(expiration);
         if (securityToken != null && !securityToken.isEmpty()) {
             req.addQueryParameter("security-token", securityToken);

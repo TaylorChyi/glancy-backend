@@ -1,22 +1,19 @@
 package com.glancy.backend.controller;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.context.annotation.Import;
-
-
-import java.util.Locale;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Locale;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.web.servlet.MockMvc;
+
 @WebMvcTest(LocaleController.class)
 @Import(com.glancy.backend.config.SecurityConfig.class)
 class LocaleControllerTest {
-
 
     @Autowired
     private MockMvc mockMvc;
@@ -29,10 +26,11 @@ class LocaleControllerTest {
      */
     @Test
     void getLocaleFromHeader() throws Exception {
-        mockMvc.perform(get("/api/locale").header("Accept-Language", "zh-CN,zh;q=0.9"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.country").value("CN"))
-                .andExpect(jsonPath("$.language").value("zh"));
+        mockMvc
+            .perform(get("/api/locale").header("Accept-Language", "zh-CN,zh;q=0.9"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.country").value("CN"))
+            .andExpect(jsonPath("$.language").value("zh"));
     }
 
     /**
@@ -43,10 +41,11 @@ class LocaleControllerTest {
      */
     @Test
     void getLocaleFromRequestLocale() throws Exception {
-        mockMvc.perform(get("/api/locale").locale(Locale.CHINA))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.country").value("CN"))
-                .andExpect(jsonPath("$.language").value("zh"));
+        mockMvc
+            .perform(get("/api/locale").locale(Locale.CHINA))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.country").value("CN"))
+            .andExpect(jsonPath("$.language").value("zh"));
     }
 
     /**
@@ -57,9 +56,10 @@ class LocaleControllerTest {
      */
     @Test
     void getLocaleMapping() throws Exception {
-        mockMvc.perform(get("/api/locale").header("Accept-Language", "US"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.country").value("US"))
-                .andExpect(jsonPath("$.language").value("en"));
+        mockMvc
+            .perform(get("/api/locale").header("Accept-Language", "US"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.country").value("US"))
+            .andExpect(jsonPath("$.language").value("en"));
     }
 }
