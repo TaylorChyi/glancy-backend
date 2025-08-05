@@ -109,6 +109,46 @@
             <finalName>glancy-backend</finalName>
             <plugins>
                         <plugin>
+                                <groupId>com.diffplug.spotless</groupId>
+                                <artifactId>spotless-maven-plugin</artifactId>
+                                <version>2.43.0</version>
+                                <configuration>
+                                        <java>
+                                                <prettier>
+                                                        <devDependencies>
+                                                                <prettier>3.2.5</prettier>
+                                                                <prettier-plugin-java>2.5.1</prettier-plugin-java>
+                                                        </devDependencies>
+                                                        <configFile>${project.basedir}/spotless-config.json</configFile>
+                                                </prettier>
+                                        </java>
+                                        <format>
+                                                <name>yaml</name>
+                                                <includes>
+                                                        <include>**/*.yml</include>
+                                                        <include>**/*.yaml</include>
+                                                </includes>
+                                                <prettier>
+                                                        <devDependencies>
+                                                                <prettier>3.2.5</prettier>
+                                                        </devDependencies>
+                                                        <parser>yaml</parser>
+                                                        <configFile>${project.basedir}/spotless-config.json</configFile>
+                                                </prettier>
+                                        </format>
+                                </configuration>
+                        </plugin>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-checkstyle-plugin</artifactId>
+                                <version>3.3.0</version>
+                                <configuration>
+                                        <configLocation>checkstyle.xml</configLocation>
+                                        <consoleOutput>true</consoleOutput>
+                                        <failOnViolation>true</failOnViolation>
+                                </configuration>
+                        </plugin>
+                        <plugin>
                                 <groupId>org.apache.maven.plugins</groupId>
                                 <artifactId>maven-compiler-plugin</artifactId>
                                 <configuration>
