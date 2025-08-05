@@ -23,7 +23,12 @@ class SearchRecordRepositoryTest {
     @Test
     void searchRecordQueries() {
         User user = userRepository.save(TestEntityFactory.user(10));
-        SearchRecord r1 = TestEntityFactory.searchRecord(user, "term1", Language.ENGLISH, LocalDateTime.now().minusDays(1));
+        SearchRecord r1 = TestEntityFactory.searchRecord(
+            user,
+            "term1",
+            Language.ENGLISH,
+            LocalDateTime.now().minusDays(1)
+        );
         SearchRecord r2 = TestEntityFactory.searchRecord(user, "term2", Language.ENGLISH, LocalDateTime.now());
         searchRecordRepository.save(r1);
         searchRecordRepository.save(r2);
